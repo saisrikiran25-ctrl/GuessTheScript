@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import { Router } from './Router';
 import { PlayerProvider } from './store/playerStore';
 import { MatchProvider } from './store/matchStore';
@@ -9,7 +9,7 @@ import './styles/animations.css';
 
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <MatchProvider>
         <PlayerProvider>
           <ToastProvider>
@@ -17,7 +17,7 @@ const App: React.FC = () => {
           </ToastProvider>
         </PlayerProvider>
       </MatchProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 
