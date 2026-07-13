@@ -94,8 +94,8 @@ export interface PlayerScore {
   matchId: string;
   primaryScriptScore: number;       // 0, 15, 40, or 100
   familyBonusScore: number;         // up to 40 (4 dims × 10)
-  sidePredictionScore: number;      // up to 30 (2 × 15)
-  perfectBonus: number;             // 25 if everything correct
+  sidePredictionScore: number;      // up to 60 (6 × 10)
+  perfectBonus: number;             // 25 if exact script + all sides correct
   totalMatchScore: number;
   badgesEarned: string[];
   breakdown: ScoreBreakdownItem[];

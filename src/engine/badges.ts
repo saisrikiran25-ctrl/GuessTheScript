@@ -77,8 +77,8 @@ export function awardTournamentBadges(player: Player): string[] {
 
   const scores = Object.values(player.matchScores);
 
-  // Hat-Trick of Reads — scored ≥40 in all played matches
-  if (scores.length >= 3 && scores.every((s) => s >= 40)) {
+  // Hat-Trick of Reads — scored ≥80 in all played matches (scaled for new 225/match max)
+  if (scores.length >= 3 && scores.every((s) => s >= 80)) {
     earned.push('hat_trick');
   }
 

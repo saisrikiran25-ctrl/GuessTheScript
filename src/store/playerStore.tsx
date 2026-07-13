@@ -38,7 +38,9 @@ function reducer(state: PlayerState, action: PlayerAction): PlayerState {
       };
       const newTournamentScore = Object.values(newMatchScores).reduce((a, b) => a + b, 0);
       const scores = Object.values(newMatchScores);
-      const streak = scores.filter((s) => s >= 40).length;
+      // Streak: scored ≥80 pts in a match (roughly equivalent to family match + some bonuses)
+      // Previously ≥40 (out of 195 max), now ≥80 (out of 225 max) — same relative bar
+      const streak = scores.filter((s) => s >= 80).length;
       const newBadges = [...new Set([...state.player.badges, ...action.badges])];
       const updated: Player = {
         ...state.player,

@@ -162,7 +162,7 @@ export const Profile: React.FC = () => {
 
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
                       {score ? (
-                        <span style={{ fontSize: '22px', fontWeight: 900, color: score.totalMatchScore >= 100 ? 'var(--color-success)' : score.totalMatchScore >= 40 ? 'var(--color-accent)' : 'var(--color-text-muted)' }}>
+                        <span style={{ fontSize: '22px', fontWeight: 900, color: score.totalMatchScore >= 160 ? 'var(--color-success)' : score.totalMatchScore >= 80 ? 'var(--color-accent)' : 'var(--color-text-muted)' }}>
                           {score.totalMatchScore}
                         </span>
                       ) : match.status === 'upcoming' ? (
