@@ -166,7 +166,12 @@ export const Group: React.FC = () => {
   }, [newGroupName, groups, showToast]);
 
   const handleInvite = useCallback((group: UserGroup) => {
-    const inviteUrl = `${window.location.origin}/group/${group.code}`;
+    const origin = window.location.origin;
+    const pathname = window.location.pathname.endsWith('/') 
+      ? window.location.pathname 
+      : window.location.pathname + '/';
+    const inviteUrl = `${origin}${pathname}#/group/${group.code}`;
+    
     navigator.clipboard.writeText(inviteUrl).then(() => {
       showToast({ type: 'success', message: 'Invite link copied to clipboard!' });
       track('share_completed', { match_id: 'all', format: 'link', method: 'copy' });
