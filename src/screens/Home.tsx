@@ -128,7 +128,7 @@ export const Home: React.FC = () => {
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
                 <span style={{ fontSize: '28px', fontWeight: 900, color: 'var(--color-accent)', lineHeight: 1 }}>{tournamentScore}</span>
-                <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 600 }}>/ 585 pts</span>
+                <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 600 }}>/ 675 pts</span>
               </div>
             </div>
 

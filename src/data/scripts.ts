@@ -160,6 +160,39 @@ export const SIDE_PREDICTION_SETS: Record<string, SidePredictionOption[]> = {
         { value: 'no', label: 'Goes beyond' },
       ],
     },
+    {
+      id: 'sp_both_score',
+      question: 'Both teams score?',
+      choices: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'One team blanked' },
+      ],
+    },
+    {
+      id: 'sp_total_goals',
+      question: 'Total goals in the match?',
+      choices: [
+        { value: 'low', label: '0–1' },
+        { value: 'mid', label: '2–3' },
+        { value: 'high', label: '4+' },
+      ],
+    },
+    {
+      id: 'sp_red_card',
+      question: 'At least one red card?',
+      choices: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' },
+      ],
+    },
+    {
+      id: 'sp_comeback',
+      question: 'A team comes from behind?',
+      choices: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No comeback' },
+      ],
+    },
   ],
   chaos: [
     {
@@ -195,6 +228,39 @@ export const SIDE_PREDICTION_SETS: Record<string, SidePredictionOption[]> = {
       choices: [
         { value: 'yes', label: 'Yes' },
         { value: 'no', label: 'One team blanked' },
+      ],
+    },
+    {
+      id: 'sp_early_goal',
+      question: 'Goal before the 20th minute?',
+      choices: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' },
+      ],
+    },
+    {
+      id: 'sp_total_goals',
+      question: 'Total goals in the match?',
+      choices: [
+        { value: 'low', label: '0–1' },
+        { value: 'mid', label: '2–3' },
+        { value: 'high', label: '4+' },
+      ],
+    },
+    {
+      id: 'sp_red_card',
+      question: 'At least one red card?',
+      choices: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' },
+      ],
+    },
+    {
+      id: 'sp_comeback',
+      question: 'A team comes from behind?',
+      choices: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No comeback' },
       ],
     },
   ],

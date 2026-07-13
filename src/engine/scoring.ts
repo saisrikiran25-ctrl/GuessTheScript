@@ -8,11 +8,13 @@ import type {
 import { getScriptById } from '@/data/scripts';
 
 // ─── Scoring Constants ────────────────────────────────────────
+// Max per match: 100 (script) + 40 (dims) + 60 (6×10 side preds) + 25 (perfect) = 225
+// Max tournament (3 matches): 675
 const EXACT_MATCH_SCORE = 100;
 const FAMILY_MATCH_SCORE = 40;
 const PARTIAL_MATCH_SCORE = 15;
 const DIMENSION_BONUS_PER_DIM = 10;
-const SIDE_PRED_SCORE = 15;
+const SIDE_PRED_SCORE = 10;  // 6 questions × 10 pts = 60 pts max
 const PERFECT_BONUS = 25;
 
 // ─── Score a single prediction against a resolved match ───────
@@ -265,5 +267,7 @@ export function getClosenessMessage(
   };
 }
 
-export const MAX_SCORE_PER_MATCH = 195;
-export const MAX_TOURNAMENT_SCORE = 585;
+// 100 (exact) + 40 (4 dims × 10) + 60 (6 sides × 10) + 25 (perfect bonus) = 225
+export const MAX_SCORE_PER_MATCH = 225;
+// 225 × 3 matches = 675
+export const MAX_TOURNAMENT_SCORE = 675;

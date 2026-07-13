@@ -302,9 +302,9 @@ export async function generateShareCard(
   ctx.fillText(player.name.toUpperCase(), W / 2, H * 0.79);
 
   const tagline = isResolved
-    ? (score.totalMatchScore >= 150
+    ? (score.totalMatchScore >= 175
       ? 'I read the match. Did you?'
-      : score.totalMatchScore >= 80
+      : score.totalMatchScore >= 100
       ? 'I called the script.'
       : 'Football writes its own rules.')
     : 'I called the script. Can you read the game?';

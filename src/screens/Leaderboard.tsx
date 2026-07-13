@@ -184,7 +184,7 @@ export const Leaderboard: React.FC = () => {
           <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
             Leaderboard updates after each match resolves.
             <br />
-            Max 585 pts across all 3 matches.
+            Max 675 pts across all 3 matches.
           </p>
         </div>
       </main>

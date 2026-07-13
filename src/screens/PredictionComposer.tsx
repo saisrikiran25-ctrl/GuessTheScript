@@ -179,7 +179,7 @@ export const PredictionComposer: React.FC = () => {
                   Optional — but worth it.
                 </p>
                 <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '4px', lineHeight: 1.5 }}>
-                  Up to 15 bonus points each. Skip if you just want your script.
+                  Up to 10 bonus points each. Skip if you just want your script.
                 </p>
               </div>
 
