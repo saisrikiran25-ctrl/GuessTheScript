@@ -180,7 +180,7 @@ export async function generateShareCard(
     ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
     ctx.beginPath();
-    ctx.roundRect(W / 2 - 200, H * 0.36, 400, 56, 8);
+    ctx.roundRect(W / 2 - 230, H * 0.36, 460, 64, 8);
     ctx.fill();
     ctx.stroke();
 
@@ -188,12 +188,13 @@ export async function generateShareCard(
     ctx.font = '500 13px Outfit, sans-serif';
     ctx.textAlign = 'center';
     
-    // Wrap description into two lines
+    // Wrap description into two lines based on width, not characters
     const words = script.description.split(' ');
     let line1 = '';
     let line2 = '';
     for (let w = 0; w < words.length; w++) {
-      if ((line1 + words[w]).length < 50) {
+      // 60 chars fits comfortably in 460px width for 13px font
+      if ((line1 + words[w]).length < 60) {
         line1 += words[w] + ' ';
       } else {
         line2 += words[w] + ' ';
@@ -201,7 +202,7 @@ export async function generateShareCard(
     }
     ctx.fillText(line1.trim(), W / 2, H * 0.395);
     if (line2) {
-      ctx.fillText(line2.trim(), W / 2, H * 0.425);
+      ctx.fillText(line2.trim(), W / 2, H * 0.420);
     }
   }
 
@@ -290,7 +291,7 @@ export async function generateShareCard(
   ctx.font = '700 11px Outfit, sans-serif';
   ctx.letterSpacing = '3px';
   ctx.textAlign = 'center';
-  ctx.fillText('GUESSTHESCRIPT.APP', W / 2, H * 0.93);
+  ctx.fillText('GUESS THE SCRIPT', W / 2, H * 0.93);
 
   return canvas.toDataURL('image/png', 0.95);
 }
