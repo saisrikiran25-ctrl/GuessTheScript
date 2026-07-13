@@ -1,0 +1,300 @@
+/* ============================================================
+   GUESS THE SCRIPT — Premium Cinematic Design System
+   ============================================================ */
+
+/* ─── Import Font ──────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ─── CSS Custom Properties ────────────────────────────────── */
+:root {
+  /* Cinematic Dark Theme Palette */
+  --color-bg: #050508;
+  --color-surface: rgba(18, 18, 29, 0.7);
+  --color-surface-2: rgba(28, 28, 44, 0.85);
+  --color-surface-3: rgba(38, 38, 59, 0.9);
+  --color-border: rgba(255, 255, 255, 0.07);
+  --color-border-dim: rgba(255, 255, 255, 0.03);
+  --color-border-glow: rgba(212, 168, 67, 0.3);
+
+  /* Gold Oracle Accents */
+  --color-accent: #E8C366;
+  --color-accent-dim: #B8933D;
+  --color-accent-glow: rgba(232, 195, 102, 0.25);
+  --color-accent-subtle: rgba(232, 195, 102, 0.06);
+
+  /* Typography Colors */
+  --color-text-primary: #F8F9FA;
+  --color-text-secondary: #A6A6BF;
+  --color-text-muted: #646480;
+  --color-text-inverse: #050508;
+
+  /* State Colors */
+  --color-success: #00E676;
+  --color-success-bg: rgba(0, 230, 118, 0.08);
+  --color-error: #FF3D00;
+  --color-error-bg: rgba(255, 61, 0, 0.08);
+  --color-warning: #FFC400;
+  --color-warning-bg: rgba(255, 196, 0, 0.08);
+  --color-info-bg: rgba(0, 176, 255, 0.08);
+
+  /* Script Family Colors (Neon Cinematic Glows) */
+  --color-family-a: #00E5FF; /* Electric Blue - Tempo */
+  --color-family-b: #FF6D00; /* Vivid Orange - Chaos */
+  --color-family-c: #D500F9; /* Neon Purple - Deadline */
+  --color-family-d: #FF1744; /* Radiant Red - Shootout */
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Typography */
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --type-hero: clamp(2.75rem, 9vw, 4.5rem);
+  --type-h1: clamp(1.85rem, 5vw, 2.75rem);
+  --type-h2: clamp(1.35rem, 3.5vw, 1.85rem);
+  --type-h3: clamp(1.1rem, 2.5vw, 1.35rem);
+  --type-body: 0.95rem;
+  --type-label: 0.85rem;
+  --type-caption: 0.72rem;
+  --type-score: clamp(3.5rem, 14vw, 5.5rem);
+
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Glassmorphism & Shadow Effects */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.9);
+  --shadow-accent: 0 0 16px var(--color-accent-glow);
+  --glass-effect: backdrop-filter: blur(20px);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+
+  /* Layout */
+  --max-width: 480px;
+  --nav-height: 72px;
+  --header-height: 64px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ─── Reset & Base ─────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--type-body);
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  /* Glowing Stadium Lights Backdrop Effect */
+  background: 
+    radial-gradient(circle at 50% -20%, rgba(232, 195, 102, 0.07) 0%, transparent 60%),
+    radial-gradient(circle at 10% 40%, rgba(0, 229, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 90% 70%, rgba(213, 0, 249, 0.03) 0%, transparent 50%),
+    var(--color-bg);
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  background: none;
+}
+
+input, textarea {
+  font-family: inherit;
+  outline: none;
+}
+
+/* ─── Typography ───────────────────────────────────────────── */
+.type-hero {
+  font-size: var(--type-hero);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  background: linear-gradient(180deg, #FFFFFF 30%, #A6A6BF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.type-h1 {
+  font-size: var(--type-h1);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.type-h2 {
+  font-size: var(--type-h2);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.type-h3 {
+  font-size: var(--type-h3);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.type-label {
+  font-size: var(--type-label);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.type-caption {
+  font-size: var(--type-caption);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ─── Composables (Premium Glass Card styles) ────────────────── */
+.glass-panel {
+  background: var(--color-surface);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel--hover {
+  transition: all var(--transition-base);
+}
+.glass-panel--hover:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--color-surface-2);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ─── Gold Oracle Gradient Text ───────────────────────────── */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FDF0CD 0%, #E8C366 50%, #B8933D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Pitch Texture Overlay (subtle football theme) ────────── */
+.pitch-bg {
+  position: relative;
+}
+.pitch-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.015) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+/* ─── Live Status Badge ───────────────────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.status-badge--live {
+  background: rgba(255, 61, 0, 0.1);
+  color: #FF3D00;
+  border: 1px solid rgba(255, 61, 0, 0.25);
+  box-shadow: 0 0 12px rgba(255, 61, 0, 0.2);
+}
+
+.status-badge--upcoming {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.status-badge--resolved {
+  background: rgba(232, 195, 102, 0.08);
+  color: var(--color-accent);
+  border: 1px solid rgba(232, 195, 102, 0.2);
+}
+
+/* ─── Layout ───────────────────────────────────────────────── */
+.page-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+  width: 100%;
+}
+
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 20px);
+}
+
+.screen--no-nav {
+  padding-bottom: 0;
+}
+
+/* ─── Shimmer Shading ──────────────────────────────────────── */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.8s ease-in-out infinite;
+}
