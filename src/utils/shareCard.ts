@@ -5,6 +5,13 @@ import { loadPrediction } from '@/utils/storage';
 // ─── Generate share card via Canvas API ──────────────────────
 // Returns a data URL (PNG) of a highly styled collector's card
 
+const loadFlagImage = (url: string) => new Promise<HTMLImageElement | null>((resolve) => {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => resolve(img);
+  img.onerror = () => resolve(null);
+  img.src = url;
+});
 export async function generateShareCard(
   match: Match,
   score: PlayerScore,
@@ -23,6 +30,11 @@ export async function generateShareCard(
   const prediction = loadPrediction(match.id, player.id);
   const script = prediction ? getScriptById(prediction.scriptId) : null;
   const isResolved = match.status === 'resolved';
+
+  let flagAImg: HTMLImageElement | null = null;
+  let flagBImg: HTMLImageElement | null = null;
+  if (match.teamA.flagCode) flagAImg = await loadFlagImage(`https://flagcdn.com/w80/${match.teamA.flagCode}.png`);
+  if (match.teamB.flagCode) flagBImg = await loadFlagImage(`https://flagcdn.com/w80/${match.teamB.flagCode}.png`);
 
   // ─── 1. Deep Space/Stadium Background ───────────────────
   const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
@@ -138,7 +150,12 @@ export async function generateShareCard(
   ctx.fillStyle = '#F8F9FA';
   ctx.font = '800 24px Outfit, sans-serif';
   ctx.textAlign = 'left';
-  ctx.fillText(`${match.teamA.flagEmoji}  ${match.teamA.shortCode}`, W / 2 - 190, teamCardY + 52);
+  if (flagAImg) {
+    ctx.drawImage(flagAImg, W / 2 - 194, teamCardY + 34, 28, 20);
+    ctx.fillText(`${match.teamA.shortCode}`, W / 2 - 150, teamCardY + 52);
+  } else {
+    ctx.fillText(`${match.teamA.flagEmoji}  ${match.teamA.shortCode}`, W / 2 - 190, teamCardY + 52);
+  }
 
   ctx.fillStyle = '#646480';
   ctx.font = '700 16px Outfit, sans-serif';
@@ -148,7 +165,12 @@ export async function generateShareCard(
   ctx.fillStyle = '#F8F9FA';
   ctx.font = '800 24px Outfit, sans-serif';
   ctx.textAlign = 'right';
-  ctx.fillText(`${match.teamB.shortCode}  ${match.teamB.flagEmoji}`, W / 2 + 190, teamCardY + 52);
+  if (flagBImg) {
+    ctx.drawImage(flagBImg, W / 2 + 166, teamCardY + 34, 28, 20);
+    ctx.fillText(`${match.teamB.shortCode}`, W / 2 + 150, teamCardY + 52);
+  } else {
+    ctx.fillText(`${match.teamB.shortCode}  ${match.teamB.flagEmoji}`, W / 2 + 190, teamCardY + 52);
+  }
 
   ctx.fillStyle = '#A6A6BF';
   ctx.font = '600 12px Outfit, sans-serif';
@@ -176,34 +198,44 @@ export async function generateShareCard(
     ctx.fillText(script.label.toUpperCase(), W / 2, H * 0.33);
     ctx.shadowBlur = 0; // reset shadow
 
+    // Wrap description using measureText
+    ctx.font = '500 13px Outfit, sans-serif';
+    const maxTextWidth = 430;
+    const words = script.description.split(' ');
+    const lines: string[] = [];
+    let currentLine = words[0];
+
+    for (let i = 1; i < words.length; i++) {
+      const word = words[i];
+      const width = ctx.measureText(currentLine + ' ' + word).width;
+      if (width < maxTextWidth) {
+        currentLine += ' ' + word;
+      } else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
+    }
+    lines.push(currentLine);
+
+    const lineHeight = 20;
+    const boxHeight = Math.max(64, lines.length * lineHeight + 24);
+
     // Script description capsule
     ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
     ctx.beginPath();
-    ctx.roundRect(W / 2 - 230, H * 0.36, 460, 64, 8);
+    ctx.roundRect(W / 2 - 240, H * 0.36, 480, boxHeight, 8);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = '#A6A6BF';
-    ctx.font = '500 13px Outfit, sans-serif';
     ctx.textAlign = 'center';
     
-    // Wrap description into two lines based on width, not characters
-    const words = script.description.split(' ');
-    let line1 = '';
-    let line2 = '';
-    for (let w = 0; w < words.length; w++) {
-      // 60 chars fits comfortably in 460px width for 13px font
-      if ((line1 + words[w]).length < 60) {
-        line1 += words[w] + ' ';
-      } else {
-        line2 += words[w] + ' ';
-      }
-    }
-    ctx.fillText(line1.trim(), W / 2, H * 0.395);
-    if (line2) {
-      ctx.fillText(line2.trim(), W / 2, H * 0.420);
-    }
+    // Draw text centered vertically in the box
+    const startY = H * 0.36 + (boxHeight / 2) - ((lines.length - 1) * lineHeight) / 2 + 5;
+    lines.forEach((line, index) => {
+      ctx.fillText(line, W / 2, startY + (index * lineHeight));
+    });
   }
 
   // ─── 8. Scoring / Locked Displays ───────────────────────
