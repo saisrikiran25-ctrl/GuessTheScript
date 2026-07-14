@@ -12,6 +12,8 @@ import { getScriptById } from '@/data/scripts';
 import { getBadgeById, BADGE_DEFINITIONS } from '@/data/badges';
 import { generateShareCard, shareCard } from '@/utils/shareCard';
 import { Analytics } from '@/utils/analytics';
+import { syncUploadMember } from '@/utils/sync';
+import type { Player } from '@/types';
 
 type RevealPhase = 'intro' | 'actual' | 'score' | 'badges' | 'done';
 
@@ -51,6 +53,22 @@ export const Results: React.FC = () => {
       saveScore(score);
       updateScore(match.id, score.totalMatchScore, badges);
       setNewBadges(badges);
+
+      // ── Sync updated score to Firestore immediately ──────────
+      // Reconstruct the player as playerStore will compute it, so Firestore
+      // gets the exact same values that localStorage will have.
+      const updatedMatchScores = { ...player.matchScores, [match.id]: score.totalMatchScore };
+      const updatedTournamentScore = Object.values(updatedMatchScores).reduce((a: number, b: number) => a + b, 0);
+      const updatedStreak = Object.values(updatedMatchScores).filter((s: number) => s >= 80).length;
+      const updatedBadges = [...new Set([...player.badges, ...badges])];
+      const syncedPlayer: Player = {
+        ...player,
+        matchScores: updatedMatchScores,
+        tournamentScore: updatedTournamentScore,
+        streak: updatedStreak,
+        badges: updatedBadges,
+      };
+      syncUploadMember('world', syncedPlayer); // fire-and-forget — offline-safe
     } else {
       setNewBadges(score.badgesEarned ?? []);
     }

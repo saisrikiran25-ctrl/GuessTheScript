@@ -9,6 +9,7 @@ import { loadAllScores } from '@/utils/storage';
 import { formatOrdinal } from '@/utils/format';
 import { getBadgeById } from '@/data/badges';
 import { Analytics } from '@/utils/analytics';
+import { syncDownloadMembers } from '@/utils/sync';
 import type { LeaderboardEntry } from '@/types';
 
 type LeaderboardTab = 'tournament' | 'sf1' | 'sf2';
@@ -28,10 +29,11 @@ export const Leaderboard: React.FC = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    setTimeout(() => {
+
+    const buildEntries = async () => {
       const allScores = loadAllScores();
 
-      // Build player entry from real scores
+      // ── Current player entry (uses precise local scores) ──
       let playerEntry: LeaderboardEntry | null = null;
       if (player) {
         const matchScores: Record<string, number> = Object.fromEntries(
@@ -58,25 +60,42 @@ export const Leaderboard: React.FC = () => {
         };
       }
 
-      // Combine mock + real player
+      // ── Real players from Firestore 'world' group ──────────
+      // Fetched offline-safe: fails silently and falls back to local-only.
+      const worldMembers = await syncDownloadMembers('world');
+      const firestoreEntries: LeaderboardEntry[] = worldMembers
+        .filter((m) => m.playerId !== player?.id) // exclude self (local entry is more precise)
+        .map((m) => ({
+          rank: 0,
+          playerId: m.playerId,
+          name: m.name,
+          tournamentScore: m.score,
+          matchScores: {},
+          streak: m.streak,
+          badges: [],
+          isCurrentPlayer: false,
+          exactMatchCount: 0,
+        }));
+
+      // ── Combine + sort ─────────────────────────────────────
       const combined = [
         ...MOCK_LEADERBOARD.map((e) => ({ ...e, rank: 0 })),
+        ...firestoreEntries,
         ...(playerEntry ? [playerEntry] : []),
       ];
 
-      // Sort by tournament score, then exact matches
       combined.sort((a, b) => {
         if (b.tournamentScore !== a.tournamentScore) return b.tournamentScore - a.tournamentScore;
         return b.exactMatchCount - a.exactMatchCount;
       });
 
-      // Assign ranks
       const ranked = combined.map((e, i) => ({ ...e, rank: i + 1 }));
-
       setEntries(ranked);
       setIsLoading(false);
-    }, 500);
-  }, [player, matchState.matches, tab]);
+    };
+
+    buildEntries();
+  }, [player, matchState.matches]);
 
   const TABS: { id: LeaderboardTab; label: string }[] = [
     { id: 'tournament', label: 'Tournament' },

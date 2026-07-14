@@ -70,8 +70,11 @@ export const Group: React.FC = () => {
   const performSync = useCallback(async (groupCode: string) => {
     if (!player) return;
     
-    // Upload current player score
-    await syncUploadMember(groupCode, player);
+    // Only upload if the player has a real score — never overwrite Firestore
+    // with score=0 (which happens when a user visits Group before seeing Results).
+    if (player.tournamentScore > 0) {
+      await syncUploadMember(groupCode, player);
+    }
     
     // Download group members list
     const latest = await syncDownloadMembers(groupCode);
