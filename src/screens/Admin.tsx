@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui';
 import { useMatches } from '@/store/matchStore';
 import { resolveMatch } from '@/engine/resolution';
+import { syncWriteMatchResolution } from '@/utils/sync';
 import type { AdminMatchInput, Match } from '@/types';
 
 const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY ?? 'gts_admin_2026';
@@ -39,7 +40,7 @@ export const Admin: React.FC = () => {
     }
   };
 
-  const handleResolve = () => {
+  const handleResolve = async () => {
     if (!selectedMatch) return;
 
     try {
@@ -65,8 +66,9 @@ export const Admin: React.FC = () => {
         resolution,
       };
 
-      updateMatch(updatedMatch);
-      setSuccess(`✓ Match resolved as: "${resolution.resolvedScriptId}"`);
+      updateMatch(updatedMatch);                                      // local state + localStorage
+      await syncWriteMatchResolution(selectedMatch.id, resolution);  // Firestore → all devices
+      setSuccess(`✓ Match resolved as: "${resolution.resolvedScriptId}" — synced to all users.`);
       setError('');
     } catch (err) {
       setError(`Error: ${err}`);

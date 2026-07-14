@@ -1,6 +1,12 @@
-import type { Player } from '@/types';
+import type { Match, Player, MatchResolution } from '@/types';
 import { db } from '@/services/firebase';
-import { doc, setDoc, collection, getDocs } from 'firebase/firestore';
+import {
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  getDocs,
+} from 'firebase/firestore';
 
 export interface SyncMember {
   playerId: string;
@@ -10,7 +16,7 @@ export interface SyncMember {
   updatedAt: string;
 }
 
-// Upload player score for a specific group
+// ─── Group: Upload player score ───────────────────────────────
 export async function syncUploadMember(
   groupCode: string,
   player: Player
@@ -31,7 +37,7 @@ export async function syncUploadMember(
   }
 }
 
-// Fetch all members in a group
+// ─── Group: Fetch all members ─────────────────────────────────
 export async function syncDownloadMembers(
   groupCode: string
 ): Promise<SyncMember[]> {
@@ -48,3 +54,39 @@ export async function syncDownloadMembers(
     return [];
   }
 }
+
+// ─── Matches: Write resolution to Firestore ───────────────────
+// Called by Admin when a match is resolved.
+// Stores { status, resolution } under matches/{matchId}.
+export async function syncWriteMatchResolution(
+  matchId: string,
+  resolution: MatchResolution
+): Promise<void> {
+  try {
+    const docRef = doc(db, `matches/${matchId}`);
+    await setDoc(docRef, { status: 'resolved', resolution }, { merge: true });
+  } catch (e) {
+    console.warn('Failed to write match resolution to Firestore:', e);
+  }
+}
+
+// ─── Matches: Read all resolutions from Firestore ────────────
+// Called on app boot. Returns a map of matchId → { status, resolution }
+// for any matches that have been resolved by the admin.
+export async function syncReadAllMatchResolutions(): Promise<
+  Record<string, Pick<Match, 'status' | 'resolution'>>
+> {
+  try {
+    const matchesRef = collection(db, 'matches');
+    const snapshot = await getDocs(matchesRef);
+    const result: Record<string, Pick<Match, 'status' | 'resolution'>> = {};
+    snapshot.forEach((docSnap) => {
+      result[docSnap.id] = docSnap.data() as Pick<Match, 'status' | 'resolution'>;
+    });
+    return result;
+  } catch (e) {
+    console.warn('Failed to read match resolutions from Firestore:', e);
+    return {};
+  }
+}
+
