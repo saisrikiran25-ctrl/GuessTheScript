@@ -33,9 +33,7 @@ export const MATCHES: Match[] = [
     status: 'upcoming',
     venue: 'AT&T Stadium',
     city: 'Dallas',
-    scripts: ALL_SCRIPTS.filter((s) =>
-      ['A1', 'B1', 'B2', 'B3', 'C1', 'D1', 'A2', 'C2'].includes(s.id)
-    ),
+    scripts: ALL_SCRIPTS,
     sideOptions: SIDE_PREDICTION_SETS.default,
   },
 
@@ -66,9 +64,7 @@ export const MATCHES: Match[] = [
     status: 'upcoming',
     venue: 'Mercedes-Benz Stadium',
     city: 'Atlanta',
-    scripts: ALL_SCRIPTS.filter((s) =>
-      ['A1', 'A2', 'A3', 'B1', 'B3', 'C1', 'C2', 'D1'].includes(s.id)
-    ),
+    scripts: ALL_SCRIPTS,
     sideOptions: SIDE_PREDICTION_SETS.default,
   },
 
@@ -97,9 +93,7 @@ export const MATCHES: Match[] = [
     status: 'upcoming',
     venue: 'MetLife Stadium',
     city: 'New York / New Jersey',
-    scripts: ALL_SCRIPTS.filter((s) =>
-      ['A1', 'B1', 'B2', 'B3', 'C1', 'C2', 'D1', 'A2'].includes(s.id)
-    ),
+    scripts: ALL_SCRIPTS,
     sideOptions: SIDE_PREDICTION_SETS.final,
   },
 ];
