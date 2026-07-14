@@ -169,4 +169,5 @@ export interface AdminMatchInput {
   penalties: boolean;
   narrativeSummary: string;
   sideResults: { optionId: string; correct: string }[];
+  resolvedScriptId: string;
 }

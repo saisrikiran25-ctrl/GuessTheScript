@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui';
 import { useMatches } from '@/store/matchStore';
@@ -24,12 +24,51 @@ export const Admin: React.FC = () => {
     penalties: false,
     narrativeSummary: '',
     sideResults: [],
+    resolvedScriptId: '',
   });
   const [goalTimesInput, setGoalTimesInput] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
   const selectedMatch = matchState.matches.find((m) => m.id === selectedMatchId);
+
+  // Pre-populate form when switching selected match or if already resolved
+  useEffect(() => {
+    if (selectedMatch) {
+      if (selectedMatch.status === 'resolved' && selectedMatch.resolution) {
+        const res = selectedMatch.resolution;
+        setForm({
+          goalTimes: res.details.goalTimes,
+          cards: res.details.cards,
+          redCards: res.details.redCards,
+          teamAGoals: res.details.teamAGoals,
+          teamBGoals: res.details.teamBGoals,
+          extraTime: res.details.resolutionType === 'extra_time' || res.details.resolutionType === 'penalties',
+          penalties: res.details.resolutionType === 'penalties',
+          narrativeSummary: res.narrativeSummary,
+          sideResults: res.sideResults,
+          resolvedScriptId: res.resolvedScriptId,
+        });
+        setGoalTimesInput(res.details.goalTimes.join(', '));
+      } else {
+        setForm({
+          goalTimes: [],
+          cards: 0,
+          redCards: 0,
+          teamAGoals: 0,
+          teamBGoals: 0,
+          extraTime: false,
+          penalties: false,
+          narrativeSummary: '',
+          sideResults: [],
+          resolvedScriptId: '',
+        });
+        setGoalTimesInput('');
+      }
+      setSuccess('');
+      setError('');
+    }
+  }, [selectedMatchId]);
 
   const handleAuth = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +81,11 @@ export const Admin: React.FC = () => {
 
   const handleResolve = async () => {
     if (!selectedMatch) return;
+
+    if (!form.resolvedScriptId) {
+      setError('Please select the correct script verdict.');
+      return;
+    }
 
     try {
       const goalTimes = goalTimesInput
@@ -151,6 +195,26 @@ export const Admin: React.FC = () => {
                 ✓ Already resolved as: {selectedMatch.resolution?.resolvedScriptId}
               </div>
             )}
+
+            <AdminField label="Correct Script Verdict">
+              <select
+                value={form.resolvedScriptId}
+                onChange={(e) => setForm({ ...form, resolvedScriptId: e.target.value })}
+                style={{
+                  ...inputStyle,
+                  appearance: 'none',
+                  background: 'var(--color-surface-2) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 4 5\'%3E%3Cpath fill=\'%23F5F5F0\' d=\'M2 0L0 2h4zm0 5L0 3h4z\'/%3E%3C/svg%3E") no-repeat right 14px center/8px 10px',
+                  paddingRight: '40px',
+                }}
+              >
+                <option value="">-- Select Correct Script --</option>
+                {selectedMatch.scripts.map((script) => (
+                  <option key={script.id} value={script.id} style={{ background: '#0A0A0F', color: '#F5F5F0' }}>
+                    [{script.id}] {script.label} ({script.familyLabel})
+                  </option>
+                ))}
+              </select>
+            </AdminField>
 
             <AdminField label="Goal Times (comma-separated, e.g. 67,78,89)">
               <input

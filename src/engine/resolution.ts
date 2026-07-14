@@ -4,8 +4,11 @@ import type {
   FirstHalfTempo,
   ScoringTiming,
   DramaLevel,
+  ResolutionType,
 } from '@/types';
 import { ALL_SCRIPTS } from '@/data/scripts';
+
+import { getScriptById } from '@/data/scripts';
 
 // ─── Determine which script best matches actual match data ────
 export function resolveMatch(
@@ -22,51 +25,54 @@ export function resolveMatch(
     penalties,
     narrativeSummary,
     sideResults,
+    resolvedScriptId,
   } = input;
+
+  const resolved = resolvedScriptId;
+  const script = getScriptById(resolved);
 
   const totalGoals = teamAGoals + teamBGoals;
 
-  // ─── Determine dimensions ────────────────────────────────
-  // First-half tempo: any goal before 45' or 4+ cards = active
+  // ─── Computed Dimensions (used as fallback or for unmapped fields) ───
   const firstHalfGoals = goalTimes.filter((t) => t <= 45).length;
-  const firstHalfTempo: FirstHalfTempo =
+  const computedFirstHalfTempo: FirstHalfTempo =
     firstHalfGoals >= 1 || cards >= 3 ? 'active' : 'quiet';
 
-  // Scoring timing
-  let scoringTiming: ScoringTiming = 'deadlock';
+  let computedScoringTiming: ScoringTiming = 'deadlock';
   if (totalGoals > 0) {
     const firstGoal = Math.min(...goalTimes);
     if (firstGoal <= 20) {
-      scoringTiming = 'early';
+      computedScoringTiming = 'early';
     } else if (firstGoal <= 74) {
-      scoringTiming = 'mid';
+      computedScoringTiming = 'mid';
     } else {
-      scoringTiming = 'late';
+      computedScoringTiming = 'late';
     }
   }
 
-  // Drama level: high if cards≥4 OR redCard OR lead changes
   const hasLeadChange = detectLeadChange(goalTimes, teamAGoals, teamBGoals);
-  const dramaLevel: DramaLevel =
+  const computedDramaLevel: DramaLevel =
     cards >= 4 || redCards >= 1 || hasLeadChange ? 'high' : totalGoals >= 3 ? 'medium' : 'low';
 
-  // Resolution type
-  const resolutionType = penalties
+  const computedResolutionType: ResolutionType = penalties
     ? 'penalties'
     : extraTime
     ? 'extra_time'
     : 'normal';
 
-  // ─── Match against script definitions ────────────────────
-  const resolved = findBestScript({
-    firstHalfTempo,
-    scoringTiming,
-    dramaLevel,
-    resolutionType,
-    totalGoals,
-    redCards,
-    goalTimes,
-  });
+  // ─── Final Resolution Dimensions ──────────────────────────────────
+  // If the admin selected a specific script, we align the official match
+  // dimensions exactly with the dimensions defined by that script.
+  const firstHalfTempo = script
+    ? (script.dimensions.firstHalfTempo ?? computedFirstHalfTempo)
+    : computedFirstHalfTempo;
+
+  const scoringTiming = script
+    ? (script.dimensions.scoringTiming ?? computedScoringTiming)
+    : computedScoringTiming;
+
+  const dramaLevel = script ? script.dimensions.dramaLevel : computedDramaLevel;
+  const resolutionType = script ? script.dimensions.resolutionType : computedResolutionType;
 
   return {
     resolvedScriptId: resolved,
