@@ -7,9 +7,9 @@ import { useMatches } from '@/store/matchStore';
 import { usePlayer } from '@/store/playerStore';
 import { loadPrediction, loadScore, saveScore } from '@/utils/storage';
 import { scorePrediction, getClosenessMessage } from '@/engine/scoring';
-import { awardBadges } from '@/engine/badges';
+import { getBadgeById } from '@/data/badges';
+import { awardBadges, awardTournamentBadges } from '@/engine/badges';
 import { getScriptById } from '@/data/scripts';
-import { getBadgeById, BADGE_DEFINITIONS } from '@/data/badges';
 import { generateShareCard, shareCard } from '@/utils/shareCard';
 import { Analytics } from '@/utils/analytics';
 import { syncUploadMember } from '@/utils/sync';
@@ -47,7 +47,7 @@ export const Results: React.FC = () => {
     if (!score) {
       // Calculate score
       score = scorePrediction(prediction, match);
-      // Award badges
+      // Award per-match badges
       const badges = awardBadges(score, prediction, player, match.resolution.resolvedScriptId, match.kickoff);
       score.badgesEarned = badges;
       saveScore(score);
@@ -68,6 +68,18 @@ export const Results: React.FC = () => {
         streak: updatedStreak,
         badges: updatedBadges,
       };
+
+      // ── Award tournament-level badges (hat-trick, script master, oracle) ──
+      // These depend on the full updated match history, so must run after
+      // updateScore has been dispatched with the new match score.
+      const tournamentBadges = awardTournamentBadges(syncedPlayer);
+      if (tournamentBadges.length > 0) {
+        updateScore(match.id, score.totalMatchScore, tournamentBadges);
+        const allNewBadges = [...new Set([...badges, ...tournamentBadges])];
+        setNewBadges(allNewBadges);
+        syncedPlayer.badges = [...new Set([...syncedPlayer.badges, ...tournamentBadges])];
+      }
+
       syncUploadMember('world', syncedPlayer); // fire-and-forget — offline-safe
     } else {
       setNewBadges(score.badgesEarned ?? []);
