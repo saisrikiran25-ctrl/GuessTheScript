@@ -1,4 +1,4 @@
-import type { Player, PlayerPrediction, PlayerScore } from '@/types';
+import type { Match, Player, PlayerPrediction, PlayerScore } from '@/types';
 
 const PREFIX = 'gts_';
 
@@ -7,6 +7,7 @@ const KEYS = {
   predictions: `${PREFIX}predictions`,
   scores: `${PREFIX}scores`,
   onboarded: `${PREFIX}onboarded`,
+  matches: `${PREFIX}matches`,
 } as const;
 
 // ─── Player ───────────────────────────────────────────────────
@@ -88,6 +89,24 @@ export function loadAllScores(): Record<string, PlayerScore> {
     return raw ? (JSON.parse(raw) as Record<string, PlayerScore>) : {};
   } catch {
     return {};
+  }
+}
+
+// ─── Matches ─────────────────────────────────────────────────
+export function saveMatches(matches: Match[]): void {
+  try {
+    localStorage.setItem(KEYS.matches, JSON.stringify(matches));
+  } catch {
+    console.warn('Failed to save matches to localStorage');
+  }
+}
+
+export function loadMatches(): Match[] | null {
+  try {
+    const raw = localStorage.getItem(KEYS.matches);
+    return raw ? (JSON.parse(raw) as Match[]) : null;
+  } catch {
+    return null;
   }
 }
 

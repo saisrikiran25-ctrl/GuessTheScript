@@ -1,6 +1,20 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import type { Match } from '@/types';
 import { MATCHES } from '@/data/matches';
+import { saveMatches, loadMatches } from '@/utils/storage';
+
+// ─── Hydrate from localStorage, falling back to seed data ─────
+function getInitialMatches(): Match[] {
+  const persisted = loadMatches();
+  if (!persisted) return MATCHES;
+
+  // Merge persisted state onto seed: keeps any new seed matches,
+  // but honours persisted status/resolution for existing matches.
+  return MATCHES.map((seed) => {
+    const saved = persisted.find((m) => m.id === seed.id);
+    return saved ?? seed;
+  });
+}
 
 // ─── State ────────────────────────────────────────────────────
 interface MatchState {
@@ -13,13 +27,13 @@ type MatchAction =
 
 function reducer(state: MatchState, action: MatchAction): MatchState {
   switch (action.type) {
-    case 'UPDATE_MATCH':
-      return {
-        ...state,
-        matches: state.matches.map((m) =>
-          m.id === action.match.id ? action.match : m
-        ),
-      };
+    case 'UPDATE_MATCH': {
+      const updated = state.matches.map((m) =>
+        m.id === action.match.id ? action.match : m
+      );
+      saveMatches(updated); // ← persist every update
+      return { ...state, matches: updated };
+    }
     default:
       return state;
   }
@@ -42,7 +56,7 @@ export function useMatches(): MatchContextValue {
 
 // ─── Provider ─────────────────────────────────────────────────
 export const MatchProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, { matches: MATCHES });
+  const [state, dispatch] = useReducer(reducer, { matches: getInitialMatches() });
 
   const getMatch = useCallback(
     (id: string) => state.matches.find((m) => m.id === id),
