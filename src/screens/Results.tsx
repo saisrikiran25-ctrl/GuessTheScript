@@ -80,7 +80,24 @@ export const Results: React.FC = () => {
         syncedPlayer.badges = [...new Set([...syncedPlayer.badges, ...tournamentBadges])];
       }
 
-      syncUploadMember('world', syncedPlayer); // fire-and-forget — offline-safe
+      // Sync to general/world group
+      syncUploadMember('world', syncedPlayer);
+
+      // Sync to all joined custom groups in localStorage
+      try {
+        const storedGroups = localStorage.getItem('gts_groups');
+        if (storedGroups) {
+          const parsedGroups = JSON.parse(storedGroups) as { code: string }[];
+          parsedGroups.forEach((g) => {
+            if (g.code && g.code !== 'world') {
+              syncUploadMember(g.code, syncedPlayer);
+            }
+          });
+        }
+      } catch (err) {
+        console.warn('Failed to sync score to joined groups:', err);
+      }
+
     } else {
       setNewBadges(score.badgesEarned ?? []);
     }
