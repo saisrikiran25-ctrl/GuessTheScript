@@ -3,7 +3,6 @@ import { db } from '@/services/firebase';
 import {
   doc,
   setDoc,
-  getDoc,
   collection,
   getDocs,
 } from 'firebase/firestore';

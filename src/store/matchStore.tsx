@@ -9,11 +9,13 @@ function getInitialMatches(): Match[] {
   const persisted = loadMatches();
   if (!persisted) return MATCHES;
 
-  // Merge persisted state onto seed: keeps any new seed matches,
-  // but honours persisted status/resolution for existing matches.
+  // Always use the fresh seed for match metadata (scripts, teams, sideOptions,
+  // kickoff, venue). Only carry over status + resolution — the only two fields
+  // that ever change at runtime.
   return MATCHES.map((seed) => {
     const saved = persisted.find((m) => m.id === seed.id);
-    return saved ?? seed;
+    if (!saved || saved.status !== 'resolved') return seed;
+    return { ...seed, status: saved.status, resolution: saved.resolution };
   });
 }
 

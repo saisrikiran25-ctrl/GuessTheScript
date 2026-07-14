@@ -6,7 +6,6 @@ import { usePlayer } from '@/store/playerStore';
 import { useMatches } from '@/store/matchStore';
 import { MOCK_LEADERBOARD } from '@/data/mockLeaderboard';
 import { loadAllScores } from '@/utils/storage';
-import { formatOrdinal } from '@/utils/format';
 import { getBadgeById } from '@/data/badges';
 import { Analytics } from '@/utils/analytics';
 import { syncDownloadMembers } from '@/utils/sync';
