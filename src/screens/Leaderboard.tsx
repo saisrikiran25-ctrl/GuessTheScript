@@ -9,9 +9,11 @@ import { loadAllScores } from '@/utils/storage';
 import { getBadgeById } from '@/data/badges';
 import { Analytics } from '@/utils/analytics';
 import { syncDownloadMembers } from '@/utils/sync';
+import { MAX_TOURNAMENT_SCORE } from '@/engine/scoring';
+import { getMatchOrder } from '@/data/matches';
 import type { LeaderboardEntry } from '@/types';
 
-type LeaderboardTab = 'tournament' | 'sf1' | 'sf2';
+type LeaderboardTab = 'tournament' | 'sf1' | 'sf2' | 'tp' | 'final';
 
 export const Leaderboard: React.FC = () => {
   const { state: playerState } = usePlayer();
@@ -96,10 +98,16 @@ export const Leaderboard: React.FC = () => {
     buildEntries();
   }, [player, matchState.matches]);
 
+  // Build tabs dynamically from match order so they never go stale
+  const MATCH_LABEL_MAP: Record<string, string> = {
+    sf1: 'Semi 1',
+    sf2: 'Semi 2',
+    tp: 'Third Place',
+    final: 'Final',
+  };
   const TABS: { id: LeaderboardTab; label: string }[] = [
     { id: 'tournament', label: 'Tournament' },
-    { id: 'sf1', label: 'Semi 1' },
-    { id: 'sf2', label: 'Semi 2' },
+    ...getMatchOrder().map((id) => ({ id: id as LeaderboardTab, label: MATCH_LABEL_MAP[id] ?? id })),
   ];
 
   const filteredEntries = tab === 'tournament'
@@ -202,7 +210,7 @@ export const Leaderboard: React.FC = () => {
           <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
             Leaderboard updates after each match resolves.
             <br />
-            Max 675 pts across all 3 matches.
+            Max {MAX_TOURNAMENT_SCORE} pts across all {getMatchOrder().length} matches.
           </p>
         </div>
       </main>

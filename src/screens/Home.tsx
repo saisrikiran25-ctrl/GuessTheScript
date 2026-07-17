@@ -7,6 +7,7 @@ import { useMatches } from '@/store/matchStore';
 import { usePlayer } from '@/store/playerStore';
 import { loadPrediction, loadScore } from '@/utils/storage';
 import { Analytics } from '@/utils/analytics';
+import { MAX_TOURNAMENT_SCORE } from '@/engine/scoring';
 
 export const Home: React.FC = () => {
   const { state: matchState } = useMatches();
@@ -128,7 +129,7 @@ export const Home: React.FC = () => {
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
                 <span style={{ fontSize: '28px', fontWeight: 900, color: 'var(--color-accent)', lineHeight: 1 }}>{tournamentScore}</span>
-                <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 600 }}>/ 675 pts</span>
+                <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 600 }}>/ {MAX_TOURNAMENT_SCORE} pts</span>
               </div>
             </div>
 

@@ -77,7 +77,7 @@ export function awardTournamentBadges(player: Player): string[] {
 
   const scores = Object.values(player.matchScores);
 
-  // Hat-Trick of Reads — scored ≥80 in all played matches (scaled for new 225/match max)
+  // Hat-Trick of Reads — scored ≥80 in 3 or more played matches (225/match max)
   if (scores.length >= 3 && scores.every((s) => s >= 80)) {
     earned.push('hat_trick');
   }
@@ -89,7 +89,7 @@ export function awardTournamentBadges(player: Player): string[] {
     earned.push('script_master');
   }
 
-  // The Oracle — perfect script in all 3
+  // The Oracle — perfect script in all 4
   if (perfectScriptCount >= 3) {
     earned.push('the_oracle');
   }

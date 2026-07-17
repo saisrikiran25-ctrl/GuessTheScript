@@ -39,14 +39,14 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   {
     id: 'script_master',
     label: 'Script Master',
-    description: 'Perfect Script on 2 of 3 matches.',
+    description: 'Perfect Script on 2 of 4 matches.',
     icon: '🎬',
     rarity: 'legendary',
   },
   {
     id: 'the_oracle',
     label: 'The Oracle',
-    description: 'Perfect Script on all 3 World Cup matches. Rarest achievement.',
+    description: 'Perfect Script on all 4 World Cup matches. Rarest achievement.',
     icon: '🔮',
     rarity: 'legendary',
   },
@@ -60,7 +60,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   {
     id: 'hat_trick',
     label: 'Hat-Trick of Reads',
-    description: 'Scored at least 40 points in all 3 matches.',
+    description: 'Scored at least 80 points in 3 or more matches.',
     icon: '🎩',
     rarity: 'legendary',
   },
