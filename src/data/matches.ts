@@ -122,7 +122,7 @@ export const MATCHES: Match[] = [
       primaryColor: '#74ACDF',
       flagCode: 'ar',
     },
-    kickoff: '2026-07-19T23:00:00Z', // 7:00 PM ET
+    kickoff: '2026-07-19T19:00:00Z', // 3:00 PM ET
     status: 'upcoming',
     venue: 'MetLife Stadium',
     city: 'New York / New Jersey',
