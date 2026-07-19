@@ -66,17 +66,21 @@ export const Leaderboard: React.FC = () => {
       const worldMembers = await syncDownloadMembers('world');
       const firestoreEntries: LeaderboardEntry[] = worldMembers
         .filter((m) => m.playerId !== player?.id) // exclude self (local entry is more precise)
-        .map((m) => ({
-          rank: 0,
-          playerId: m.playerId,
-          name: m.name,
-          tournamentScore: m.score,
-          matchScores: {},
-          streak: m.streak,
-          badges: [],
-          isCurrentPlayer: false,
-          exactMatchCount: 0,
-        }));
+        .map((m) => {
+          const matchScores = m.matchScores ?? {};
+          const exactCount = Object.values(matchScores).filter((s) => (s as number) >= 100).length;
+          return {
+            rank: 0,
+            playerId: m.playerId,
+            name: m.name,
+            tournamentScore: m.score,
+            matchScores,
+            streak: m.streak,
+            badges: m.badges ?? [],
+            isCurrentPlayer: false,
+            exactMatchCount: exactCount,
+          };
+        });
 
       // ── Combine + sort ─────────────────────────────────────
       const combined = [

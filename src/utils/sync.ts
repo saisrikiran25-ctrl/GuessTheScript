@@ -13,6 +13,8 @@ export interface SyncMember {
   score: number;
   streak: number;
   updatedAt: string;
+  matchScores?: Record<string, number>;
+  badges?: string[];
 }
 
 // ─── Group: Upload player score ───────────────────────────────
@@ -26,6 +28,8 @@ export async function syncUploadMember(
     score: player.tournamentScore,
     streak: player.streak,
     updatedAt: new Date().toISOString(),
+    matchScores: player.matchScores,
+    badges: player.badges,
   };
 
   try {
