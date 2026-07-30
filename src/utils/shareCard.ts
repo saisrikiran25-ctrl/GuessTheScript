@@ -3,7 +3,7 @@ import { getScriptById } from '@/data/scripts';
 import { loadPrediction } from '@/utils/storage';
 
 // ─── Generate share card via Canvas API ──────────────────────
-// Returns a data URL (PNG) of a high-converting, viral VIP Oracle Match Pass
+// Returns a data URL (PNG) of an equitably spaced, viral VIP Oracle Match Pass
 
 const loadFlagImage = (url: string) => new Promise<HTMLImageElement | null>((resolve) => {
   const img = new Image();
@@ -19,7 +19,7 @@ export async function generateShareCard(
   player: Player
 ): Promise<string> {
   const canvas = document.createElement('canvas');
-  // High Resolution 9:16 aspect ratio (720 x 1280 for sharp social sharing)
+  // High Resolution 9:16 aspect ratio (720 x 1280)
   const W = 720;
   const H = 1280;
   canvas.width = W;
@@ -38,53 +38,52 @@ export async function generateShareCard(
   if (match.teamA.flagCode) flagAImg = await loadFlagImage(`https://flagcdn.com/w160/${match.teamA.flagCode}.png`);
   if (match.teamB.flagCode) flagBImg = await loadFlagImage(`https://flagcdn.com/w160/${match.teamB.flagCode}.png`);
 
-  // ─── 1. Deep Obsidian Atmosphere Background ─────────────
+  // ─── 1. Deep Atmospheric Background ─────────────────────
   const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
   bgGrad.addColorStop(0, '#020306');
-  bgGrad.addColorStop(0.3, '#0B0D18');
-  bgGrad.addColorStop(0.7, '#070810');
+  bgGrad.addColorStop(0.3, '#090B16');
+  bgGrad.addColorStop(0.7, '#060710');
   bgGrad.addColorStop(1, '#020305');
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, W, H);
 
-  // ─── 2. Radiant Script Family Spotlight Glow ────────────
-  const radialGlow = ctx.createRadialGradient(W / 2, H * 0.4, 40, W / 2, H * 0.4, 420);
-  radialGlow.addColorStop(0, `${familyColor}25`);
+  // ─── 2. Ambient Script Family Spotlight Glow ─────────────
+  const radialGlow = ctx.createRadialGradient(W / 2, H * 0.5, 60, W / 2, H * 0.5, 480);
+  radialGlow.addColorStop(0, `${familyColor}28`);
   radialGlow.addColorStop(0.4, `${familyColor}08`);
   radialGlow.addColorStop(1, 'transparent');
   ctx.fillStyle = radialGlow;
   ctx.fillRect(0, 0, W, H);
 
-  // ─── 3. Tactical Pitch Grid & Stadium Light Beams ────────
+  // ─── 3. Tactical Pitch Grid & Field Lines ───────────────
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.025)';
   ctx.lineWidth = 1.5;
   for (let i = -5; i <= 5; i++) {
     ctx.beginPath();
-    ctx.moveTo(W / 2 + i * 40, 0);
-    ctx.lineTo(W / 2 + i * 140, H);
+    ctx.moveTo(W / 2 + i * 45, 0);
+    ctx.lineTo(W / 2 + i * 150, H);
     ctx.stroke();
   }
   for (let y = 0; y <= H; y += 80) {
-    ctx.strokeStyle = `rgba(255, 255, 255, ${0.015 + (y / H) * 0.025})`;
+    ctx.strokeStyle = `rgba(255, 255, 255, ${0.015 + (y / H) * 0.02})`;
     ctx.beginPath();
     ctx.moveTo(0, y);
     ctx.lineTo(W, y);
     ctx.stroke();
   }
 
-  // Tactical Center Circle
-  ctx.strokeStyle = 'rgba(245, 208, 97, 0.04)';
+  // Tactical Center Circle Marking
+  ctx.strokeStyle = 'rgba(245, 208, 97, 0.035)';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.arc(W / 2, H * 0.45, 160, 0, 2 * Math.PI);
+  ctx.arc(W / 2, H * 0.5, 180, 0, 2 * Math.PI);
   ctx.stroke();
 
   // ─── 4. Metallic Foil Outer Collector Frame ──────────────
-  const p = 24; // Padding
+  const p = 24; // Margin padding
   const frameW = W - p * 2;
   const frameH = H - p * 2;
 
-  // Gold foil gradient border stroke
   const goldFoil = ctx.createLinearGradient(p, p, W - p, H - p);
   goldFoil.addColorStop(0, '#FFF6D6');
   goldFoil.addColorStop(0.25, '#F5D061');
@@ -96,19 +95,18 @@ export async function generateShareCard(
   ctx.lineWidth = 4;
   ctx.strokeRect(p, p, frameW, frameH);
 
-  // Inner subtle corner notches & inner stroke
+  // Inner subtle corner frame stroke
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
   ctx.lineWidth = 1.5;
   ctx.strokeRect(p + 10, p + 10, frameW - 20, frameH - 20);
 
-  // ─── 5. Top Viral Header & Official Pass Watermark ──────
+  // ─── SECTION 1: TOP BRAND HEADER (Y: 40 - 120) ───────────
   ctx.fillStyle = '#F5D061';
   ctx.font = '800 12px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '4px';
   ctx.textAlign = 'center';
-  ctx.fillText('OFFICIAL MATCH PASS · FIFA WORLD CUP 2026', W / 2, p + 42);
+  ctx.fillText('OFFICIAL MATCH PASS · FIFA WORLD CUP 2026', W / 2, p + 38);
 
-  // Main App Wordmark Title
   const titleGrad = ctx.createLinearGradient(W / 2 - 200, 0, W / 2 + 200, 0);
   titleGrad.addColorStop(0, '#FFFFFF');
   titleGrad.addColorStop(0.5, '#F5D061');
@@ -116,91 +114,91 @@ export async function generateShareCard(
   ctx.fillStyle = titleGrad;
   ctx.font = '900 32px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '-0.5px';
-  ctx.fillText('GUESS THE SCRIPT', W / 2, p + 82);
+  ctx.fillText('GUESS THE SCRIPT', W / 2, p + 78);
 
-  // ─── 6. VIP Match Ticket Stub Centerpiece ───────────────
+  // ─── SECTION 2: MATCH TICKET STUB CARD (Y: 135 - 345) ──────
   const ticketY = p + 110;
   const ticketW = frameW - 40;
-  const ticketH = 175;
+  const ticketH = 210;
 
-  // Ticket Stub Background
+  // Ticket Container Box
   ctx.fillStyle = 'rgba(18, 20, 34, 0.85)';
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  ctx.roundRect(W / 2 - ticketW / 2, ticketY, ticketW, ticketH, 16);
+  ctx.roundRect(W / 2 - ticketW / 2, ticketY, ticketW, ticketH, 18);
   ctx.fill();
   ctx.stroke();
 
-  // Match Stage & Venue Tag
+  // Match Stage & Venue Meta
   ctx.fillStyle = '#F5D061';
   ctx.font = '800 13px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '3px';
   ctx.textAlign = 'center';
-  ctx.fillText(match.label.toUpperCase(), W / 2, ticketY + 32);
+  ctx.fillText(match.label.toUpperCase(), W / 2, ticketY + 34);
 
   ctx.fillStyle = '#9DA3BC';
   ctx.font = '600 12px "Plus Jakarta Sans", sans-serif';
   ctx.letterSpacing = '1px';
-  ctx.fillText(`${match.venue.toUpperCase()} (${match.city.toUpperCase()})`, W / 2, ticketY + 50);
+  ctx.fillText(`${match.venue.toUpperCase()} (${match.city.toUpperCase()})`, W / 2, ticketY + 54);
 
-  // Perforated Ticket Divider
+  // Perforated Ticket Divider Line
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
   ctx.lineWidth = 1;
   ctx.setLineDash([6, 6]);
   ctx.beginPath();
-  ctx.moveTo(W / 2 - ticketW / 2 + 20, ticketY + 65);
-  ctx.lineTo(W / 2 + ticketW / 2 - 20, ticketY + 65);
+  ctx.moveTo(W / 2 - ticketW / 2 + 20, ticketY + 72);
+  ctx.lineTo(W / 2 + ticketW / 2 - 20, ticketY + 72);
   ctx.stroke();
   ctx.setLineDash([]); // Reset line dash
 
-  // Draw Teams & Flags
-  const teamRowY = ticketY + 120;
+  // Draw Teams & Flags Row
+  const teamRowY = ticketY + 140;
 
   // Team A (Left)
   if (flagAImg) {
-    drawCircularFlag(ctx, flagAImg, W / 2 - 200, teamRowY - 14, 46);
+    drawCircularFlag(ctx, flagAImg, W / 2 - 195, teamRowY - 12, 52);
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = '800 28px "Space Grotesk", sans-serif';
+    ctx.font = '800 30px "Space Grotesk", sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText(match.teamA.shortCode, W / 2 - 140, teamRowY + 8);
+    ctx.fillText(match.teamA.shortCode, W / 2 - 130, teamRowY + 10);
   } else {
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = '800 28px "Space Grotesk", sans-serif';
+    ctx.font = '800 30px "Space Grotesk", sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText(`${match.teamA.flagEmoji} ${match.teamA.shortCode}`, W / 2 - 200, teamRowY + 8);
+    ctx.fillText(`${match.teamA.flagEmoji} ${match.teamA.shortCode}`, W / 2 - 195, teamRowY + 10);
   }
 
-  // VS Badge / Score
+  // Score or VS Display
   if (isResolved && match.resolution) {
     ctx.fillStyle = '#F5D061';
-    ctx.font = '800 30px "Space Grotesk", sans-serif';
+    ctx.font = '800 34px "Space Grotesk", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`${match.resolution.details.teamAGoals} - ${match.resolution.details.teamBGoals}`, W / 2, teamRowY + 8);
+    ctx.fillText(`${match.resolution.details.teamAGoals} - ${match.resolution.details.teamBGoals}`, W / 2, teamRowY + 10);
   } else {
     ctx.fillStyle = '#5C627A';
-    ctx.font = '800 16px "Space Grotesk", sans-serif';
+    ctx.font = '800 18px "Space Grotesk", sans-serif';
     ctx.letterSpacing = '2px';
     ctx.textAlign = 'center';
-    ctx.fillText('VS', W / 2, teamRowY + 6);
+    ctx.fillText('VS', W / 2, teamRowY + 8);
   }
 
   // Team B (Right)
   if (flagBImg) {
-    drawCircularFlag(ctx, flagBImg, W / 2 + 200, teamRowY - 14, 46);
+    drawCircularFlag(ctx, flagBImg, W / 2 + 195, teamRowY - 12, 52);
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = '800 28px "Space Grotesk", sans-serif';
+    ctx.font = '800 30px "Space Grotesk", sans-serif';
     ctx.textAlign = 'right';
-    ctx.fillText(match.teamB.shortCode, W / 2 + 140, teamRowY + 8);
+    ctx.fillText(match.teamB.shortCode, W / 2 + 130, teamRowY + 10);
   } else {
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = '800 28px "Space Grotesk", sans-serif';
+    ctx.font = '800 30px "Space Grotesk", sans-serif';
     ctx.textAlign = 'right';
-    ctx.fillText(`${match.teamB.shortCode} ${match.teamB.flagEmoji}`, W / 2 + 200, teamRowY + 8);
+    ctx.fillText(`${match.teamB.shortCode} ${match.teamB.flagEmoji}`, W / 2 + 195, teamRowY + 10);
   }
 
-  // ─── 7. Dramatic Script Narrative Section ────────────────
-  const scriptY = ticketY + ticketH + 40;
+  // ─── SECTION 3: SCRIPT NARRATIVE CARD (Y: 375 - 655) ──────
+  const scriptY = ticketY + ticketH + 30;
 
   ctx.fillStyle = familyColor;
   ctx.font = '800 12px "Space Grotesk", sans-serif';
@@ -209,34 +207,34 @@ export async function generateShareCard(
   ctx.fillText('NARRATIVE DRAFTED BY ORACLE', W / 2, scriptY);
 
   if (script) {
-    // Large Glowing Script Title
+    // Glowing Script Title
     ctx.shadowColor = familyColor;
-    ctx.shadowBlur = 16;
+    ctx.shadowBlur = 18;
     ctx.fillStyle = '#FFFFFF';
     ctx.font = '900 32px "Space Grotesk", sans-serif';
     ctx.letterSpacing = '-0.5px';
-    ctx.fillText(`"${script.label.toUpperCase()}"`, W / 2, scriptY + 45);
-    ctx.shadowBlur = 0; // Reset shadow
+    ctx.fillText(`"${script.label.toUpperCase()}"`, W / 2, scriptY + 42);
+    ctx.shadowBlur = 0;
 
-    // Family classification badge
+    // Family classification pill badge
     const familyBadgeW = 160;
     const familyBadgeH = 26;
     ctx.fillStyle = `${familyColor}22`;
     ctx.strokeStyle = familyColor;
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.roundRect(W / 2 - familyBadgeW / 2, scriptY + 62, familyBadgeW, familyBadgeH, 13);
+    ctx.roundRect(W / 2 - familyBadgeW / 2, scriptY + 58, familyBadgeW, familyBadgeH, 13);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = familyColor;
     ctx.font = '800 11px "Space Grotesk", sans-serif';
     ctx.letterSpacing = '2px';
-    ctx.fillText(script.familyLabel.toUpperCase(), W / 2, scriptY + 79);
+    ctx.fillText(script.familyLabel.toUpperCase(), W / 2, scriptY + 75);
 
     // Script description box
-    const descY = scriptY + 105;
-    const maxTextWidth = 520;
+    const descY = scriptY + 100;
+    const maxTextWidth = 500;
     const words = script.description.split(' ');
     const lines: string[] = [];
     let currentLine = words[0];
@@ -255,26 +253,26 @@ export async function generateShareCard(
     lines.push(currentLine);
 
     const lineHeight = 24;
-    const descBoxH = lines.length * lineHeight + 30;
+    const descBoxH = Math.max(80, lines.length * lineHeight + 30);
 
-    ctx.fillStyle = 'rgba(22, 25, 41, 0.7)';
+    ctx.fillStyle = 'rgba(22, 25, 41, 0.75)';
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.roundRect(W / 2 - 280, descY, 560, descBoxH, 14);
+    ctx.roundRect(W / 2 - 270, descY, 540, descBoxH, 14);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = '#9DA3BC';
     ctx.textAlign = 'center';
-    const startY = descY + 24;
+    const startY = descY + (descBoxH / 2) - ((lines.length - 1) * lineHeight) / 2 + 5;
     lines.forEach((line, index) => {
       ctx.fillText(line, W / 2, startY + index * lineHeight);
     });
   }
 
-  // ─── 8. Scoring or Locked Status Emblem ──────────────────
-  const emblemY = scriptY + 230;
+  // ─── SECTION 4: SCORE / VAULT STATUS EMBLEM (Y: 685 - 915) ─
+  const emblemY = 705;
 
   if (isResolved) {
     // Score Emblem Ring
@@ -282,47 +280,47 @@ export async function generateShareCard(
     ctx.strokeStyle = goldFoil;
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.arc(W / 2, emblemY + 40, 75, 0, 2 * Math.PI);
+    ctx.arc(W / 2, emblemY + 55, 80, 0, 2 * Math.PI);
     ctx.fill();
     ctx.stroke();
 
     // Score text
     ctx.fillStyle = '#F5D061';
-    ctx.font = '900 68px "Space Grotesk", sans-serif';
+    ctx.font = '900 72px "Space Grotesk", sans-serif';
     ctx.letterSpacing = '-2px';
     ctx.textAlign = 'center';
-    ctx.fillText(String(score.totalMatchScore), W / 2, emblemY + 62);
+    ctx.fillText(String(score.totalMatchScore), W / 2, emblemY + 80);
 
     ctx.fillStyle = '#9DA3BC';
     ctx.font = '800 12px "Space Grotesk", sans-serif';
     ctx.letterSpacing = '4px';
-    ctx.fillText('MATCH POINTS EARNED', W / 2, emblemY + 135);
+    ctx.fillText('MATCH POINTS EARNED', W / 2, emblemY + 160);
   } else {
     // Locked Vault Emblem
     ctx.fillStyle = 'rgba(14, 16, 26, 0.95)';
     ctx.strokeStyle = 'rgba(245, 208, 97, 0.5)';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(W / 2, emblemY + 35, 65, 0, 2 * Math.PI);
+    ctx.arc(W / 2, emblemY + 55, 70, 0, 2 * Math.PI);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = '#F5D061';
-    ctx.font = '800 52px "Space Grotesk", sans-serif';
+    ctx.font = '800 54px "Space Grotesk", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('📜', W / 2, emblemY + 52);
+    ctx.fillText('📜', W / 2, emblemY + 74);
 
     ctx.fillStyle = '#F5D061';
     ctx.font = '800 13px "Space Grotesk", sans-serif';
     ctx.letterSpacing = '4px';
-    ctx.fillText('SCRIPT VAULT LOCKED', W / 2, emblemY + 125);
+    ctx.fillText('SCRIPT VAULT LOCKED', W / 2, emblemY + 155);
   }
 
-  // ─── 9. Oracle Handle & Challenger Tagline ───────────────
-  const playerY = emblemY + 175;
+  // ─── SECTION 5: PLAYER HANDLE & TAGLINE (Y: 935 - 1060) ───
+  const playerY = 945;
 
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '800 24px "Space Grotesk", sans-serif';
+  ctx.font = '800 26px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '0.5px';
   ctx.textAlign = 'center';
   ctx.fillText(player.name.toUpperCase(), W / 2, playerY);
@@ -336,20 +334,19 @@ export async function generateShareCard(
   ctx.fillStyle = '#F5D061';
   ctx.font = '800 13px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '2px';
-  ctx.fillText(challengerCall, W / 2, playerY + 28);
+  ctx.fillText(challengerCall, W / 2, playerY + 30);
 
-  // ─── 10. High Converting Viral CTA Footer Banner ──────────
-  const footerY = H - p - 100;
+  // ─── SECTION 6: VIRAL CTA FOOTER BANNER (Y: 1115 - 1215) ──
+  const footerY = 1120;
   const footerW = frameW - 40;
-  const footerH = 75;
+  const footerH = 80;
 
-  // Metallic CTA Container
-  ctx.fillStyle = 'linear-gradient(135deg, rgba(245, 208, 97, 0.15) 0%, rgba(201, 158, 46, 0.05) 100%)';
+  // CTA Container Box
   ctx.fillStyle = 'rgba(22, 25, 41, 0.95)';
   ctx.strokeStyle = 'rgba(245, 208, 97, 0.4)';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  ctx.roundRect(W / 2 - footerW / 2, footerY, footerW, footerH, 14);
+  ctx.roundRect(W / 2 - footerW / 2, footerY, footerW, footerH, 16);
   ctx.fill();
   ctx.stroke();
 
@@ -358,12 +355,12 @@ export async function generateShareCard(
   ctx.font = '800 15px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '0.5px';
   ctx.textAlign = 'center';
-  ctx.fillText('PREDICT THE WORLD CUP KNOCKOUT NARRATIVE', W / 2, footerY + 30);
+  ctx.fillText('PREDICT THE WORLD CUP KNOCKOUT NARRATIVE', W / 2, footerY + 32);
 
   ctx.fillStyle = '#F5D061';
   ctx.font = '800 14px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '3px';
-  ctx.fillText('PLAY NOW AT GUESS THE SCRIPT', W / 2, footerY + 54);
+  ctx.fillText('PLAY NOW AT GUESS THE SCRIPT', W / 2, footerY + 56);
 
   return canvas.toDataURL('image/png', 0.95);
 }
