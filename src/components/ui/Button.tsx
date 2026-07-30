@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Button.module.css';
+import { soundFx } from '@/utils/audio';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -25,10 +26,16 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       disabled,
       className = '',
+      onClick,
       ...props
     },
     ref
   ) => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      soundFx.playClick();
+      if (onClick) onClick(e);
+    };
+
     const classes = [
       styles.btn,
       styles[`btn--${variant}`],
@@ -46,6 +53,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={classes}
         disabled={disabled || loading}
         aria-disabled={disabled || loading}
+        onClick={handleClick}
         {...props}
       >
         {loading ? (

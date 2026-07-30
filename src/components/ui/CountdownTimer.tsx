@@ -34,15 +34,16 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
 
   if (parts.total <= 0) {
     return (
-      <span style={{ color: 'var(--color-error)', fontWeight: 700, fontSize: 'var(--type-label)' }}>
-        LIVE
-      </span>
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--color-error)', fontWeight: 800, fontSize: '11px', letterSpacing: '0.1em' }}>
+        <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor', animation: 'pulse 1s infinite' }} />
+        LIVE NOW
+      </div>
     );
   }
 
   if (compact) {
     return (
-      <span style={{ fontWeight: 700, color: 'var(--color-text-primary)', fontVariantNumeric: 'tabular-nums' }}>
+      <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--color-text-primary)', fontVariantNumeric: 'tabular-nums', letterSpacing: '0.04em' }}>
         {parts.days > 0
           ? `${parts.days}d ${parts.hours}h`
           : parts.hours > 0
@@ -53,7 +54,7 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
   }
 
   return (
-    <div style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'center' }}>
+    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
       {parts.days > 0 && (
         <CountUnit value={parts.days} label="days" />
       )}
@@ -67,12 +68,23 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
 };
 
 const CountUnit: React.FC<{ value: number; label: string }> = ({ value, label }) => (
-  <div style={{ textAlign: 'center', minWidth: '36px' }}>
+  <div
+    style={{
+      textAlign: 'center',
+      minWidth: '42px',
+      padding: '6px 8px',
+      borderRadius: 'var(--radius-sm)',
+      background: 'rgba(0, 0, 0, 0.4)',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+    }}
+  >
     <div
       style={{
-        fontSize: '1.5rem',
+        fontFamily: 'var(--font-display)',
+        fontSize: '1.4rem',
         fontWeight: 800,
-        color: 'var(--color-text-primary)',
+        color: 'var(--color-accent)',
         lineHeight: 1,
         fontVariantNumeric: 'tabular-nums',
       }}
@@ -81,12 +93,12 @@ const CountUnit: React.FC<{ value: number; label: string }> = ({ value, label })
     </div>
     <div
       style={{
-        fontSize: '9px',
-        fontWeight: 600,
-        letterSpacing: '0.1em',
+        fontSize: '8px',
+        fontWeight: 700,
+        letterSpacing: '0.12em',
         textTransform: 'uppercase',
         color: 'var(--color-text-muted)',
-        marginTop: '2px',
+        marginTop: '3px',
       }}
     >
       {label}
@@ -95,7 +107,7 @@ const CountUnit: React.FC<{ value: number; label: string }> = ({ value, label })
 );
 
 const Separator: React.FC = () => (
-  <span style={{ color: 'var(--color-text-muted)', fontWeight: 700, fontSize: '1.2rem', lineHeight: 1, marginTop: '-8px' }}>
+  <span style={{ color: 'var(--color-text-muted)', fontWeight: 700, fontSize: '1rem', lineHeight: 1, marginTop: '-10px' }}>
     :
   </span>
 );

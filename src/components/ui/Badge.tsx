@@ -17,20 +17,20 @@ export const Badge: React.FC<BadgeProps> = ({
   className = '',
 }) => {
   const sizeMap = {
-    sm: { icon: '16px', label: '10px', padding: '2px 8px', gap: '4px', radius: '4px' },
-    md: { icon: '20px', label: '11px', padding: '4px 10px', gap: '6px', radius: '6px' },
-    lg: { icon: '24px', label: '13px', padding: '6px 14px', gap: '8px', radius: '8px' },
+    sm: { icon: '14px', label: '10px', padding: '3px 8px', gap: '4px', radius: 'var(--radius-full)' },
+    md: { icon: '18px', label: '11px', padding: '5px 12px', gap: '6px', radius: 'var(--radius-full)' },
+    lg: { icon: '22px', label: '13px', padding: '8px 16px', gap: '8px', radius: 'var(--radius-full)' },
   };
 
   const rarityColors = {
-    common: { bg: 'rgba(155, 155, 176, 0.1)', border: 'rgba(155, 155, 176, 0.3)', text: '#9B9BB0' },
-    rare: { bg: 'rgba(74, 144, 217, 0.1)', border: 'rgba(74, 144, 217, 0.3)', text: '#4A90D9' },
-    legendary: { bg: 'rgba(212, 168, 67, 0.12)', border: 'rgba(212, 168, 67, 0.4)', text: '#D4A843' },
+    common: { bg: 'rgba(157, 163, 188, 0.1)', border: 'rgba(157, 163, 188, 0.25)', text: '#9DA3BC', shadow: 'none' },
+    rare: { bg: 'rgba(0, 242, 254, 0.12)', border: 'rgba(0, 242, 254, 0.4)', text: '#00F2FE', shadow: '0 0 12px rgba(0, 242, 254, 0.2)' },
+    legendary: { bg: 'rgba(245, 208, 97, 0.15)', border: 'rgba(245, 208, 97, 0.5)', text: '#F5D061', shadow: '0 0 16px rgba(245, 208, 97, 0.25)' },
   };
 
   const s = sizeMap[size];
   const colors = locked
-    ? { bg: 'rgba(94, 94, 120, 0.08)', border: 'rgba(94, 94, 120, 0.2)', text: '#5E5E78' }
+    ? { bg: 'rgba(92, 98, 122, 0.08)', border: 'rgba(92, 98, 122, 0.2)', text: '#5C627A', shadow: 'none' }
     : rarityColors[badge.rarity];
 
   return (
@@ -46,8 +46,11 @@ export const Badge: React.FC<BadgeProps> = ({
         background: colors.bg,
         border: `1px solid ${colors.border}`,
         color: colors.text,
-        opacity: locked ? 0.5 : 1,
-        transition: 'all var(--transition-base)',
+        boxShadow: colors.shadow,
+        opacity: locked ? 0.55 : 1,
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        transition: 'all 0.2s ease',
       }}
     >
       <span style={{ fontSize: s.icon, lineHeight: 1 }}>
@@ -58,7 +61,7 @@ export const Badge: React.FC<BadgeProps> = ({
           style={{
             fontSize: s.label,
             fontWeight: 700,
-            letterSpacing: '0.05em',
+            letterSpacing: '0.08em',
             textTransform: 'uppercase',
             whiteSpace: 'nowrap',
           }}

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { Match } from '@/types';
 import { CountdownTimer, Flag } from '@/components/ui';
 import { isBeforeKickoff, formatKickoffDate } from '@/utils/format';
+import { soundFx } from '@/utils/audio';
 
 interface MatchCardProps {
   match: Match;
@@ -12,8 +13,8 @@ interface MatchCardProps {
 
 const STATUS_LABELS: Record<string, string> = {
   upcoming: 'Upcoming',
-  live: 'Live',
-  resolved: 'Result Ready',
+  live: 'Live Now',
+  resolved: 'Script Resolved',
   void: 'Void',
 };
 
@@ -27,6 +28,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
   const isFinalTBD = match.id === 'final' && match.status === 'upcoming' && match.teamA.id === 'tbd_a';
 
   const handleTap = () => {
+    soundFx.playClick();
     navigate(`/match/${match.id}`);
   };
 
@@ -37,153 +39,147 @@ export const MatchCard: React.FC<MatchCardProps> = ({
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && handleTap()}
       aria-label={`${match.label}: ${match.teamA.name} vs ${match.teamB.name}`}
+      className="ticket-stub"
       style={{
-        background: 'var(--color-surface)',
-        border: `1.5px solid ${match.status === 'resolved' ? 'rgba(232, 195, 102, 0.25)' : 'var(--color-border)'}`,
-        borderRadius: 'var(--radius-lg)',
+        borderColor: match.status === 'resolved' ? 'rgba(245, 208, 97, 0.4)' : 'var(--color-border)',
         padding: 'var(--space-5)',
-        cursor: 'pointer',
-        transition: 'all var(--transition-base)',
-        position: 'relative',
-        overflow: 'hidden',
-        userSelect: 'none',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        boxShadow: match.status === 'resolved' ? '0 0 16px rgba(232, 195, 102, 0.15)' : '0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.03)',
-      }}
-      onMouseEnter={(e) => {
-        const el = e.currentTarget as HTMLElement;
-        el.style.borderColor = match.status === 'resolved' ? 'rgba(232, 195, 102, 0.5)' : 'rgba(255, 255, 255, 0.15)';
-        el.style.background = 'var(--color-surface-2)';
-        el.style.transform = 'translateY(-2px)';
-        el.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.5)';
-      }}
-      onMouseLeave={(e) => {
-        const el = e.currentTarget as HTMLElement;
-        el.style.borderColor = match.status === 'resolved' ? 'rgba(232, 195, 102, 0.25)' : 'var(--color-border)';
-        el.style.background = 'var(--color-surface)';
-        el.style.transform = 'translateY(0)';
-        el.style.boxShadow = match.status === 'resolved' ? '0 0 16px rgba(232, 195, 102, 0.15)' : '0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.03)';
+        boxShadow: match.status === 'resolved' ? '0 0 20px rgba(245, 208, 97, 0.15)' : '0 8px 30px rgba(0, 0, 0, 0.5)',
       }}
     >
-      {/* Top row: label + status */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
+      {/* Top Header: Label + Barcode + Status */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
         <div>
           <span
+            className="font-display"
             style={{
-              fontSize: '10px',
-              fontWeight: 700,
-              letterSpacing: '0.12em',
+              fontSize: '11px',
+              fontWeight: 800,
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: 'var(--color-text-muted)',
+              color: 'var(--color-accent)',
             }}
           >
             {match.label}
           </span>
           <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
-            {formatKickoffDate(match.kickoff)} · {match.city}
+            {formatKickoffDate(match.kickoff)} · {match.venue} ({match.city})
           </div>
         </div>
+
         <StatusBadge status={match.status} />
       </div>
 
-      {/* Teams */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-4)' }}>
-        <TeamDisplay team={match.teamA} isFinalTBD={isFinalTBD} />
-        <span style={{ color: 'var(--color-text-muted)', fontWeight: 700, fontSize: '13px', letterSpacing: '0.1em' }}>
-          VS
-        </span>
-        <TeamDisplay team={match.teamB} isFinalTBD={isFinalTBD} />
+      {/* Perforated Divider */}
+      <div className="ticket-perforated-line" />
+
+      {/* Teams Display */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', margin: 'var(--space-4) 0' }}>
+        <TeamDisplay team={match.teamA} isFinalTBD={isFinalTBD} align="left" />
+        
+        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <span
+            className="font-display"
+            style={{
+              color: 'var(--color-text-muted)',
+              fontWeight: 800,
+              fontSize: '14px',
+              letterSpacing: '0.14em',
+              padding: '4px 10px',
+              borderRadius: 'var(--radius-full)',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid var(--color-border)',
+            }}
+          >
+            VS
+          </span>
+        </div>
+
+        <TeamDisplay team={match.teamB} isFinalTBD={isFinalTBD} align="right" />
       </div>
 
+      {/* Perforated Divider */}
+      <div className="ticket-perforated-line" />
+
       {/* Bottom row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '4px' }}>
         {/* Countdown or score */}
         {match.status === 'resolved' && playerScore !== undefined ? (
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-            <span style={{ fontSize: '22px', fontWeight: 900, color: playerScore >= 100 ? 'var(--color-success)' : playerScore >= 40 ? 'var(--color-accent)' : 'var(--color-text-secondary)' }}>
-              {playerScore}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+            <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>Score:</span>
+            <span className="font-display" style={{ fontSize: '20px', fontWeight: 800, color: playerScore >= 100 ? 'var(--color-success)' : 'var(--color-accent)' }}>
+              {playerScore} <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>pts</span>
             </span>
-            <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', fontWeight: 600 }}>pts</span>
           </div>
         ) : match.status === 'upcoming' && isUpcoming ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-            <span style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>Kicks off in</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>Kickoff:</span>
             <CountdownTimer kickoffISO={match.kickoff} compact />
           </div>
         ) : (
           <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
-            {match.status === 'live' ? '⏱ Match underway' : ''}
+            {match.status === 'live' ? '⏱ Underway' : 'Match Concluded'}
           </span>
         )}
 
         {/* CTA indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {hasSubmitted && match.status !== 'resolved' && (
             <span style={{
               fontSize: '10px',
-              fontWeight: 700,
+              fontWeight: 800,
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
               color: 'var(--color-success)',
               background: 'var(--color-success-bg)',
-              padding: '3px 8px',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              padding: '4px 10px',
               borderRadius: 'var(--radius-full)',
             }}>
-              ✓ Script locked
+              ✓ Script Locked
             </span>
           )}
           {match.status === 'resolved' && (
-            <span style={{
-              fontSize: '10px',
-              fontWeight: 700,
+            <span className="font-display" style={{
+              fontSize: '11px',
+              fontWeight: 800,
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
               color: 'var(--color-accent)',
             }}>
-              See result →
+              View Revelation →
             </span>
           )}
           {match.status === 'upcoming' && !hasSubmitted && !isFinalTBD && (
-            <span style={{
-              fontSize: '10px',
-              fontWeight: 700,
+            <span className="font-display" style={{
+              fontSize: '11px',
+              fontWeight: 800,
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
-              color: 'var(--color-text-secondary)',
+              color: 'var(--color-text-primary)',
+              padding: '4px 12px',
+              borderRadius: 'var(--radius-full)',
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: '1px solid var(--color-border)',
             }}>
-              Read →
+              Draft Script →
             </span>
           )}
         </div>
       </div>
-
-      {/* Bottom highlight for resolved */}
-      {match.status === 'resolved' && (
-        <div style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: '2px',
-          background: 'linear-gradient(90deg, transparent, var(--color-accent), transparent)',
-          opacity: 0.5,
-        }} />
-      )}
     </div>
   );
 };
 
 // ─── Sub-components ───────────────────────────────────────────
 
-const TeamDisplay: React.FC<{ team: Match['teamA']; isFinalTBD: boolean }> = ({ team, isFinalTBD }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
-    <Flag team={team} size="28px" />
-    <div>
-      <div style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-text-primary)', lineHeight: 1 }}>
+const TeamDisplay: React.FC<{ team: Match['teamA']; isFinalTBD: boolean; align: 'left' | 'right' }> = ({ team, isFinalTBD, align }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexDirection: align === 'right' ? 'row-reverse' : 'row', flex: 1 }}>
+    <Flag team={team} size="34px" />
+    <div style={{ textAlign: align }}>
+      <div className="font-display" style={{ fontSize: '17px', fontWeight: 800, color: 'var(--color-text-primary)', lineHeight: 1 }}>
         {isFinalTBD ? '???' : team.shortCode}
       </div>
-      <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+      <div style={{ fontSize: '11px', color: 'var(--color-text-secondary)', marginTop: '3px' }}>
         {isFinalTBD ? 'TBD' : team.name}
       </div>
     </div>
@@ -192,10 +188,10 @@ const TeamDisplay: React.FC<{ team: Match['teamA']; isFinalTBD: boolean }> = ({ 
 
 const StatusBadge: React.FC<{ status: Match['status'] }> = ({ status }) => {
   const styleMap: Record<string, { bg: string; color: string; border: string }> = {
-    upcoming: { bg: 'rgba(94, 94, 120, 0.12)', color: 'var(--color-text-muted)', border: 'rgba(94, 94, 120, 0.2)' },
-    live: { bg: 'rgba(231, 76, 60, 0.12)', color: 'var(--color-error)', border: 'rgba(231, 76, 60, 0.3)' },
-    resolved: { bg: 'rgba(212, 168, 67, 0.1)', color: 'var(--color-accent)', border: 'rgba(212, 168, 67, 0.3)' },
-    void: { bg: 'rgba(94, 94, 120, 0.08)', color: 'var(--color-text-muted)', border: 'transparent' },
+    upcoming: { bg: 'rgba(255, 255, 255, 0.06)', color: 'var(--color-text-secondary)', border: 'var(--color-border)' },
+    live: { bg: 'rgba(239, 68, 68, 0.15)', color: 'var(--color-error)', border: 'rgba(239, 68, 68, 0.4)' },
+    resolved: { bg: 'rgba(245, 208, 97, 0.12)', color: 'var(--color-accent)', border: 'var(--color-border-accent)' },
+    void: { bg: 'rgba(92, 98, 122, 0.08)', color: 'var(--color-text-muted)', border: 'transparent' },
   };
 
   const s = styleMap[status];
@@ -204,19 +200,20 @@ const StatusBadge: React.FC<{ status: Match['status'] }> = ({ status }) => {
     <div style={{
       display: 'inline-flex',
       alignItems: 'center',
-      gap: '4px',
-      padding: '3px 8px',
+      gap: '5px',
+      padding: '4px 10px',
       borderRadius: 'var(--radius-full)',
       background: s.bg,
       border: `1px solid ${s.border}`,
       color: s.color,
       fontSize: '9px',
-      fontWeight: 700,
-      letterSpacing: '0.1em',
+      fontWeight: 800,
+      letterSpacing: '0.12em',
       textTransform: 'uppercase',
       flexShrink: 0,
+      fontFamily: 'var(--font-display)',
     }}>
-      {status === 'live' && <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor', display: 'block', animation: 'pulse 1.5s infinite' }} />}
+      {status === 'live' && <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor', animation: 'pulse 1s infinite' }} />}
       {STATUS_LABELS[status]}
     </div>
   );

@@ -25,7 +25,6 @@ export const ScoreCounter: React.FC<ScoreCounterProps> = ({
     const animate = () => {
       const elapsed = Date.now() - start;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
       const val = Math.round(startVal + (target - startVal) * eased);
       setCurrent(val);
@@ -42,7 +41,7 @@ export const ScoreCounter: React.FC<ScoreCounterProps> = ({
   const sizeMap = {
     sm: '1.5rem',
     md: '2.5rem',
-    lg: 'var(--type-score)',
+    lg: '3.75rem',
   };
 
   return (
@@ -51,12 +50,14 @@ export const ScoreCounter: React.FC<ScoreCounterProps> = ({
       aria-label={`Score: ${current}${suffix}`}
       style={{
         display: 'inline-block',
+        fontFamily: 'var(--font-display)',
         fontSize: sizeMap[size],
-        fontWeight: 900,
+        fontWeight: 800,
         color,
         fontVariantNumeric: 'tabular-nums',
         letterSpacing: '-0.03em',
         lineHeight: 1,
+        textShadow: color === 'var(--color-accent)' ? '0 0 20px rgba(245, 208, 97, 0.3)' : 'none',
       }}
     >
       {current}{suffix}

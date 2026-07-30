@@ -4,6 +4,7 @@ import { Button } from '@/components/ui';
 import { useMatches } from '@/store/matchStore';
 import { resolveMatch } from '@/engine/resolution';
 import { syncWriteMatchResolution } from '@/utils/sync';
+import { soundFx } from '@/utils/audio';
 import type { AdminMatchInput, Match } from '@/types';
 
 const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY ?? 'gts_admin_2026';
@@ -32,7 +33,6 @@ export const Admin: React.FC = () => {
 
   const selectedMatch = matchState.matches.find((m) => m.id === selectedMatchId);
 
-  // Pre-populate form when switching selected match or if already resolved
   useEffect(() => {
     if (selectedMatch) {
       if (selectedMatch.status === 'resolved' && selectedMatch.resolution) {
@@ -72,6 +72,7 @@ export const Admin: React.FC = () => {
 
   const handleAuth = (e: React.FormEvent) => {
     e.preventDefault();
+    soundFx.playClick();
     if (keyInput === ADMIN_KEY) {
       setIsAuthenticated(true);
     } else {
@@ -86,6 +87,8 @@ export const Admin: React.FC = () => {
       setError('Please select the correct script verdict.');
       return;
     }
+
+    soundFx.playStamp();
 
     try {
       const goalTimes = goalTimesInput
@@ -110,9 +113,9 @@ export const Admin: React.FC = () => {
         resolution,
       };
 
-      updateMatch(updatedMatch);                                      // local state + localStorage
-      await syncWriteMatchResolution(selectedMatch.id, resolution);  // Firestore → all devices
-      setSuccess(`✓ Match resolved as: "${resolution.resolvedScriptId}" — synced to all users.`);
+      updateMatch(updatedMatch);
+      await syncWriteMatchResolution(selectedMatch.id, resolution);
+      setSuccess(`✓ Match resolved as: "${resolution.resolvedScriptId}" — synced to all devices.`);
       setError('');
     } catch (err) {
       setError(`Error: ${err}`);
@@ -123,7 +126,7 @@ export const Admin: React.FC = () => {
     return (
       <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px', background: 'var(--color-bg)' }}>
         <div style={{ width: '100%', maxWidth: 400, display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <h1 style={{ color: 'var(--color-text-primary)', fontSize: '24px', fontWeight: 800 }}>Admin</h1>
+          <h1 className="font-display gold-gradient-text" style={{ fontSize: '28px', fontWeight: 800 }}>ORACLE ADMIN</h1>
           <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <input
               type="password"
@@ -132,20 +135,20 @@ export const Admin: React.FC = () => {
               placeholder="Admin key"
               style={{
                 height: 48,
-                background: 'var(--color-surface-2)',
+                background: 'var(--color-surface-elevated)',
                 border: '1.5px solid var(--color-border)',
                 borderRadius: 'var(--radius-md)',
                 padding: '0 16px',
                 color: 'var(--color-text-primary)',
                 fontSize: '15px',
-                fontFamily: 'var(--font-family)',
+                fontFamily: 'var(--font-sans)',
               }}
             />
             {error && <p style={{ color: 'var(--color-error)', fontSize: '13px' }}>{error}</p>}
-            <Button type="submit" variant="primary" size="lg">Enter</Button>
+            <Button type="submit" variant="primary" size="lg">Enter Vault</Button>
           </form>
           <button onClick={() => navigate('/')} style={{ color: 'var(--color-text-muted)', fontSize: '13px', background: 'none', border: 'none', cursor: 'pointer' }}>
-            ← Back to app
+            ← Back to App
           </button>
         </div>
       </div>
@@ -156,9 +159,9 @@ export const Admin: React.FC = () => {
     <div style={{ minHeight: '100dvh', background: 'var(--color-bg)', padding: '24px', color: 'var(--color-text-primary)' }}>
       <div style={{ maxWidth: 600, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 style={{ fontSize: '22px', fontWeight: 800 }}>Match Admin</h1>
-          <button onClick={() => navigate('/')} style={{ color: 'var(--color-accent)', fontSize: '13px', background: 'none', border: 'none', cursor: 'pointer' }}>
-            ← App
+          <h1 className="font-display gold-gradient-text" style={{ fontSize: '22px', fontWeight: 800 }}>ORACLE RESOLUTION VAULT</h1>
+          <button onClick={() => navigate('/')} className="font-display" style={{ color: 'var(--color-accent)', fontSize: '12px', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer' }}>
+            ← APP
           </button>
         </div>
 
@@ -167,31 +170,34 @@ export const Admin: React.FC = () => {
           {matchState.matches.map((m) => (
             <button
               key={m.id}
-              onClick={() => setSelectedMatchId(m.id)}
+              onClick={() => { soundFx.playClick(); setSelectedMatchId(m.id); }}
+              className="font-display"
               style={{
                 padding: '8px 16px',
                 borderRadius: 'var(--radius-md)',
                 border: `1.5px solid ${selectedMatchId === m.id ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                background: selectedMatchId === m.id ? 'var(--color-accent-subtle)' : 'var(--color-surface)',
+                background: selectedMatchId === m.id ? 'rgba(245, 208, 97, 0.15)' : 'var(--color-surface-card)',
                 color: selectedMatchId === m.id ? 'var(--color-accent)' : 'var(--color-text-secondary)',
-                fontSize: '13px',
-                fontWeight: 600,
+                fontSize: '11px',
+                fontWeight: 800,
                 cursor: 'pointer',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
               }}
             >
-              {m.label} <span style={{ fontSize: '10px' }}>({m.status})</span>
+              {m.label} <span style={{ fontSize: '9px' }}>({m.status})</span>
             </button>
           ))}
         </div>
 
         {selectedMatch && (
-          <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <h2 style={{ fontSize: '16px', fontWeight: 700 }}>
+          <div style={{ background: 'var(--color-surface-elevated)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h2 className="font-display" style={{ fontSize: '18px', fontWeight: 800 }}>
               {selectedMatch.teamA.name} vs {selectedMatch.teamB.name}
             </h2>
 
             {selectedMatch.status === 'resolved' && (
-              <div style={{ padding: '12px', background: 'var(--color-success-bg)', border: '1px solid rgba(46,204,113,0.3)', borderRadius: 'var(--radius-sm)', fontSize: '13px', color: 'var(--color-success)' }}>
+              <div style={{ padding: '12px', background: 'var(--color-success-bg)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: 'var(--radius-md)', fontSize: '13px', color: 'var(--color-success)' }}>
                 ✓ Already resolved as: {selectedMatch.resolution?.resolvedScriptId}
               </div>
             )}
@@ -203,20 +209,21 @@ export const Admin: React.FC = () => {
                 style={{
                   ...inputStyle,
                   appearance: 'none',
-                  background: 'var(--color-surface-2) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 4 5\'%3E%3Cpath fill=\'%23F5F5F0\' d=\'M2 0L0 2h4zm0 5L0 3h4z\'/%3E%3C/svg%3E") no-repeat right 14px center/8px 10px',
+                  background: 'var(--color-bg)',
+                  color: 'var(--color-text-primary)',
                   paddingRight: '40px',
                 }}
               >
                 <option value="">-- Select Correct Script --</option>
                 {selectedMatch.scripts.map((script) => (
-                  <option key={script.id} value={script.id} style={{ background: '#0A0A0F', color: '#F5F5F0' }}>
+                  <option key={script.id} value={script.id} style={{ background: '#030408', color: '#FFF' }}>
                     [{script.id}] {script.label} ({script.familyLabel})
                   </option>
                 ))}
               </select>
             </AdminField>
 
-            <AdminField label="Goal Times (comma-separated, e.g. 67,78,89)">
+            <AdminField label="Goal Times (comma-separated, e.g. 67, 78, 89)">
               <input
                 type="text"
                 value={goalTimesInput}
@@ -278,6 +285,7 @@ export const Admin: React.FC = () => {
                           <button
                             key={c.value}
                             onClick={() => {
+                              soundFx.playClick();
                               const updated = form.sideResults.filter((r) => r.optionId !== opt.id);
                               setForm({ ...form, sideResults: [...updated, { optionId: opt.id, correct: c.value }] });
                             }}
@@ -285,7 +293,7 @@ export const Admin: React.FC = () => {
                               padding: '4px 12px',
                               borderRadius: 'var(--radius-sm)',
                               border: `1px solid ${current === c.value ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                              background: current === c.value ? 'var(--color-accent-subtle)' : 'var(--color-surface-2)',
+                              background: current === c.value ? 'var(--color-accent-subtle)' : 'var(--color-surface-card)',
                               color: current === c.value ? 'var(--color-accent)' : 'var(--color-text-muted)',
                               fontSize: '12px',
                               cursor: 'pointer',
@@ -301,11 +309,11 @@ export const Admin: React.FC = () => {
               </div>
             )}
 
-            {success && <div style={{ padding: '12px', background: 'var(--color-success-bg)', border: '1px solid rgba(46,204,113,0.3)', borderRadius: 'var(--radius-sm)', fontSize: '13px', color: 'var(--color-success)' }}>{success}</div>}
-            {error && <div style={{ padding: '12px', background: 'var(--color-error-bg)', border: '1px solid rgba(231,76,60,0.3)', borderRadius: 'var(--radius-sm)', fontSize: '13px', color: 'var(--color-error)' }}>{error}</div>}
+            {success && <div style={{ padding: '12px', background: 'var(--color-success-bg)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: 'var(--radius-md)', fontSize: '13px', color: 'var(--color-success)' }}>{success}</div>}
+            {error && <div style={{ padding: '12px', background: 'var(--color-error-bg)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 'var(--radius-md)', fontSize: '13px', color: 'var(--color-error)' }}>{error}</div>}
 
             <Button variant="primary" size="lg" fullWidth onClick={handleResolve}>
-              🔓 Resolve Match
+              🔓 Resolve Match Narrative
             </Button>
           </div>
         )}
@@ -317,11 +325,11 @@ export const Admin: React.FC = () => {
 const inputStyle: React.CSSProperties = {
   width: '100%',
   height: 44,
-  background: 'var(--color-surface-2)',
+  background: 'var(--color-bg)',
   border: '1.5px solid var(--color-border)',
-  borderRadius: 'var(--radius-sm)',
+  borderRadius: 'var(--radius-md)',
   padding: '0 14px',
-  color: '#F5F5F0',
+  color: 'var(--color-text-primary)',
   fontSize: '14px',
   fontFamily: 'inherit',
 };

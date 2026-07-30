@@ -1,47 +1,59 @@
 /* ============================================================
-   GUESS THE SCRIPT — Premium Cinematic Design System
+   GUESS THE SCRIPT — FIFA World Cup Oracle Design System
    ============================================================ */
 
-/* ─── Import Font ──────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap');
 
-/* ─── CSS Custom Properties ────────────────────────────────── */
 :root {
-  /* Cinematic Dark Theme Palette */
-  --color-bg: #050508;
-  --color-surface: rgba(18, 18, 29, 0.7);
-  --color-surface-2: rgba(28, 28, 44, 0.85);
-  --color-surface-3: rgba(38, 38, 59, 0.9);
-  --color-border: rgba(255, 255, 255, 0.07);
-  --color-border-dim: rgba(255, 255, 255, 0.03);
-  --color-border-glow: rgba(212, 168, 67, 0.3);
+  /* Ultra-deep pitch obsidian theme */
+  --color-bg: #030408;
+  --color-surface: rgba(14, 16, 26, 0.75);
+  --color-surface-elevated: rgba(22, 25, 41, 0.88);
+  --color-surface-card: rgba(18, 20, 34, 0.7);
+  
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-subtle: rgba(255, 255, 255, 0.04);
+  --color-border-accent: rgba(232, 195, 102, 0.4);
 
   /* Gold Oracle Accents */
-  --color-accent: #E8C366;
-  --color-accent-dim: #B8933D;
-  --color-accent-glow: rgba(232, 195, 102, 0.25);
-  --color-accent-subtle: rgba(232, 195, 102, 0.06);
+  --color-accent: #F5D061;
+  --color-accent-dark: #C99E2E;
+  --color-accent-glow: rgba(245, 208, 97, 0.22);
+  --color-accent-subtle: rgba(245, 208, 97, 0.08);
 
   /* Typography Colors */
-  --color-text-primary: #F8F9FA;
-  --color-text-secondary: #A6A6BF;
-  --color-text-muted: #646480;
-  --color-text-inverse: #050508;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #9DA3BC;
+  --color-text-muted: #5C627A;
+  --color-text-inverse: #030408;
 
   /* State Colors */
-  --color-success: #00E676;
-  --color-success-bg: rgba(0, 230, 118, 0.08);
-  --color-error: #FF3D00;
-  --color-error-bg: rgba(255, 61, 0, 0.08);
-  --color-warning: #FFC400;
-  --color-warning-bg: rgba(255, 196, 0, 0.08);
-  --color-info-bg: rgba(0, 176, 255, 0.08);
+  --color-success: #10B981;
+  --color-success-bg: rgba(16, 185, 129, 0.12);
+  --color-error: #EF4444;
+  --color-error-bg: rgba(239, 68, 68, 0.12);
+  --color-warning: #F59E0B;
+  --color-warning-bg: rgba(245, 158, 11, 0.12);
+  --color-info: #06B6D4;
+  --color-info-bg: rgba(6, 182, 212, 0.12);
 
-  /* Script Family Colors (Neon Cinematic Glows) */
-  --color-family-a: #00E5FF; /* Electric Blue - Tempo */
-  --color-family-b: #FF6D00; /* Vivid Orange - Chaos */
-  --color-family-c: #D500F9; /* Neon Purple - Deadline */
-  --color-family-d: #FF1744; /* Radiant Red - Shootout */
+  /* Script Family Colors (Electric Sports Neon) */
+  --color-family-a: #00F2FE; /* Tempo - Electric Cyan */
+  --color-family-b: #FF5E36; /* Chaos - Vivid Orange Flame */
+  --color-family-c: #D946EF; /* Deadline - Radiant Fuchsia */
+  --color-family-d: #FF2A55; /* Shootout - Crimson Blaze */
+
+  /* Typography Fonts */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Space Grotesk', var(--font-sans);
+  --font-serif: 'Cinzel', serif;
+
+  --type-hero: clamp(2.5rem, 8vw, 4rem);
+  --type-h1: clamp(1.75rem, 5vw, 2.5rem);
+  --type-h2: clamp(1.25rem, 3.5vw, 1.75rem);
+  --type-h3: clamp(1.05rem, 2.5vw, 1.25rem);
+  --type-body: 0.95rem;
+  --type-caption: 0.75rem;
 
   /* Spacing */
   --space-1: 4px;
@@ -52,34 +64,19 @@
   --space-6: 24px;
   --space-8: 32px;
   --space-10: 40px;
-  --space-12: 48px;
-
-  /* Typography */
-  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-
-  --type-hero: clamp(2.75rem, 9vw, 4.5rem);
-  --type-h1: clamp(1.85rem, 5vw, 2.75rem);
-  --type-h2: clamp(1.35rem, 3.5vw, 1.85rem);
-  --type-h3: clamp(1.1rem, 2.5vw, 1.35rem);
-  --type-body: 0.95rem;
-  --type-label: 0.85rem;
-  --type-caption: 0.72rem;
-  --type-score: clamp(3.5rem, 14vw, 5.5rem);
 
   /* Border radius */
   --radius-sm: 8px;
   --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
   --radius-full: 9999px;
 
-  /* Glassmorphism & Shadow Effects */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.7);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.9);
-  --shadow-accent: 0 0 16px var(--color-accent-glow);
-  --glass-effect: backdrop-filter: blur(20px);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+  /* Z-indices */
+  --z-sticky: 100;
+  --z-nav: 200;
+  --z-modal: 300;
+  --z-toast: 400;
 
   /* Layout */
   --max-width: 480px;
@@ -99,30 +96,42 @@ html {
   font-size: 16px;
   -webkit-tap-highlight-color: transparent;
   scroll-behavior: smooth;
+  background-color: var(--color-bg);
 }
 
 body {
-  font-family: var(--font-family);
+  font-family: var(--font-sans);
   font-size: var(--type-body);
-  font-weight: 400;
-  line-height: 1.45;
   color: var(--color-text-primary);
   background-color: var(--color-bg);
   min-height: 100dvh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  /* Glowing Stadium Lights Backdrop Effect */
+  position: relative;
+  /* Ambient Stadium Lights Backdrop */
   background: 
-    radial-gradient(circle at 50% -20%, rgba(232, 195, 102, 0.07) 0%, transparent 60%),
-    radial-gradient(circle at 10% 40%, rgba(0, 229, 255, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 90% 70%, rgba(213, 0, 249, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(245, 208, 97, 0.08) 0%, transparent 70%),
+    radial-gradient(circle at 15% 45%, rgba(0, 242, 254, 0.03) 0%, transparent 60%),
+    radial-gradient(circle at 85% 75%, rgba(217, 70, 239, 0.03) 0%, transparent 60%),
     var(--color-bg);
+}
+
+/* Subtle Film Noise Texture Overlay */
+#root::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 button {
@@ -130,6 +139,7 @@ button {
   font-family: inherit;
   border: none;
   background: none;
+  touch-action: manipulation;
 }
 
 input, textarea {
@@ -137,126 +147,173 @@ input, textarea {
   outline: none;
 }
 
-/* ─── Typography ───────────────────────────────────────────── */
-.type-hero {
-  font-size: var(--type-hero);
-  font-weight: 900;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-  background: linear-gradient(180deg, #FFFFFF 30%, #A6A6BF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* ─── Custom Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
-.type-h1 {
-  font-size: var(--type-h1);
+/* ─── Typography Styling ────────────────────────────────────── */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.type-hero {
+  font-family: var(--font-display);
+  font-size: var(--type-hero);
   font-weight: 800;
-  line-height: 1.05;
+  line-height: 1.02;
   letter-spacing: -0.03em;
 }
 
-.type-h2 {
-  font-size: var(--type-h2);
+.type-h1 {
+  font-family: var(--font-display);
+  font-size: var(--type-h1);
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.1;
   letter-spacing: -0.02em;
 }
 
-.type-h3 {
-  font-size: var(--type-h3);
-  font-weight: 600;
-  line-height: 1.25;
+.type-h2 {
+  font-family: var(--font-display);
+  font-size: var(--type-h2);
+  font-weight: 700;
+  line-height: 1.2;
   letter-spacing: -0.01em;
 }
 
-.type-label {
-  font-size: var(--type-label);
+.type-h3 {
+  font-family: var(--font-sans);
+  font-size: var(--type-h3);
   font-weight: 700;
-  letter-spacing: 0.12em;
+  line-height: 1.3;
+}
+
+.type-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-.type-caption {
-  font-size: var(--type-caption);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* ─── Composables (Premium Glass Card styles) ────────────────── */
-.glass-panel {
-  background: var(--color-surface);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 
-    0 4px 30px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-.glass-panel--hover {
-  transition: all var(--transition-base);
-}
-.glass-panel--hover:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-  background: var(--color-surface-2);
-  transform: translateY(-2px);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-/* ─── Gold Oracle Gradient Text ───────────────────────────── */
+/* ─── Metallic Gold & Foil Gradients ────────────────────────── */
 .gold-gradient-text {
-  background: linear-gradient(135deg, #FDF0CD 0%, #E8C366 50%, #B8933D 100%);
+  background: linear-gradient(135deg, #FFF6D6 0%, #F5D061 45%, #C99E2E 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* ─── Pitch Texture Overlay (subtle football theme) ────────── */
-.pitch-bg {
+.gold-border-glow {
+  border: 1px solid rgba(245, 208, 97, 0.35);
+  box-shadow: 0 0 20px rgba(245, 208, 97, 0.15);
+}
+
+/* ─── Glassmorphism Panels ──────────────────────────────────── */
+.glass-panel {
+  background: var(--color-surface);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--color-border);
+  box-shadow: 
+    0 12px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ─── VIP Match Ticket Stub Styling ────────────────────────── */
+.ticket-stub {
+  position: relative;
+  background: var(--color-surface-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease;
+}
+
+.ticket-stub:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    0 16px 40px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(245, 208, 97, 0.1);
+}
+
+.ticket-stub::before,
+.ticket-stub::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 24px;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  z-index: 2;
+}
+
+.ticket-stub::before {
+  left: -8px;
+  border-radius: 0 14px 14px 0;
+  border-left: none;
+}
+
+.ticket-stub::after {
+  right: -8px;
+  border-radius: 14px 0 0 14px;
+  border-right: none;
+}
+
+.ticket-perforated-line {
+  position: relative;
+  height: 1px;
+  width: 100%;
+  margin: 12px 0;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.15) 40%, transparent 40%);
+  background-size: 8px 1px;
+  background-repeat: repeat-x;
+}
+
+/* Vertical Barcode Accent */
+.barcode-strip {
+  display: flex;
+  gap: 2px;
+  height: 20px;
+  align-items: center;
+  opacity: 0.25;
+}
+
+.barcode-strip div {
+  background: #FFF;
+  height: 100%;
+}
+
+/* ─── Tactical Pitch Lines Pattern ─────────────────────────── */
+.pitch-tactical-grid {
   position: relative;
 }
-.pitch-bg::before {
+.pitch-tactical-grid::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.015) 1.5px, transparent 1.5px);
-  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
   pointer-events: none;
-}
-
-/* ─── Live Status Badge ───────────────────────────────────── */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.status-badge--live {
-  background: rgba(255, 61, 0, 0.1);
-  color: #FF3D00;
-  border: 1px solid rgba(255, 61, 0, 0.25);
-  box-shadow: 0 0 12px rgba(255, 61, 0, 0.2);
-}
-
-.status-badge--upcoming {
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--color-text-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.status-badge--resolved {
-  background: rgba(232, 195, 102, 0.08);
-  color: var(--color-accent);
-  border: 1px solid rgba(232, 195, 102, 0.2);
 }
 
 /* ─── Layout ───────────────────────────────────────────────── */
@@ -272,29 +329,11 @@ input, textarea {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 20px);
+  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 24px);
+  position: relative;
+  z-index: 2;
 }
 
 .screen--no-nav {
   padding-bottom: 0;
-}
-
-/* ─── Shimmer Shading ──────────────────────────────────────── */
-.shimmer {
-  position: relative;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.shimmer::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.03) 50%,
-    transparent 100%
-  );
-  animation: shimmer 1.8s ease-in-out infinite;
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ScreenHeader } from '@/components/layout/ScreenHeader';
+import { ScreenHeader, SoundToggleButton } from '@/components/layout/ScreenHeader';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { Badge } from '@/components/ui/Badge';
 import { Button, Flag } from '@/components/ui';
@@ -11,6 +11,7 @@ import { getScriptById } from '@/data/scripts';
 import { getBadgeById, BADGE_DEFINITIONS } from '@/data/badges';
 import { getInitials } from '@/utils/format';
 import { clearAll } from '@/utils/storage';
+import { soundFx } from '@/utils/audio';
 
 export const Profile: React.FC = () => {
   const { state: playerState } = usePlayer();
@@ -41,64 +42,63 @@ export const Profile: React.FC = () => {
   const earnedBadges = player.badges;
   const lockedBadges = BADGE_DEFINITIONS.filter((b) => !earnedBadges.includes(b.id));
 
-  const AVATAR_COLORS = [
-    '#D4A843', '#4A90D9', '#E67E22', '#9B59B6', '#2ECC71', '#C0392B'
-  ];
-  const avatarColor = AVATAR_COLORS[player.name.charCodeAt(0) % AVATAR_COLORS.length];
-
   return (
     <div className="screen">
-      <ScreenHeader title="Profile" />
+      <ScreenHeader title="Oracle Dossier" />
 
       <main style={{ flex: 1, overflowY: 'auto', maxWidth: 'var(--max-width)', margin: '0 auto', width: '100%' }}>
-        {/* Avatar + Name */}
+        {/* Avatar + Moniker Header */}
         <div
           style={{
             padding: 'var(--space-8) var(--space-5) var(--space-5)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: 'var(--space-3)',
-            background: 'var(--color-surface)',
+            gap: 'var(--space-4)',
+            background: 'linear-gradient(180deg, rgba(22, 25, 41, 0.8) 0%, transparent 100%)',
             borderBottom: '1px solid var(--color-border)',
           }}
         >
           <div
             style={{
-              width: 80,
-              height: 80,
+              width: 88,
+              height: 88,
               borderRadius: '50%',
-              background: avatarColor,
+              background: 'linear-gradient(135deg, #F5D061 0%, #C99E2E 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '28px',
-              fontWeight: 900,
-              color: '#0A0A0F',
-              boxShadow: `0 0 0 4px ${avatarColor}22, 0 8px 24px rgba(0,0,0,0.4)`,
+              fontSize: '32px',
+              fontWeight: 800,
+              color: '#030408',
+              boxShadow: '0 0 24px rgba(245, 208, 97, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
               animation: 'scaleIn 300ms ease-out',
             }}
           >
             {getInitials(player.name)}
           </div>
+
           <div style={{ textAlign: 'center' }}>
-            <h1 className="type-h2" style={{ color: 'var(--color-text-primary)' }}>
+            <h1 className="type-h2 font-display gold-gradient-text">
               {player.name}
             </h1>
-            <span style={{
-              fontSize: '10px',
-              fontWeight: 700,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              color: 'var(--color-text-muted)',
-              background: 'var(--color-surface-2)',
-              border: '1px solid var(--color-border)',
-              padding: '2px 8px',
-              borderRadius: 'var(--radius-full)',
-              display: 'inline-block',
-              marginTop: '4px',
-            }}>
-              Guest
+            <span
+              className="font-display"
+              style={{
+                fontSize: '10px',
+                fontWeight: 800,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: 'var(--color-accent)',
+                background: 'rgba(245, 208, 97, 0.1)',
+                border: '1px solid var(--color-border-accent)',
+                padding: '3px 12px',
+                borderRadius: 'var(--radius-full)',
+                display: 'inline-block',
+                marginTop: '6px',
+              }}
+            >
+              CERTIFIED KNOCKOUT ORACLE
             </span>
           </div>
         </div>
@@ -117,40 +117,75 @@ export const Profile: React.FC = () => {
             <StatBox label="Badges" value={earnedBadges.length} color="var(--color-text-primary)" />
           </div>
 
+          {/* Sound Audio Control Box */}
+          <div
+            style={{
+              background: 'var(--color-surface-card)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-lg)',
+              padding: 'var(--space-4) var(--space-5)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <div>
+              <div className="font-display" style={{ fontSize: '13px', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+                Tactile Audio Engine
+              </div>
+              <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+                Pure Web Audio synth feedback sounds
+              </div>
+            </div>
+
+            <SoundToggleButton />
+          </div>
+
           {/* Match history */}
           <section>
-            <h2 style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: 'var(--space-3)' }}>
-              Match History
+            <h2
+              className="font-display"
+              style={{
+                fontSize: '11px',
+                fontWeight: 800,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: 'var(--color-text-muted)',
+                marginBottom: 'var(--space-3)',
+              }}
+            >
+              Predictions Timeline
             </h2>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
               {matchHistory.map(({ match, prediction, score, selectedScript, resolvedScript }) => (
                 <div
                   key={match.id}
-                  onClick={() => navigate(`/match/${match.id}`)}
+                  onClick={() => {
+                    soundFx.playClick();
+                    navigate(`/match/${match.id}`);
+                  }}
+                  className="ticket-stub"
                   style={{
-                    background: 'var(--color-surface)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--radius-md)',
                     padding: 'var(--space-4)',
                     cursor: 'pointer',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '4px' }}>
+                      <div className="font-display" style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: '4px' }}>
                         {match.label}
                       </div>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <Flag team={match.teamA} size="1.2em" />
+                      <div className="font-display" style={{ fontSize: '14px', fontWeight: 800, color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Flag team={match.teamA} size="18px" />
                         <span>{match.teamA.shortCode}</span>
                         <span style={{ color: 'var(--color-text-muted)', fontSize: '11px', margin: '0 2px' }}>vs</span>
-                        <Flag team={match.teamB} size="1.2em" />
+                        <Flag team={match.teamB} size="18px" />
                         <span>{match.teamB.shortCode}</span>
                       </div>
                       {prediction && (
                         <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-                          Your script: <span style={{ color: 'var(--color-text-secondary)' }}>{selectedScript?.label ?? '—'}</span>
+                          Drafted: <span style={{ color: 'var(--color-text-secondary)' }}>{selectedScript?.label ?? '—'}</span>
                         </div>
                       )}
                       {match.status === 'resolved' && resolvedScript && (
@@ -162,12 +197,12 @@ export const Profile: React.FC = () => {
 
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
                       {score ? (
-                        <span style={{ fontSize: '22px', fontWeight: 900, color: score.totalMatchScore >= 160 ? 'var(--color-success)' : score.totalMatchScore >= 80 ? 'var(--color-accent)' : 'var(--color-text-muted)' }}>
-                          {score.totalMatchScore}
+                        <span className="font-display" style={{ fontSize: '20px', fontWeight: 800, color: score.totalMatchScore >= 160 ? 'var(--color-success)' : 'var(--color-accent)' }}>
+                          {score.totalMatchScore} <span style={{ fontSize: '10px', color: 'var(--color-text-muted)' }}>PTS</span>
                         </span>
                       ) : match.status === 'upcoming' ? (
-                        <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: prediction ? 'var(--color-success)' : 'var(--color-text-muted)' }}>
-                          {prediction ? '✓ Ready' : 'Predict'}
+                        <span className="font-display" style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: prediction ? 'var(--color-success)' : 'var(--color-text-muted)' }}>
+                          {prediction ? '✓ Locked' : 'Draft →'}
                         </span>
                       ) : (
                         <span style={{ fontSize: '10px', color: 'var(--color-text-muted)' }}>—</span>
@@ -181,14 +216,24 @@ export const Profile: React.FC = () => {
 
           {/* Badge shelf */}
           <section>
-            <h2 style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: 'var(--space-3)' }}>
-              Badges
+            <h2
+              className="font-display"
+              style={{
+                fontSize: '11px',
+                fontWeight: 800,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: 'var(--color-text-muted)',
+                marginBottom: 'var(--space-3)',
+              }}
+            >
+              Badge Vault
             </h2>
 
             {earnedBadges.length === 0 ? (
-              <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: 'var(--space-6)', textAlign: 'center' }}>
+              <div style={{ background: 'var(--color-surface-card)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-6)', textAlign: 'center' }}>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '13px' }}>
-                  Earn badges by reading the game correctly.
+                  Earn badges by accurately predicting knockout narratives.
                 </p>
               </div>
             ) : (
@@ -222,7 +267,7 @@ export const Profile: React.FC = () => {
               marginBottom: 'var(--space-4)',
             }}
           >
-            Reset game data (dev)
+            Reset local player data (dev)
           </button>
         </div>
       </main>
@@ -235,17 +280,27 @@ export const Profile: React.FC = () => {
 const StatBox: React.FC<{ label: string; value: number; color: string; suffix?: string }> = ({ label, value, color, suffix = '' }) => (
   <div
     style={{
-      background: 'var(--color-surface)',
+      background: 'var(--color-surface-card)',
       border: '1px solid var(--color-border)',
-      borderRadius: 'var(--radius-md)',
+      borderRadius: 'var(--radius-lg)',
       padding: 'var(--space-4)',
       textAlign: 'center',
     }}
   >
-    <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--color-text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '4px' }}>
+    <div
+      className="font-display"
+      style={{
+        fontSize: '10px',
+        fontWeight: 800,
+        color: 'var(--color-text-muted)',
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+        marginBottom: '4px',
+      }}
+    >
       {label}
     </div>
-    <div style={{ fontSize: '26px', fontWeight: 900, color, lineHeight: 1 }}>
+    <div className="font-display" style={{ fontSize: '26px', fontWeight: 800, color, lineHeight: 1 }}>
       {value}{suffix}
     </div>
   </div>

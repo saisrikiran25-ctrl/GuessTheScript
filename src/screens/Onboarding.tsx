@@ -3,28 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui';
 import { usePlayer } from '@/store/playerStore';
 import { Analytics } from '@/utils/analytics';
+import { soundFx } from '@/utils/audio';
 
 const SLIDES = [
   {
     id: 1,
-    eyebrow: 'World Cup 2026',
+    eyebrow: 'FIFA World Cup 2026',
     headline: 'Every match\nhas a script.',
-    sub: 'Cagey opener. Late drama. Penalty chaos. Football writes its own stories.',
-    icon: '📖',
+    sub: 'Tactile openers. High press chaos. Penalty shootouts. Football writes legendary stories.',
+    icon: '📜',
   },
   {
     id: 2,
-    eyebrow: 'Your job',
-    headline: 'Guess it\nbefore kickoff.',
-    sub: 'Pick the narrative you think will unfold. Earn points for reading the game right.',
-    icon: '🎯',
+    eyebrow: 'Your Mission',
+    headline: 'Draft it\nbefore kickoff.',
+    sub: 'Predict the exact match narrative that will unfold. Claim up to 130 points per game.',
+    icon: '🔮',
   },
   {
     id: 3,
-    eyebrow: 'Then see',
-    headline: 'If football\nagreed.',
-    sub: 'Compare with friends. Build a streak. Become the oracle.',
-    icon: '🔮',
+    eyebrow: 'The Hall of Oracles',
+    headline: 'See if football\nagreed.',
+    sub: 'Compete in private friend leagues, earn legendary badges, and prove your football instinct.',
+    icon: '👑',
   },
 ];
 
@@ -37,6 +38,7 @@ export const Onboarding: React.FC = () => {
   const { createPlayer } = usePlayer();
 
   const handleSlideNext = useCallback(() => {
+    soundFx.playClick();
     if (slide === SLIDES.length - 1) {
       Analytics.onboardingStart();
       setIsNameStep(true);
@@ -46,6 +48,7 @@ export const Onboarding: React.FC = () => {
   }, [slide]);
 
   const handleSkip = useCallback(() => {
+    soundFx.playClick();
     Analytics.onboardingStart();
     setIsNameStep(true);
   }, []);
@@ -53,6 +56,7 @@ export const Onboarding: React.FC = () => {
   const handleSubmitName = useCallback(async () => {
     const trimmed = name.trim();
     if (!trimmed) return;
+    soundFx.playStamp();
     setIsSubmitting(true);
     createPlayer(trimmed);
     Analytics.onboardingComplete(true);
@@ -92,14 +96,24 @@ export const Onboarding: React.FC = () => {
         >
           {/* Wordmark */}
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 'var(--space-3)' }}>
-              One last thing
+            <div
+              className="font-display"
+              style={{
+                fontSize: '11px',
+                fontWeight: 800,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                color: 'var(--color-accent)',
+                marginBottom: 'var(--space-3)',
+              }}
+            >
+              FINAL ORACLE PASS STEP
             </div>
-            <h1 className="type-h1" style={{ color: 'var(--color-text-primary)' }}>
+            <h1 className="type-h1 font-display gold-gradient-text">
               What do we call you?
             </h1>
             <p style={{ color: 'var(--color-text-secondary)', marginTop: 'var(--space-3)', fontSize: '14px' }}>
-              Your name shows on the leaderboard and share cards.
+              Your oracle moniker appears on global leaderboards and prediction pass cards.
             </p>
           </div>
 
@@ -110,22 +124,23 @@ export const Onboarding: React.FC = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Your name or nickname"
+              placeholder="Enter your handle or name..."
               maxLength={24}
               autoFocus
               aria-label="Enter your name"
               style={{
                 width: '100%',
-                height: '56px',
-                background: 'var(--color-surface-2)',
+                height: '58px',
+                background: 'var(--color-surface-elevated)',
                 border: `1.5px solid ${name.trim() ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                borderRadius: 'var(--radius-md)',
+                borderRadius: 'var(--radius-lg)',
                 padding: '0 var(--space-5)',
                 color: 'var(--color-text-primary)',
                 fontSize: '18px',
-                fontWeight: 600,
-                fontFamily: 'var(--font-family)',
-                transition: 'border-color var(--transition-fast)',
+                fontWeight: 700,
+                fontFamily: 'var(--font-display)',
+                boxShadow: name.trim() ? '0 0 20px rgba(245, 208, 97, 0.2)' : 'none',
+                transition: 'all 0.2s ease',
               }}
             />
             <div style={{ marginTop: 'var(--space-2)', fontSize: '11px', color: 'var(--color-text-muted)', textAlign: 'right' }}>
@@ -142,11 +157,11 @@ export const Onboarding: React.FC = () => {
             onClick={handleSubmitName}
             id="enter-match-btn"
           >
-            Enter the Match →
+            Enter the Matchroom →
           </Button>
 
           <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
-            No account required. Guest mode — your data stays on this device.
+            No sign-up required. Your predictions & data are saved locally on this device.
           </p>
         </div>
       </div>
@@ -171,12 +186,12 @@ export const Onboarding: React.FC = () => {
       <div
         style={{
           position: 'absolute',
-          top: '-20%',
-          right: '-20%',
+          top: '-15%',
+          right: '-15%',
           width: '500px',
           height: '500px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(212,168,67,0.06) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(245, 208, 97, 0.12) 0%, transparent 70%)',
           pointerEvents: 'none',
         }}
         aria-hidden="true"
@@ -185,13 +200,16 @@ export const Onboarding: React.FC = () => {
       {/* Skip button */}
       <button
         onClick={handleSkip}
+        className="font-display"
         style={{
           position: 'absolute',
           top: 'calc(env(safe-area-inset-top, 0px) + 20px)',
           right: 'var(--space-5)',
           color: 'var(--color-text-muted)',
-          fontSize: '13px',
-          fontWeight: 600,
+          fontSize: '12px',
+          fontWeight: 800,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
           zIndex: 10,
         }}
       >
@@ -210,17 +228,16 @@ export const Onboarding: React.FC = () => {
           animation: 'fadeInUp 300ms ease-out',
         }}
       >
-        {/* Icon */}
         <div style={{ fontSize: '72px', marginBottom: 'var(--space-8)', lineHeight: 1 }}>
           {current.icon}
         </div>
 
-        {/* Eyebrow */}
         <div
+          className="font-display"
           style={{
             fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.16em',
+            fontWeight: 800,
+            letterSpacing: '0.18em',
             textTransform: 'uppercase',
             color: 'var(--color-accent)',
             marginBottom: 'var(--space-3)',
@@ -229,11 +246,11 @@ export const Onboarding: React.FC = () => {
           {current.eyebrow}
         </div>
 
-        {/* Headline */}
         <h2
+          className="font-display"
           style={{
-            fontSize: 'clamp(2.5rem, 10vw, 4rem)',
-            fontWeight: 900,
+            fontSize: 'clamp(2.5rem, 10vw, 3.8rem)',
+            fontWeight: 800,
             lineHeight: 1.0,
             letterSpacing: '-0.03em',
             color: 'var(--color-text-primary)',
@@ -244,10 +261,9 @@ export const Onboarding: React.FC = () => {
           {current.headline}
         </h2>
 
-        {/* Sub */}
         <p
           style={{
-            fontSize: '16px',
+            fontSize: '15px',
             color: 'var(--color-text-secondary)',
             lineHeight: 1.6,
             maxWidth: '340px',
@@ -268,18 +284,18 @@ export const Onboarding: React.FC = () => {
         }}
       >
         {/* Progress dots */}
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           {SLIDES.map((_, i) => (
             <button
               key={i}
-              onClick={() => setSlide(i)}
+              onClick={() => { soundFx.playClick(); setSlide(i); }}
               aria-label={`Go to slide ${i + 1}`}
               style={{
-                width: i === slide ? '24px' : '6px',
+                width: i === slide ? '28px' : '8px',
                 height: '6px',
-                borderRadius: '3px',
+                borderRadius: '99px',
                 background: i === slide ? 'var(--color-accent)' : 'var(--color-border)',
-                transition: 'all var(--transition-base)',
+                transition: 'all 0.22s ease',
               }}
             />
           ))}
@@ -292,7 +308,7 @@ export const Onboarding: React.FC = () => {
           onClick={handleSlideNext}
           id={`onboarding-next-${slide}`}
         >
-          {slide === SLIDES.length - 1 ? 'Set My Name →' : 'Next →'}
+          {slide === SLIDES.length - 1 ? 'Set My Oracle Moniker →' : 'Next →'}
         </Button>
       </div>
     </div>

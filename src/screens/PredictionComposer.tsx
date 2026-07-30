@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ScriptCard } from '@/components/prediction/ScriptCard';
 import { SidePredictionChip } from '@/components/prediction/SidePredictionChip';
+import { ScriptStoryPreview } from '@/components/prediction/ScriptStoryPreview';
 import { Button, Flag } from '@/components/ui';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { useMatches } from '@/store/matchStore';
@@ -11,6 +12,7 @@ import { isBeforeKickoff } from '@/utils/format';
 import { getScriptById } from '@/data/scripts';
 import { Analytics } from '@/utils/analytics';
 import { useToast } from '@/components/ui/Toast';
+import { soundFx } from '@/utils/audio';
 import type { PlayerPrediction } from '@/types';
 
 type Step = 1 | 2 | 3;
@@ -56,6 +58,7 @@ export const PredictionComposer: React.FC = () => {
   const handleLock = useCallback(async () => {
     if (!selectedScriptId) return;
     setIsLocking(true);
+    soundFx.playStamp();
 
     const prediction: PlayerPrediction = {
       matchId: match.id,
@@ -69,15 +72,15 @@ export const PredictionComposer: React.FC = () => {
     savePrediction(prediction);
     Analytics.predictionSubmitted(match.id, selectedScriptId, prediction.sideSelections.length);
 
-    // Show stamp animation
     setIsLocked(true);
-    await new Promise((r) => setTimeout(r, 1200));
+    soundFx.playTriumph();
+    await new Promise((r) => setTimeout(r, 1400));
     navigate(`/match/${match.id}`, { replace: true });
   }, [selectedScriptId, sideSelections, match.id, player.id, navigate]);
 
   const selectedScript = selectedScriptId ? getScriptById(selectedScriptId) : null;
 
-  const STEP_LABELS = ['Choose Script', 'Add Detail', 'Lock It In'];
+  const STEP_LABELS = ['Primary Script', 'Side Plot Twists', 'Press Lock'];
 
   return (
     <div
@@ -88,18 +91,18 @@ export const PredictionComposer: React.FC = () => {
         showBack
         title={match.label}
         rightAction={
-          <div style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 600 }}>
-            Step {step}/3
+          <div className="font-display" style={{ fontSize: '11px', color: 'var(--color-accent)', fontWeight: 800 }}>
+            STEP {step} / 3
           </div>
         }
       />
 
-      {/* Step indicator */}
+      {/* Step Indicator */}
       <div
         style={{
           display: 'flex',
           borderBottom: '1px solid var(--color-border)',
-          background: 'var(--color-surface)',
+          background: 'var(--color-surface-card)',
         }}
       >
         {STEP_LABELS.map((label, i) => {
@@ -114,14 +117,15 @@ export const PredictionComposer: React.FC = () => {
                 padding: 'var(--space-3) var(--space-2)',
                 textAlign: 'center',
                 borderBottom: `2px solid ${isActive ? 'var(--color-accent)' : 'transparent'}`,
-                transition: 'border-color var(--transition-base)',
+                transition: 'all 0.22s ease',
               }}
             >
               <span
+                className="font-display"
                 style={{
                   fontSize: '10px',
-                  fontWeight: 700,
-                  letterSpacing: '0.06em',
+                  fontWeight: 800,
+                  letterSpacing: '0.08em',
                   textTransform: 'uppercase',
                   color: isActive ? 'var(--color-accent)' : isComplete ? 'var(--color-success)' : 'var(--color-text-muted)',
                 }}
@@ -135,24 +139,31 @@ export const PredictionComposer: React.FC = () => {
 
       {/* Step content */}
       <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' as any }}>
-        <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: 'var(--space-5)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+        <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: 'var(--space-5)', display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
 
           {/* ─── STEP 1: Script Selection ─────────────────── */}
           {step === 1 && (
             <>
               <div>
-                <h2 className="type-h2" style={{ color: 'var(--color-text-primary)', marginBottom: 'var(--space-2)' }}>
-                  Choose your script.
+                <h2 className="type-h2 font-display" style={{ color: 'var(--color-text-primary)', marginBottom: 'var(--space-2)' }}>
+                  Draft the match narrative.
                 </h2>
-                <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', lineHeight: 1.5, display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                  <Flag team={match.teamA} size="1.2em" />
-                  <span>{match.teamA.shortCode}</span>
-                  <span style={{ color: 'var(--color-text-muted)', margin: '0 2px' }}>vs</span>
-                  <Flag team={match.teamB} size="1.2em" />
-                  <span>{match.teamB.shortCode}</span>
-                  <span style={{ marginLeft: '4px' }}>— pick the narrative you believe will unfold.</span>
+                <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', lineHeight: 1.5, display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <Flag team={match.teamA} size="20px" />
+                  <span className="font-display" style={{ fontWeight: 800, color: 'var(--color-text-primary)' }}>{match.teamA.shortCode}</span>
+                  <span style={{ color: 'var(--color-text-muted)' }}>vs</span>
+                  <Flag team={match.teamB} size="20px" />
+                  <span className="font-display" style={{ fontWeight: 800, color: 'var(--color-text-primary)' }}>{match.teamB.shortCode}</span>
+                  <span>— Select the exact script that will dominate the 90 minutes.</span>
                 </p>
               </div>
+
+              {/* Dynamic Live Narrative Press Release Preview */}
+              <ScriptStoryPreview
+                match={match}
+                selectedScript={selectedScript ?? undefined}
+                selectedSideOptions={sideSelections}
+              />
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
                 {match.scripts.map((script, i) => (
@@ -172,36 +183,20 @@ export const PredictionComposer: React.FC = () => {
           {step === 2 && (
             <>
               <div>
-                <h2 className="type-h2" style={{ color: 'var(--color-text-primary)', marginBottom: 'var(--space-1)' }}>
-                  Add some detail.
+                <h2 className="type-h2 font-display" style={{ color: 'var(--color-text-primary)', marginBottom: 'var(--space-1)' }}>
+                  Draft side plot twists.
                 </h2>
-                <p style={{ fontSize: '13px', color: 'var(--color-accent)', fontWeight: 600 }}>
-                  Optional — but worth it.
-                </p>
-                <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '4px', lineHeight: 1.5 }}>
-                  Up to 10 bonus points each. Skip if you just want your script.
+                <p style={{ fontSize: '12px', color: 'var(--color-accent)', fontWeight: 700, letterSpacing: '0.04em' }}>
+                  OPTIONAL — UP TO +20 BONUS POINTS
                 </p>
               </div>
 
-              {/* Selected script reminder */}
-              {selectedScript && (
-                <div
-                  style={{
-                    background: 'var(--color-surface)',
-                    border: `1px solid ${selectedScript.familyColor}44`,
-                    borderLeft: `4px solid ${selectedScript.familyColor}`,
-                    borderRadius: 'var(--radius-md)',
-                    padding: 'var(--space-4)',
-                  }}
-                >
-                  <span style={{ fontSize: '10px', fontWeight: 700, color: selectedScript.familyColor, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                    Your script
-                  </span>
-                  <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-text-primary)', marginTop: '4px' }}>
-                    {selectedScript.label}
-                  </p>
-                </div>
-              )}
+              {/* Live Press Draft Preview */}
+              <ScriptStoryPreview
+                match={match}
+                selectedScript={selectedScript ?? undefined}
+                selectedSideOptions={sideSelections}
+              />
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
                 {match.sideOptions.map((option) => (
@@ -220,74 +215,26 @@ export const PredictionComposer: React.FC = () => {
           {step === 3 && (
             <>
               <div>
-                <h2 className="type-h2" style={{ color: 'var(--color-text-primary)', marginBottom: 'var(--space-2)' }}>
-                  Lock it in.
+                <h2 className="type-h2 font-display" style={{ color: 'var(--color-text-primary)', marginBottom: 'var(--space-2)' }}>
+                  Lock script into Oracle vault.
                 </h2>
                 <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>
-                  This is your call. Football will answer.
+                  Once locked, your match pass cannot be altered. Football will settle the rest.
                 </p>
               </div>
 
-              {/* Script summary */}
-              {selectedScript && (
-                <div
-                  style={{
-                    background: 'var(--color-surface)',
-                    border: `1.5px solid ${selectedScript.familyColor}`,
-                    borderRadius: 'var(--radius-md)',
-                    padding: 'var(--space-5)',
-                    position: 'relative',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, ${selectedScript.familyColor}10 0%, transparent 60%)`, pointerEvents: 'none' }} />
-                  <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: selectedScript.familyColor, marginBottom: 'var(--space-2)' }}>
-                    {selectedScript.familyLabel}
-                  </div>
-                  <h3 style={{ fontSize: '22px', fontWeight: 900, color: 'var(--color-text-primary)', marginBottom: 'var(--space-2)', lineHeight: 1.1 }}>
-                    {selectedScript.label}
-                  </h3>
-                  <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
-                    {selectedScript.description}
-                  </p>
-                </div>
-              )}
-
-              {/* Side predictions summary */}
-              {Object.keys(sideSelections).length > 0 && (
-                <div
-                  style={{
-                    background: 'var(--color-surface)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--radius-md)',
-                    padding: 'var(--space-4)',
-                  }}
-                >
-                  <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: 'var(--space-3)' }}>
-                    Side predictions
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                    {match.sideOptions.map((opt) => {
-                      const answer = sideSelections[opt.id];
-                      if (!answer) return null;
-                      const choiceLabel = opt.choices.find((c) => c.value === answer)?.label;
-                      return (
-                        <div key={opt.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
-                          <span style={{ color: 'var(--color-text-secondary)' }}>{opt.question}</span>
-                          <span style={{ color: 'var(--color-accent)', fontWeight: 600 }}>{choiceLabel}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              <ScriptStoryPreview
+                match={match}
+                selectedScript={selectedScript ?? undefined}
+                selectedSideOptions={sideSelections}
+              />
 
               {/* Change script link */}
               <button
-                onClick={() => setStep(1)}
-                style={{ color: 'var(--color-text-muted)', fontSize: '12px', fontWeight: 600, textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', alignSelf: 'center' }}
+                onClick={() => { soundFx.playClick(); setStep(1); }}
+                style={{ color: 'var(--color-accent)', fontSize: '12px', fontWeight: 700, textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', alignSelf: 'center', fontFamily: 'var(--font-display)' }}
               >
-                Change script
+                ← Change primary script
               </button>
             </>
           )}
@@ -300,40 +247,41 @@ export const PredictionComposer: React.FC = () => {
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(10,10,15,0.85)',
+            background: 'rgba(3, 4, 8, 0.92)',
+            backdropFilter: 'blur(24px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 999,
             flexDirection: 'column',
-            gap: 'var(--space-5)',
+            gap: 'var(--space-4)',
           }}
         >
           <div
             style={{
-              fontSize: '80px',
-              animation: 'stampIn 400ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+              fontSize: '84px',
+              animation: 'stampDown 450ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
             }}
           >
-            🔒
+            📜
           </div>
-          <h2 className="type-h2" style={{ color: 'var(--color-text-primary)', textAlign: 'center' }}>
-            Script locked.
+          <h2 className="type-h2 font-display gold-gradient-text" style={{ textAlign: 'center', fontSize: '2rem' }}>
+            SCRIPT LOCKED IN VAULT
           </h2>
           <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center', fontSize: '14px' }}>
-            Bold call. Let football answer.
+            Your official prediction pass is generated. Good luck.
           </p>
         </div>
       )}
 
-      {/* Bottom CTA */}
+      {/* Bottom CTA Bar */}
       <div
         style={{
           padding: 'var(--space-4) var(--space-5)',
           paddingBottom: 'calc(var(--space-4) + env(safe-area-inset-bottom, 0px))',
           borderTop: '1px solid var(--color-border)',
-          background: 'rgba(10,10,15,0.95)',
-          backdropFilter: 'blur(12px)',
+          background: 'rgba(14, 16, 26, 0.95)',
+          backdropFilter: 'blur(20px)',
         }}
       >
         <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', display: 'flex', gap: 'var(--space-3)' }}>
@@ -346,13 +294,13 @@ export const PredictionComposer: React.FC = () => {
               onClick={() => { setStep(2); Analytics.predictionStarted(match.id); }}
               id="next-to-side-preds"
             >
-              Next →
+              Continue to Side Plots →
             </Button>
           )}
           {step === 2 && (
             <>
               <Button
-                variant="ghost"
+                variant="secondary"
                 size="lg"
                 onClick={() => setStep(3)}
                 style={{ flex: 1 }}
@@ -367,7 +315,7 @@ export const PredictionComposer: React.FC = () => {
                 style={{ flex: 2 }}
                 id="confirm-side-preds"
               >
-                {Object.keys(sideSelections).length > 0 ? 'Confirm →' : 'Skip & Confirm →'}
+                Proceed to Lock →
               </Button>
             </>
           )}
@@ -379,9 +327,8 @@ export const PredictionComposer: React.FC = () => {
               loading={isLocking}
               onClick={handleLock}
               id="lock-script-btn"
-              style={{ background: 'var(--color-accent)', letterSpacing: '0.08em' }}
             >
-              🔒 Lock the Script
+              🔒 Lock Match Pass
             </Button>
           )}
         </div>

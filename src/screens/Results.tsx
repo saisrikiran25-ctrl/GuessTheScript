@@ -13,6 +13,7 @@ import { getScriptById } from '@/data/scripts';
 import { generateShareCard, shareCard } from '@/utils/shareCard';
 import { Analytics } from '@/utils/analytics';
 import { syncUploadMember } from '@/utils/sync';
+import { soundFx } from '@/utils/audio';
 import type { Player } from '@/types';
 
 type RevealPhase = 'intro' | 'actual' | 'score' | 'badges' | 'done';
@@ -41,22 +42,16 @@ export const Results: React.FC = () => {
     const prediction = loadPrediction(match.id, player.id);
     if (!prediction) return;
 
-    // Check if already scored
     let score = loadScore(match.id, player.id);
 
     if (!score) {
-      // Calculate score
       score = scorePrediction(prediction, match);
-      // Award per-match badges
       const badges = awardBadges(score, prediction, player, match.resolution.resolvedScriptId, match.kickoff);
       score.badgesEarned = badges;
       saveScore(score);
       updateScore(match.id, score.totalMatchScore, badges);
       setNewBadges(badges);
 
-      // ── Sync updated score to Firestore immediately ──────────
-      // Reconstruct the player as playerStore will compute it, so Firestore
-      // gets the exact same values that localStorage will have.
       const updatedMatchScores = { ...player.matchScores, [match.id]: score.totalMatchScore };
       const updatedTournamentScore = Object.values(updatedMatchScores).reduce((a: number, b: number) => a + b, 0);
       const updatedStreak = Object.values(updatedMatchScores).filter((s: number) => s >= 80).length;
@@ -69,9 +64,6 @@ export const Results: React.FC = () => {
         badges: updatedBadges,
       };
 
-      // ── Award tournament-level badges (hat-trick, script master, oracle) ──
-      // These depend on the full updated match history, so must run after
-      // updateScore has been dispatched with the new match score.
       const tournamentBadges = awardTournamentBadges(syncedPlayer);
       if (tournamentBadges.length > 0) {
         updateScore(match.id, score.totalMatchScore, tournamentBadges);
@@ -80,10 +72,8 @@ export const Results: React.FC = () => {
         syncedPlayer.badges = [...new Set([...syncedPlayer.badges, ...tournamentBadges])];
       }
 
-      // Sync to general/world group
       syncUploadMember('world', syncedPlayer);
 
-      // Sync to all joined custom groups in localStorage
       try {
         const storedGroups = localStorage.getItem('gts_groups');
         if (storedGroups) {
@@ -104,6 +94,7 @@ export const Results: React.FC = () => {
 
     scoreRef.current = score;
     setPlayerScore(score);
+    soundFx.playTriumph();
 
     Analytics.resultViewed(match.id, score.totalMatchScore, score.perfectBonus > 0);
   }, [match, player]);
@@ -130,6 +121,7 @@ export const Results: React.FC = () => {
 
   const handleShare = useCallback(async () => {
     if (!match || !player || !playerScore) return;
+    soundFx.playClick();
     setIsGeneratingCard(true);
     setShareError(false);
     try {
@@ -181,13 +173,17 @@ export const Results: React.FC = () => {
     >
       <ScreenHeader
         showBack
-        title="Your Result"
+        title="Oracle Revelation"
         rightAction={
           <button
-            onClick={() => navigate('/leaderboard')}
-            style={{ fontSize: '12px', color: 'var(--color-accent)', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}
+            onClick={() => {
+              soundFx.playClick();
+              navigate('/leaderboard');
+            }}
+            className="font-display"
+            style={{ fontSize: '11px', color: 'var(--color-accent)', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase' }}
           >
-            Board →
+            Oracles →
           </button>
         }
       />
@@ -209,18 +205,18 @@ export const Results: React.FC = () => {
                 animation: 'fadeIn 600ms ease-out',
               }}
             >
-              <div style={{ fontSize: '48px' }}>🎬</div>
-              <h2 className="type-h2" style={{ color: 'var(--color-text-primary)' }}>
-                Here's what<br />actually happened.
+              <div style={{ fontSize: '56px' }}>🏆</div>
+              <h2 className="type-h2 font-display gold-gradient-text">
+                THE SCRIPT REVELATION
               </h2>
-              <p style={{ color: 'var(--color-text-secondary)', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                <Flag team={match.teamA} size="1.4em" />
-                <span>{match.teamA.shortCode}</span>
-                <span style={{ fontSize: '20px', fontWeight: 900, color: 'var(--color-text-primary)', margin: '0 6px' }}>
-                  {match.resolution?.details.teamAGoals}–{match.resolution?.details.teamBGoals}
+              <p style={{ color: 'var(--color-text-secondary)', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                <Flag team={match.teamA} size="28px" />
+                <span className="font-display" style={{ fontWeight: 800 }}>{match.teamA.shortCode}</span>
+                <span className="font-display gold-gradient-text" style={{ fontSize: '24px', fontWeight: 800, margin: '0 4px' }}>
+                  {match.resolution?.details.teamAGoals} – {match.resolution?.details.teamBGoals}
                 </span>
-                <span>{match.teamB.shortCode}</span>
-                <Flag team={match.teamB} size="1.4em" />
+                <span className="font-display" style={{ fontWeight: 800 }}>{match.teamB.shortCode}</span>
+                <Flag team={match.teamB} size="28px" />
               </p>
             </div>
           )}
@@ -228,21 +224,18 @@ export const Results: React.FC = () => {
           {/* ─── Phase: Actual Script Reveal ─────────────── */}
           {(phase === 'actual' || phase === 'score' || phase === 'badges' || phase === 'done') && resolvedScript && (
             <div
+              className="ticket-stub"
               style={{
-                background: 'var(--color-surface)',
                 border: `1.5px solid ${resolvedScript.familyColor}`,
-                borderRadius: 'var(--radius-lg)',
                 padding: 'var(--space-6)',
-                position: 'relative',
-                overflow: 'hidden',
+                boxShadow: `0 0 24px ${resolvedScript.familyColor}33`,
                 animation: 'fadeInUp 400ms ease-out',
               }}
             >
-              <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, ${resolvedScript.familyColor}10 0%, transparent 60%)`, pointerEvents: 'none' }} />
-              <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: resolvedScript.familyColor, marginBottom: 'var(--space-2)' }}>
-                The actual script
+              <div style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: resolvedScript.familyColor, marginBottom: 'var(--space-2)' }}>
+                OFFICIAL MATCH SCRIPT WRITTEN
               </div>
-              <h2 style={{ fontSize: '26px', fontWeight: 900, color: 'var(--color-text-primary)', marginBottom: 'var(--space-3)', lineHeight: 1.1 }}>
+              <h2 className="font-display" style={{ fontSize: '24px', fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 'var(--space-3)', lineHeight: 1.1 }}>
                 {resolvedScript.label}
               </h2>
               <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
@@ -251,26 +244,26 @@ export const Results: React.FC = () => {
             </div>
           )}
 
-          {/* Your script (comparison) */}
+          {/* Your script comparison */}
           {(phase === 'actual' || phase === 'score' || phase === 'badges' || phase === 'done') && selectedScript && (
             <div
               style={{
-                background: 'var(--color-surface)',
+                background: 'var(--color-surface-elevated)',
                 border: `1px solid ${selectedScriptId_matches(selectedScript, resolvedScript) ? 'var(--color-success)' : 'var(--color-border)'}`,
-                borderRadius: 'var(--radius-md)',
-                padding: 'var(--space-4)',
-                animation: 'fadeInUp 400ms ease-out 200ms both',
+                borderRadius: 'var(--radius-lg)',
+                padding: 'var(--space-4) var(--space-5)',
+                animation: 'fadeInUp 400ms ease-out 150ms both',
               }}
             >
-              <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: 'var(--space-2)' }}>
-                Your script
+              <div style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: 'var(--space-2)' }}>
+                YOUR DRAFTED SCRIPT
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                <h3 className="font-display" style={{ fontSize: '16px', fontWeight: 800, color: 'var(--color-text-primary)' }}>
                   {selectedScript.label}
                 </h3>
-                <span style={{ fontSize: '18px' }}>
-                  {selectedScriptId_matches(selectedScript, resolvedScript) ? '✅' : '❌'}
+                <span style={{ fontSize: '20px' }}>
+                  {selectedScriptId_matches(selectedScript, resolvedScript) ? '🎯' : '❌'}
                 </span>
               </div>
             </div>
@@ -280,26 +273,30 @@ export const Results: React.FC = () => {
           {(phase === 'score' || phase === 'badges' || phase === 'done') && playerScore && closeness && (
             <div
               style={{
-                background: 'var(--color-surface)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-lg)',
+                background: 'var(--color-surface-elevated)',
+                border: '1px solid var(--color-border-accent)',
+                borderRadius: 'var(--radius-xl)',
                 padding: 'var(--space-6)',
                 textAlign: 'center',
+                boxShadow: '0 0 30px rgba(245, 208, 97, 0.2)',
                 animation: 'scaleIn 400ms ease-out',
               }}
             >
               <div style={{ marginBottom: 'var(--space-3)' }}>
                 <ScoreCounter target={playerScore.totalMatchScore} duration={1200} />
-                <span style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginTop: '4px' }}>points</span>
+                <span style={{ display: 'block', fontSize: '12px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+                  MATCH POINTS EARNED
+                </span>
               </div>
 
               <h3
+                className="font-display"
                 style={{
                   fontSize: '18px',
                   fontWeight: 800,
                   color: sentimentColor[closeness.sentiment],
                   marginBottom: 'var(--space-2)',
-                  lineHeight: 1.2,
+                  lineHeight: 1.25,
                 }}
               >
                 {closeness.headline}
@@ -310,24 +307,25 @@ export const Results: React.FC = () => {
 
               {/* Breakdown toggle */}
               <button
-                onClick={() => setShowBreakdown(!showBreakdown)}
+                onClick={() => { soundFx.playClick(); setShowBreakdown(!showBreakdown); }}
+                className="font-display"
                 style={{
                   marginTop: 'var(--space-4)',
                   color: 'var(--color-accent)',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  letterSpacing: '0.06em',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  letterSpacing: '0.08em',
                   textTransform: 'uppercase',
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
                 }}
               >
-                {showBreakdown ? 'Hide' : 'See'} breakdown ↓
+                {showBreakdown ? 'Hide' : 'See'} Score Breakdown ↓
               </button>
 
               {showBreakdown && (
-                <div style={{ marginTop: 'var(--space-4)', textAlign: 'left', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-4)' }}>
+                <div style={{ marginTop: 'var(--space-4)', textAlign: 'left', borderTop: '1px dashed var(--color-border)', paddingTop: 'var(--space-4)' }}>
                   {playerScore.breakdown.map((item, i) => (
                     <div
                       key={i}
@@ -336,19 +334,19 @@ export const Results: React.FC = () => {
                         justifyContent: 'space-between',
                         alignItems: 'flex-start',
                         padding: 'var(--space-2) 0',
-                        borderBottom: i < playerScore.breakdown.length - 1 ? '1px solid var(--color-border-dim)' : 'none',
+                        borderBottom: i < playerScore.breakdown.length - 1 ? '1px solid var(--color-border-subtle)' : 'none',
                         gap: 'var(--space-3)',
                       }}
                     >
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: item.earned ? 'var(--color-text-primary)' : 'var(--color-text-muted)' }}>
+                        <div style={{ fontSize: '12px', fontWeight: 700, color: item.earned ? 'var(--color-text-primary)' : 'var(--color-text-muted)' }}>
                           {item.label}
                         </div>
                         {item.detail && (
                           <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '2px', lineHeight: 1.4 }}>{item.detail}</div>
                         )}
                       </div>
-                      <span style={{
+                      <span className="font-display" style={{
                         fontSize: '14px',
                         fontWeight: 800,
                         color: item.earned ? 'var(--color-accent)' : 'var(--color-text-muted)',
@@ -367,15 +365,16 @@ export const Results: React.FC = () => {
           {(phase === 'badges' || phase === 'done') && newBadges.length > 0 && (
             <div
               style={{
-                background: 'var(--color-surface)',
-                border: '1px solid rgba(212,168,67,0.2)',
-                borderRadius: 'var(--radius-md)',
+                background: 'var(--color-surface-elevated)',
+                border: '1px solid var(--color-border-accent)',
+                borderRadius: 'var(--radius-lg)',
                 padding: 'var(--space-5)',
+                boxShadow: '0 0 20px rgba(245, 208, 97, 0.15)',
                 animation: 'fadeInUp 400ms ease-out',
               }}
             >
-              <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 'var(--space-4)' }}>
-                🏅 New badges earned
+              <div style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 'var(--space-3)' }}>
+                🎖 NEW BADGES UNLOCKED
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
                 {newBadges.map((badgeId, i) => {
@@ -404,7 +403,7 @@ export const Results: React.FC = () => {
             >
               {shareError && (
                 <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', textAlign: 'center', lineHeight: 1.5 }}>
-                  Couldn't generate your card. Screenshot this screen and share it.
+                  Couldn't generate your card. Screenshot this screen to share your prediction.
                 </p>
               )}
               <Button
@@ -415,24 +414,24 @@ export const Results: React.FC = () => {
                 onClick={handleShare}
                 id="share-result-btn"
               >
-                📤 Share Your Script
+                📤 Share Revelation Card
               </Button>
               <Button
                 variant="secondary"
                 size="lg"
                 fullWidth
-                onClick={() => navigate('/leaderboard')}
+                onClick={() => { soundFx.playClick(); navigate('/leaderboard'); }}
                 id="see-leaderboard-btn"
               >
-                See Leaderboard
+                View Oracle Leaderboard →
               </Button>
               <Button
                 variant="ghost"
                 size="md"
                 fullWidth
-                onClick={() => navigate('/')}
+                onClick={() => { soundFx.playClick(); navigate('/'); }}
               >
-                Back to Matches
+                Back to Matchroom
               </Button>
             </div>
           )}
@@ -442,7 +441,6 @@ export const Results: React.FC = () => {
   );
 };
 
-// Helper
 function selectedScriptId_matches(selected: any, resolved: any): boolean {
   return selected?.id === resolved?.id;
 }

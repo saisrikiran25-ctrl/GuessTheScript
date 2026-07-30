@@ -8,6 +8,7 @@ import { useToast } from '@/components/ui/Toast';
 import { formatScore, getInitials } from '@/utils/format';
 import { track } from '@/utils/analytics';
 import { syncUploadMember, syncDownloadMembers } from '@/utils/sync';
+import { soundFx } from '@/utils/audio';
 
 interface GroupMember {
   name: string;
@@ -34,26 +35,21 @@ export const Group: React.FC = () => {
   const [newGroupName, setNewGroupName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
 
-  // Load groups from localStorage on mount & clean old cached mock users/groups
   useEffect(() => {
     const stored = localStorage.getItem('gts_groups');
     const defaultGroup: UserGroup = {
       code: 'world',
-      name: 'World',
+      name: 'World League',
       members: [],
     };
 
     if (stored) {
       try {
         const parsed = JSON.parse(stored) as UserGroup[];
-        // Filter out old test group codes: 'wc-fever' (WhatsApp Fanatics) and '47PCP1' (hh)
         let cleaned = parsed.filter(g => g.code !== 'wc-fever' && g.code !== '47PCP1');
-        
-        // Ensure the global 'world' group is present
         if (!cleaned.some(g => g.code === 'world')) {
           cleaned.unshift(defaultGroup);
         }
-        
         setGroups(cleaned);
         localStorage.setItem('gts_groups', JSON.stringify(cleaned));
       } catch {
@@ -61,7 +57,6 @@ export const Group: React.FC = () => {
         localStorage.setItem('gts_groups', JSON.stringify([defaultGroup]));
       }
     } else {
-      // Seed default "World" group
       setGroups([defaultGroup]);
       localStorage.setItem('gts_groups', JSON.stringify([defaultGroup]));
     }
@@ -69,21 +64,14 @@ export const Group: React.FC = () => {
 
   const performSync = useCallback(async (groupCode: string) => {
     if (!player) return;
-    
-    // Only upload if the player has a real score — never overwrite Firestore
-    // with score=0 (which happens when a user visits Group before seeing Results).
     if (player.tournamentScore > 0) {
       await syncUploadMember(groupCode, player);
     }
-    
-    // Download group members list
     const latest = await syncDownloadMembers(groupCode);
-    
     if (latest.length > 0) {
       setGroups((prevGroups) => {
         const updated = prevGroups.map((g) => {
           if (g.code === groupCode) {
-            // Keep only other players from KV (we append player dynamically in UI)
             const otherMembers = latest
               .filter((m) => m.playerId !== player.id)
               .map((m) => ({
@@ -91,11 +79,7 @@ export const Group: React.FC = () => {
                 score: m.score,
                 streak: m.streak,
               }));
-            
-            return {
-              ...g,
-              members: otherMembers,
-            };
+            return { ...g, members: otherMembers };
           }
           return g;
         });
@@ -105,21 +89,14 @@ export const Group: React.FC = () => {
     }
   }, [player]);
 
-  // Run sync on active group change or when matches resolve
   useEffect(() => {
     if (activeGroupCode) {
       performSync(activeGroupCode);
-      
-      // Pull scores from KV every 10 seconds to keep groups updated
-      const interval = setInterval(() => {
-        performSync(activeGroupCode);
-      }, 10000);
-      
+      const interval = setInterval(() => performSync(activeGroupCode), 10000);
       return () => clearInterval(interval);
     }
   }, [activeGroupCode, performSync]);
 
-  // Update active group from route or list
   useEffect(() => {
     if (groups.length > 0) {
       if (routeCode && groups.some((g) => g.code === routeCode)) {
@@ -130,24 +107,8 @@ export const Group: React.FC = () => {
     }
   }, [groups, routeCode, activeGroupCode]);
 
-  // Handle auto-joining when landing on a group code route
-  useEffect(() => {
-    if (routeCode && groups.length > 0 && !groups.some((g) => g.code === routeCode)) {
-      // Create new group automatically for the code
-      const joined: UserGroup = {
-        code: routeCode,
-        name: `Invited Group (${routeCode.toUpperCase()})`,
-        members: [],
-      };
-      const updated = [...groups, joined];
-      setGroups(updated);
-      localStorage.setItem('gts_groups', JSON.stringify(updated));
-      setActiveGroupCode(routeCode);
-      showToast({ type: 'success', message: 'Joined new friend group!' });
-    }
-  }, [routeCode, groups, showToast]);
-
   const handleCreateGroup = useCallback(() => {
+    soundFx.playStamp();
     const trimmed = newGroupName.trim();
     if (!trimmed) return;
 
@@ -164,11 +125,12 @@ export const Group: React.FC = () => {
     setActiveGroupCode(code);
     setNewGroupName('');
     setIsCreating(false);
-    showToast({ type: 'success', message: `Group "${trimmed}" created!` });
+    showToast({ type: 'success', message: `Private League "${trimmed}" created!` });
     track('group_created', { group_name: trimmed, group_code: code });
   }, [newGroupName, groups, showToast]);
 
   const handleInvite = useCallback((group: UserGroup) => {
+    soundFx.playClick();
     const origin = window.location.origin;
     const pathname = window.location.pathname.endsWith('/') 
       ? window.location.pathname 
@@ -176,21 +138,19 @@ export const Group: React.FC = () => {
     const inviteUrl = `${origin}${pathname}#/group/${group.code}`;
     
     navigator.clipboard.writeText(inviteUrl).then(() => {
-      showToast({ type: 'success', message: 'Invite link copied to clipboard!' });
+      showToast({ type: 'success', message: 'Pass invite link copied to clipboard!' });
       track('share_completed', { match_id: 'all', format: 'link', method: 'copy' });
     }).catch(() => {
-      showToast({ type: 'error', message: 'Failed to copy link.' });
+      showToast({ type: 'error', message: 'Failed to copy invite link.' });
     });
   }, [showToast]);
 
   const activeGroup = groups.find((g) => g.code === activeGroupCode);
 
-  // Combine members with current player
   const sortedMembers = (() => {
     if (!activeGroup) return [];
     const members = [...activeGroup.members];
     if (player) {
-      // Check if player already in group
       if (!members.some((m) => m.isYou)) {
         members.push({
           name: player.name,
@@ -199,7 +159,6 @@ export const Group: React.FC = () => {
           isYou: true,
         });
       } else {
-        // Update score/streak for player
         const idx = members.findIndex((m) => m.isYou);
         members[idx].score = player.tournamentScore;
         members[idx].streak = player.streak;
@@ -211,13 +170,14 @@ export const Group: React.FC = () => {
   return (
     <div className="screen">
       <ScreenHeader
-        title="Friend Groups"
+        title="Private Leagues"
         rightAction={
           <button
-            onClick={() => setIsCreating(true)}
-            style={{ fontSize: '13px', color: 'var(--color-accent)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}
+            onClick={() => { soundFx.playClick(); setIsCreating(true); }}
+            className="font-display"
+            style={{ fontSize: '11px', color: 'var(--color-accent)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}
           >
-            + Create
+            + New League
           </button>
         }
       />
@@ -229,17 +189,20 @@ export const Group: React.FC = () => {
             {groups.map((g) => (
               <button
                 key={g.code}
-                onClick={() => setActiveGroupCode(g.code)}
+                onClick={() => { soundFx.playClick(); setActiveGroupCode(g.code); }}
+                className="font-display"
                 style={{
                   padding: '6px 14px',
                   borderRadius: 'var(--radius-full)',
-                  background: activeGroupCode === g.code ? 'var(--color-accent-subtle)' : 'var(--color-surface)',
-                  border: `1.5px solid ${activeGroupCode === g.code ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                  background: activeGroupCode === g.code ? 'rgba(245, 208, 97, 0.15)' : 'var(--color-surface-card)',
+                  border: `1px solid ${activeGroupCode === g.code ? 'var(--color-border-accent)' : 'var(--color-border)'}`,
                   color: activeGroupCode === g.code ? 'var(--color-accent)' : 'var(--color-text-secondary)',
-                  fontSize: '12px',
-                  fontWeight: 600,
+                  fontSize: '11px',
+                  fontWeight: 800,
                   whiteSpace: 'nowrap',
                   cursor: 'pointer',
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
                 }}
               >
                 {g.name}
@@ -251,23 +214,25 @@ export const Group: React.FC = () => {
         {/* Group details */}
         {activeGroup ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-            <Card variant="default" padding="md">
+            <Card variant="ticket" padding="lg">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
                 <div>
-                  <h2 className="type-h3" style={{ color: 'var(--color-text-primary)' }}>
+                  <h2 className="type-h3 font-display" style={{ color: 'var(--color-text-primary)' }}>
                     {activeGroup.name}
                   </h2>
-                  <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
-                    Code: {activeGroup.code.toUpperCase()}
+                  <span className="font-display" style={{ fontSize: '11px', color: 'var(--color-accent)', fontWeight: 700 }}>
+                    PASS CODE: {activeGroup.code.toUpperCase()}
                   </span>
                 </div>
                 <Button variant="secondary" size="sm" onClick={() => handleInvite(activeGroup)}>
-                  Invite Friend
+                  Invite Friends 🔗
                 </Button>
               </div>
 
+              <div className="ticket-perforated-line" />
+
               {/* Members listing */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', marginTop: 'var(--space-4)' }}>
                 {sortedMembers.map((member, idx) => (
                   <div
                     key={member.name}
@@ -275,23 +240,23 @@ export const Group: React.FC = () => {
                       display: 'flex',
                       alignItems: 'center',
                       gap: 'var(--space-3)',
-                      padding: 'var(--space-2) 0',
-                      borderBottom: idx < sortedMembers.length - 1 ? '1px solid var(--color-border-dim)' : 'none',
+                      padding: '10px 12px',
+                      borderRadius: 'var(--radius-md)',
+                      background: member.isYou ? 'rgba(245, 208, 97, 0.1)' : 'rgba(255, 255, 255, 0.02)',
+                      border: `1px solid ${member.isYou ? 'var(--color-border-accent)' : 'transparent'}`,
                     }}
                   >
-                    {/* Rank */}
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-text-muted)', width: '20px' }}>
-                      {idx + 1}
+                    <span className="font-display" style={{ fontSize: '12px', fontWeight: 800, color: 'var(--color-text-muted)', width: '20px' }}>
+                      #{idx + 1}
                     </span>
-                    {/* Avatar */}
                     <div
                       style={{
                         width: 32,
                         height: 32,
                         borderRadius: '50%',
-                        background: member.isYou ? 'var(--color-accent)' : 'var(--color-surface-2)',
+                        background: member.isYou ? 'linear-gradient(135deg, #F5D061 0%, #C99E2E 100%)' : 'var(--color-surface-elevated)',
                         border: '1px solid var(--color-border)',
-                        color: member.isYou ? '#0A0A0F' : 'var(--color-text-secondary)',
+                        color: member.isYou ? '#030408' : 'var(--color-text-secondary)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -301,40 +266,25 @@ export const Group: React.FC = () => {
                     >
                       {getInitials(member.name)}
                     </div>
-                    {/* Name */}
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '14px', fontWeight: 600, color: member.isYou ? 'var(--color-accent)' : 'var(--color-text-primary)' }}>
+                      <div className="font-display" style={{ fontSize: '13px', fontWeight: 700, color: member.isYou ? 'var(--color-accent)' : 'var(--color-text-primary)' }}>
                         {member.name} {member.isYou && '(You)'}
                       </div>
                       {member.streak > 0 && (
-                        <div style={{ fontSize: '10px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+                        <div style={{ fontSize: '10px', color: 'var(--color-text-muted)', marginTop: '1px' }}>
                           Streak: {member.streak}🔥
                         </div>
                       )}
                     </div>
-                    {/* Score */}
-                    <span style={{ fontSize: '16px', fontWeight: 800, color: member.isYou ? 'var(--color-accent)' : 'var(--color-text-primary)' }}>
-                      {formatScore(member.score)}
+                    <span className="font-display" style={{ fontSize: '15px', fontWeight: 800, color: member.isYou ? 'var(--color-accent)' : 'var(--color-text-primary)' }}>
+                      {formatScore(member.score)} <span style={{ fontSize: '9px', color: 'var(--color-text-muted)' }}>PTS</span>
                     </span>
                   </div>
                 ))}
               </div>
             </Card>
-
-            <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--color-text-muted)' }}>
-              Invite link copies a unique URL that lets your friends join this group instantly.
-            </p>
           </div>
-        ) : (
-          <div style={{ textAlign: 'center', padding: 'var(--space-10) 0' }}>
-            <span style={{ fontSize: '48px' }}>👥</span>
-            <h3 className="type-h3" style={{ margin: 'var(--space-4) 0 var(--space-2)' }}>No groups joined</h3>
-            <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-5)' }}>
-              Create a group to compete with your friends side-by-side.
-            </p>
-            <Button variant="primary" onClick={() => setIsCreating(true)}>Create Group</Button>
-          </div>
-        )}
+        ) : null}
 
         {/* Modal for Group Creation */}
         {isCreating && (
@@ -342,8 +292,8 @@ export const Group: React.FC = () => {
             style={{
               position: 'fixed',
               inset: 0,
-              background: 'rgba(0,0,0,0.8)',
-              backdropFilter: 'blur(8px)',
+              background: 'rgba(3, 4, 8, 0.85)',
+              backdropFilter: 'blur(16px)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -353,22 +303,22 @@ export const Group: React.FC = () => {
           >
             <Card
               variant="elevated"
-              style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}
+              style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', border: '1px solid var(--color-border-accent)' }}
             >
-              <h2 className="type-h3" style={{ color: 'var(--color-text-primary)' }}>
-                New Friend Group
+              <h2 className="type-h3 font-display gold-gradient-text">
+                CREATE PRIVATE LEAGUE
               </h2>
               <input
                 type="text"
-                placeholder="Group Name (e.g. Dream Team)"
+                placeholder="League Name (e.g. Tactical Oracles)"
                 value={newGroupName}
                 onChange={(e) => setNewGroupName(e.target.value)}
                 maxLength={32}
                 autoFocus
                 style={{
-                  height: 48,
+                  height: 50,
                   width: '100%',
-                  background: 'var(--color-surface-2)',
+                  background: 'var(--color-bg)',
                   border: '1.5px solid var(--color-border)',
                   borderRadius: 'var(--radius-md)',
                   padding: '0 var(--space-4)',
@@ -381,7 +331,7 @@ export const Group: React.FC = () => {
                   Cancel
                 </Button>
                 <Button variant="primary" onClick={handleCreateGroup} disabled={!newGroupName.trim()} style={{ flex: 2 }}>
-                  Create Group
+                  Create League
                 </Button>
               </div>
             </Card>
