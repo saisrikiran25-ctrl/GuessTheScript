@@ -100,12 +100,12 @@ export async function generateShareCard(
   ctx.lineWidth = 1.5;
   ctx.strokeRect(p + 10, p + 10, frameW - 20, frameH - 20);
 
-  // ─── SECTION 1: TOP BRAND HEADER (Y: 40 - 120) ───────────
+  // ─── SECTION 1: TOP BRAND HEADER (Y: 40 - 110) ───────────
   ctx.fillStyle = '#F5D061';
   ctx.font = '800 12px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '4px';
   ctx.textAlign = 'center';
-  ctx.fillText('OFFICIAL MATCH PASS · FIFA WORLD CUP 2026', W / 2, p + 38);
+  ctx.fillText('OFFICIAL MATCH PASS · FIFA WORLD CUP 2026', W / 2, p + 36);
 
   const titleGrad = ctx.createLinearGradient(W / 2 - 200, 0, W / 2 + 200, 0);
   titleGrad.addColorStop(0, '#FFFFFF');
@@ -114,12 +114,12 @@ export async function generateShareCard(
   ctx.fillStyle = titleGrad;
   ctx.font = '900 32px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '-0.5px';
-  ctx.fillText('GUESS THE SCRIPT', W / 2, p + 78);
+  ctx.fillText('GUESS THE SCRIPT', W / 2, p + 74);
 
-  // ─── SECTION 2: MATCH TICKET STUB CARD (Y: 135 - 345) ──────
-  const ticketY = p + 110;
+  // ─── SECTION 2: MATCH TICKET STUB CARD (Y: 125 - 315) ──────
+  const ticketY = p + 100;
   const ticketW = frameW - 40;
-  const ticketH = 210;
+  const ticketH = 190;
 
   // Ticket Container Box
   ctx.fillStyle = 'rgba(18, 20, 34, 0.85)';
@@ -135,29 +135,29 @@ export async function generateShareCard(
   ctx.font = '800 13px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '3px';
   ctx.textAlign = 'center';
-  ctx.fillText(match.label.toUpperCase(), W / 2, ticketY + 34);
+  ctx.fillText(match.label.toUpperCase(), W / 2, ticketY + 30);
 
   ctx.fillStyle = '#9DA3BC';
   ctx.font = '600 12px "Plus Jakarta Sans", sans-serif';
   ctx.letterSpacing = '1px';
-  ctx.fillText(`${match.venue.toUpperCase()} (${match.city.toUpperCase()})`, W / 2, ticketY + 54);
+  ctx.fillText(`${match.venue.toUpperCase()} (${match.city.toUpperCase()})`, W / 2, ticketY + 48);
 
   // Perforated Ticket Divider Line
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
   ctx.lineWidth = 1;
   ctx.setLineDash([6, 6]);
   ctx.beginPath();
-  ctx.moveTo(W / 2 - ticketW / 2 + 20, ticketY + 72);
-  ctx.lineTo(W / 2 + ticketW / 2 - 20, ticketY + 72);
+  ctx.moveTo(W / 2 - ticketW / 2 + 20, ticketY + 64);
+  ctx.lineTo(W / 2 + ticketW / 2 - 20, ticketY + 64);
   ctx.stroke();
   ctx.setLineDash([]); // Reset line dash
 
   // Draw Teams & Flags Row
-  const teamRowY = ticketY + 140;
+  const teamRowY = ticketY + 128;
 
   // Team A (Left)
   if (flagAImg) {
-    drawCircularFlag(ctx, flagAImg, W / 2 - 195, teamRowY - 12, 52);
+    drawCircularFlag(ctx, flagAImg, W / 2 - 195, teamRowY - 12, 50);
     ctx.fillStyle = '#FFFFFF';
     ctx.font = '800 30px "Space Grotesk", sans-serif';
     ctx.textAlign = 'left';
@@ -185,7 +185,7 @@ export async function generateShareCard(
 
   // Team B (Right)
   if (flagBImg) {
-    drawCircularFlag(ctx, flagBImg, W / 2 + 195, teamRowY - 12, 52);
+    drawCircularFlag(ctx, flagBImg, W / 2 + 195, teamRowY - 12, 50);
     ctx.fillStyle = '#FFFFFF';
     ctx.font = '800 30px "Space Grotesk", sans-serif';
     ctx.textAlign = 'right';
@@ -197,14 +197,14 @@ export async function generateShareCard(
     ctx.fillText(`${match.teamB.shortCode} ${match.teamB.flagEmoji}`, W / 2 + 195, teamRowY + 10);
   }
 
-  // ─── SECTION 3: SCRIPT NARRATIVE CARD (Y: 375 - 655) ──────
-  const scriptY = ticketY + ticketH + 30;
+  // ─── SECTION 3: SCRIPT NARRATIVE CARD (Y: 410 - 610) ──────
+  const scriptY = 410; // Generous 86px gap below ticket stub box!
 
   ctx.fillStyle = familyColor;
   ctx.font = '800 12px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '4px';
   ctx.textAlign = 'center';
-  ctx.fillText('NARRATIVE DRAFTED BY ORACLE', W / 2, scriptY);
+  ctx.fillText('NARRATIVE DRAFTED BY ME', W / 2, scriptY);
 
   if (script) {
     // Glowing Script Title
@@ -233,7 +233,7 @@ export async function generateShareCard(
     ctx.fillText(script.familyLabel.toUpperCase(), W / 2, scriptY + 75);
 
     // Script description box
-    const descY = scriptY + 100;
+    const descY = scriptY + 105;
     const maxTextWidth = 500;
     const words = script.description.split(' ');
     const lines: string[] = [];
@@ -271,8 +271,8 @@ export async function generateShareCard(
     });
   }
 
-  // ─── SECTION 4: SCORE / VAULT STATUS EMBLEM (Y: 685 - 915) ─
-  const emblemY = 705;
+  // ─── SECTION 4: SCORE / VAULT STATUS EMBLEM (Y: 735 - 915) ─
+  const emblemY = 735; // 130px gap below description box!
 
   if (isResolved) {
     // Score Emblem Ring
@@ -280,13 +280,13 @@ export async function generateShareCard(
     ctx.strokeStyle = goldFoil;
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.arc(W / 2, emblemY + 55, 80, 0, 2 * Math.PI);
+    ctx.arc(W / 2, emblemY + 55, 76, 0, 2 * Math.PI);
     ctx.fill();
     ctx.stroke();
 
     // Score text
     ctx.fillStyle = '#F5D061';
-    ctx.font = '900 72px "Space Grotesk", sans-serif';
+    ctx.font = '900 70px "Space Grotesk", sans-serif';
     ctx.letterSpacing = '-2px';
     ctx.textAlign = 'center';
     ctx.fillText(String(score.totalMatchScore), W / 2, emblemY + 80);
@@ -301,12 +301,12 @@ export async function generateShareCard(
     ctx.strokeStyle = 'rgba(245, 208, 97, 0.5)';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(W / 2, emblemY + 55, 70, 0, 2 * Math.PI);
+    ctx.arc(W / 2, emblemY + 55, 68, 0, 2 * Math.PI);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = '#F5D061';
-    ctx.font = '800 54px "Space Grotesk", sans-serif';
+    ctx.font = '800 52px "Space Grotesk", sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('📜', W / 2, emblemY + 74);
 
@@ -316,8 +316,8 @@ export async function generateShareCard(
     ctx.fillText('SCRIPT VAULT LOCKED', W / 2, emblemY + 155);
   }
 
-  // ─── SECTION 5: PLAYER HANDLE & TAGLINE (Y: 935 - 1060) ───
-  const playerY = 945;
+  // ─── SECTION 5: PLAYER HANDLE & TAGLINE (Y: 975 - 1065) ───
+  const playerY = 975;
 
   ctx.fillStyle = '#FFFFFF';
   ctx.font = '800 26px "Space Grotesk", sans-serif';
@@ -336,8 +336,8 @@ export async function generateShareCard(
   ctx.letterSpacing = '2px';
   ctx.fillText(challengerCall, W / 2, playerY + 30);
 
-  // ─── SECTION 6: VIRAL CTA FOOTER BANNER (Y: 1115 - 1215) ──
-  const footerY = 1120;
+  // ─── SECTION 6: VIRAL CTA FOOTER BANNER (Y: 1125 - 1205) ──
+  const footerY = 1125;
   const footerW = frameW - 40;
   const footerH = 80;
 
