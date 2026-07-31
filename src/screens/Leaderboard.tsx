@@ -10,24 +10,24 @@ import { getBadgeById } from '@/data/badges';
 import { Analytics } from '@/utils/analytics';
 import { syncDownloadMembers } from '@/utils/sync';
 import { MAX_TOURNAMENT_SCORE } from '@/engine/scoring';
-import { getMatchOrder } from '@/data/matches';
 import { soundFx } from '@/utils/audio';
 import type { LeaderboardEntry } from '@/types';
 
-type LeaderboardTab = 'tournament' | 'gw1_m1' | 'gw1_m2' | 'gw1_m3' | 'gw1_m4' | 'gw1_m5' | 'gw1_m6' | 'gw1_m7' | 'gw1_m8' | 'gw1_m9' | 'gw1_m10';
+type ViewMode = 'overall' | 'gameweek';
 
 export const Leaderboard: React.FC = () => {
   const { state: playerState } = usePlayer();
   const { state: matchState } = useMatches();
-  const [tab, setTab] = useState<LeaderboardTab>('tournament');
+  const [viewMode, setViewMode] = useState<ViewMode>('overall');
+  const [selectedGW, setSelectedGW] = useState<number>(1);
   const [isLoading, setIsLoading] = useState(true);
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
 
   const player = playerState.player;
 
   useEffect(() => {
-    Analytics.leaderboardViewed(tab);
-  }, [tab]);
+    Analytics.leaderboardViewed(viewMode === 'overall' ? 'overall' : `gw_${selectedGW}`);
+  }, [viewMode, selectedGW]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -86,42 +86,49 @@ export const Leaderboard: React.FC = () => {
         ...(playerEntry ? [playerEntry] : []),
       ];
 
-      combined.sort((a, b) => {
-        if (b.tournamentScore !== a.tournamentScore) return b.tournamentScore - a.tournamentScore;
-        return b.exactMatchCount - a.exactMatchCount;
-      });
-
-      const ranked = combined.map((e, i) => ({ ...e, rank: i + 1 }));
-      setEntries(ranked);
+      setEntries(combined);
       setIsLoading(false);
     };
 
     buildEntries();
   }, [player, matchState.matches]);
 
-  const MATCH_LABEL_MAP: Record<string, string> = {
-    gw1_m1: 'ARS-COV',
-    gw1_m2: 'HUL-MUN',
-    gw1_m3: 'EVE-CRY',
-    gw1_m4: 'IPS-SUN',
-    gw1_m5: 'NFO-LEE',
-    gw1_m6: 'BRE-SPU',
-    gw1_m7: 'BHA-AVL',
-    gw1_m8: 'MCI-BOU',
-    gw1_m9: 'NEW-LIV',
-    gw1_m10: 'FUL-CHE',
-  };
-  const TABS: { id: LeaderboardTab; label: string }[] = [
-    { id: 'tournament', label: 'Overall' },
-    ...getMatchOrder().map((id) => ({ id: id as LeaderboardTab, label: MATCH_LABEL_MAP[id] ?? id })),
-  ];
+  // Compute entries filtered and ranked by mode
+  const filteredEntries = React.useMemo(() => {
+    let list: LeaderboardEntry[] = [];
+    if (viewMode === 'overall') {
+      list = entries.map((e) => ({ ...e }));
+      list.sort((a, b) => {
+        if (b.tournamentScore !== a.tournamentScore) return b.tournamentScore - a.tournamentScore;
+        return b.exactMatchCount - a.exactMatchCount;
+      });
+    } else {
+      // Filter by selected Gameweek (matches starting with gwX_)
+      const prefix = `gw${selectedGW}_`;
+      list = entries.map((e) => {
+        const gwScore = Object.entries(e.matchScores)
+          .filter(([mId]) => mId.startsWith(prefix))
+          .reduce((sum, [, pts]) => sum + pts, 0);
 
-  const filteredEntries = tab === 'tournament'
-    ? entries
-    : entries.map((e) => ({
-        ...e,
-        tournamentScore: e.matchScores[tab] ?? 0,
-      })).sort((a, b) => b.tournamentScore - a.tournamentScore).map((e, i) => ({ ...e, rank: i + 1 }));
+        const gwExactCount = Object.entries(e.matchScores)
+          .filter(([mId, pts]) => mId.startsWith(prefix) && pts >= 100)
+          .length;
+
+        return {
+          ...e,
+          tournamentScore: gwScore,
+          exactMatchCount: gwExactCount,
+        };
+      });
+
+      list.sort((a, b) => {
+        if (b.tournamentScore !== a.tournamentScore) return b.tournamentScore - a.tournamentScore;
+        return b.exactMatchCount - a.exactMatchCount;
+      });
+    }
+
+    return list.map((e, i) => ({ ...e, rank: i + 1 }));
+  }, [entries, viewMode, selectedGW]);
 
   const playerEntry = filteredEntries.find((e) => e.isCurrentPlayer);
   const top10 = filteredEntries.slice(0, 10);
@@ -130,38 +137,112 @@ export const Leaderboard: React.FC = () => {
     <div className="screen">
       <ScreenHeader title="Leaderboard" />
 
-      {/* Tab bar */}
+      {/* Tab bar (Overall vs Gameweek) */}
       <div
         style={{
           display: 'flex',
           background: 'var(--color-surface-card)',
           borderBottom: '1px solid var(--color-border)',
+          alignItems: 'center',
+          padding: '0 var(--space-4)',
         }}
       >
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => {
+        <button
+          onClick={() => {
+            soundFx.playClick();
+            setViewMode('overall');
+          }}
+          className="font-display"
+          style={{
+            flex: 1,
+            padding: 'var(--space-3)',
+            fontSize: '11px',
+            fontWeight: 800,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: viewMode === 'overall' ? 'var(--color-accent)' : 'var(--color-text-muted)',
+            borderBottom: `2px solid ${viewMode === 'overall' ? 'var(--color-accent)' : 'transparent'}`,
+            transition: 'all 0.2s ease',
+          }}
+        >
+          Overall Season
+        </button>
+
+        <button
+          onClick={() => {
+            soundFx.playClick();
+            setViewMode('gameweek');
+          }}
+          className="font-display"
+          style={{
+            flex: 1,
+            padding: 'var(--space-3)',
+            fontSize: '11px',
+            fontWeight: 800,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: viewMode === 'gameweek' ? 'var(--color-accent)' : 'var(--color-text-muted)',
+            borderBottom: `2px solid ${viewMode === 'gameweek' ? 'var(--color-accent)' : 'transparent'}`,
+            transition: 'all 0.2s ease',
+          }}
+        >
+          Gameweek
+        </button>
+      </div>
+
+      {/* Gameweek Selector Dropdown Bar (GW1 to GW38) */}
+      {viewMode === 'gameweek' && (
+        <div
+          style={{
+            padding: '10px var(--space-5)',
+            background: 'rgba(22, 25, 41, 0.7)',
+            borderBottom: '1px solid var(--color-border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span
+            className="font-display"
+            style={{
+              fontSize: '11px',
+              fontWeight: 800,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: 'var(--color-text-muted)',
+            }}
+          >
+            Select Gameweek:
+          </span>
+
+          <select
+            value={selectedGW}
+            onChange={(e) => {
               soundFx.playClick();
-              setTab(t.id);
+              setSelectedGW(Number(e.target.value));
             }}
             className="font-display"
             style={{
-              flex: 1,
-              padding: 'var(--space-3)',
-              fontSize: '11px',
+              background: 'var(--color-surface-elevated)',
+              border: '1.5px solid var(--color-border-accent)',
+              borderRadius: 'var(--radius-md)',
+              padding: '6px 14px',
+              color: 'var(--color-accent)',
+              fontSize: '12px',
               fontWeight: 800,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              color: tab === t.id ? 'var(--color-accent)' : 'var(--color-text-muted)',
-              borderBottom: `2px solid ${tab === t.id ? 'var(--color-accent)' : 'transparent'}`,
-              transition: 'all 0.2s ease',
+              cursor: 'pointer',
+              outline: 'none',
+              boxShadow: '0 0 12px rgba(245, 208, 97, 0.15)',
             }}
           >
-            {t.label}
-          </button>
-        ))}
-      </div>
+            {Array.from({ length: 38 }, (_, i) => i + 1).map((gw) => (
+              <option key={gw} value={gw} style={{ background: '#090B16', color: '#FFF' }}>
+                Gameweek {gw}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <main style={{ flex: 1, maxWidth: 'var(--max-width)', margin: '0 auto', width: '100%' }}>
         {/* Top 3 podium */}
@@ -191,7 +272,7 @@ export const Leaderboard: React.FC = () => {
             <div style={{ textAlign: 'center', padding: 'var(--space-12)' }}>
               <p style={{ fontSize: '36px', marginBottom: 'var(--space-4)' }}>🏆</p>
               <p style={{ color: 'var(--color-text-secondary)', fontSize: '14px' }}>
-                The Oracle standings will populate after predictions resolve.
+                The Leaderboard standings will populate after predictions resolve.
               </p>
             </div>
           ) : (
@@ -214,9 +295,9 @@ export const Leaderboard: React.FC = () => {
 
         <div style={{ padding: 'var(--space-6)', textAlign: 'center' }}>
           <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
-          Rankings reflect official Premier League oracle accuracy.
+            Rankings reflect official Premier League oracle accuracy.
             <br />
-            Maximum {MAX_TOURNAMENT_SCORE} pts available.
+            {viewMode === 'overall' ? `Maximum ${MAX_TOURNAMENT_SCORE} pts available across the season.` : `Gameweek ${selectedGW} Standings.`}
           </p>
         </div>
       </main>
