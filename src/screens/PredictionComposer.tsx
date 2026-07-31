@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ScriptCard } from '@/components/prediction/ScriptCard';
 import { SidePredictionChip } from '@/components/prediction/SidePredictionChip';
 import { ScriptStoryPreview } from '@/components/prediction/ScriptStoryPreview';
-import { Button, Flag } from '@/components/ui';
+import { Button, Flag, PitchField } from '@/components/ui';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { useMatches } from '@/store/matchStore';
 import { usePlayer } from '@/store/playerStore';
@@ -144,17 +144,15 @@ export const PredictionComposer: React.FC = () => {
           {/* ─── STEP 1: Script Selection ─────────────────── */}
           {step === 1 && (
             <>
+              {/* 2D Stadium Tactical Pitch Canvas */}
+              <PitchField teamA={match.teamA} teamB={match.teamB} height={130} />
+
               <div>
                 <h2 className="type-h2 font-display" style={{ color: 'var(--color-text-primary)', marginBottom: 'var(--space-2)' }}>
                   Draft the match narrative.
                 </h2>
-                <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', lineHeight: 1.5, display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  <Flag team={match.teamA} size="20px" />
-                  <span className="font-display" style={{ fontWeight: 800, color: 'var(--color-text-primary)' }}>{match.teamA.shortCode}</span>
-                  <span style={{ color: 'var(--color-text-muted)' }}>vs</span>
-                  <Flag team={match.teamB} size="20px" />
-                  <span className="font-display" style={{ fontWeight: 800, color: 'var(--color-text-primary)' }}>{match.teamB.shortCode}</span>
-                  <span>— Select the exact script that will dominate the 90 minutes.</span>
+                <p style={{ fontSize: '13px', color: '#E2E8F0', lineHeight: 1.5, display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span>Select the tactical script that will dominate the 90 minutes.</span>
                 </p>
               </div>
 

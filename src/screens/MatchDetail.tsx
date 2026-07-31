@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { BottomNav } from '@/components/layout/BottomNav';
-import { Button, CountdownTimer, Flag } from '@/components/ui';
+import { Button, CountdownTimer, Flag, PitchField } from '@/components/ui';
 import { useMatches } from '@/store/matchStore';
 import { usePlayer } from '@/store/playerStore';
 import { loadPrediction, loadScore } from '@/utils/storage';
@@ -105,8 +105,13 @@ export const MatchDetail: React.FC = () => {
             border: '1px solid var(--color-border-accent)',
             padding: 'var(--space-6)',
             boxShadow: '0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(245, 208, 97, 0.12)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-4)',
           }}
         >
+          {/* 2D Stadium Tactical Field */}
+          <PitchField teamA={match.teamA} teamB={match.teamB} height={160} />
           {/* Label & Location */}
           <div style={{ marginBottom: 'var(--space-5)' }}>
             <span

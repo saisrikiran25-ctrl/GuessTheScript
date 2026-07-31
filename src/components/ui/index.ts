@@ -7,3 +7,4 @@ export { CountdownTimer } from './CountdownTimer';
 export { ScoreCounter } from './ScoreCounter';
 export { ToastProvider, useToast } from './Toast';
 export { Flag } from './Flag';
+export { PitchField } from './PitchField';
