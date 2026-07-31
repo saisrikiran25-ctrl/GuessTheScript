@@ -21,10 +21,10 @@
   --color-accent-glow: rgba(245, 208, 97, 0.22);
   --color-accent-subtle: rgba(245, 208, 97, 0.08);
 
-  /* Typography Colors (High Contrast Stadium Theme) */
-  --color-text-primary: #F8FAFC;
-  --color-text-secondary: #CBD5E1;
-  --color-text-muted: #94A3B8;
+  /* Typography Colors (High-Contrast Luminous Stadium Theme) */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #E2E8F0;
+  --color-text-muted: #A0AEC0;
   --color-text-inverse: #030408;
 
   /* State Colors */
