@@ -9,7 +9,7 @@ import { useMatches } from '@/store/matchStore';
 import { loadPrediction, loadScore } from '@/utils/storage';
 import { getScriptById } from '@/data/scripts';
 import { getBadgeById, BADGE_DEFINITIONS } from '@/data/badges';
-import { getInitials } from '@/utils/format';
+import { getInitials, formatJoinedDate } from '@/utils/format';
 import { getPlayerTitle } from '@/utils/titles';
 import { clearAll } from '@/utils/storage';
 import { soundFx } from '@/utils/audio';
@@ -100,7 +100,7 @@ export const Profile: React.FC = () => {
                 marginTop: '6px',
               }}
             >
-              {getPlayerTitle(player.tournamentScore)}
+              {formatJoinedDate(player.createdAt)}
             </span>
           </div>
         </div>

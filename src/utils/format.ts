@@ -83,3 +83,13 @@ export function getInitials(name: string): string {
     .map((w) => w[0]?.toUpperCase() ?? '')
     .join('');
 }
+
+export function formatJoinedDate(isoString?: string): string {
+  if (!isoString) return 'Joined July 2026';
+  const date = new Date(isoString);
+  if (isNaN(date.getTime())) return 'Joined July 2026';
+  const day = date.getDate();
+  const month = date.toLocaleDateString('en-GB', { month: 'short' });
+  const year = date.getFullYear();
+  return `Joined on ${day} ${month} ${year}`;
+}
