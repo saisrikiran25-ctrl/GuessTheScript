@@ -44,7 +44,7 @@ export const Profile: React.FC = () => {
 
   return (
     <div className="screen">
-      <ScreenHeader title="Oracle Dossier" />
+      <ScreenHeader title="Your Profile" />
 
       <main style={{ flex: 1, overflowY: 'auto', maxWidth: 'var(--max-width)', margin: '0 auto', width: '100%' }}>
         {/* Avatar + Moniker Header */}
@@ -98,7 +98,7 @@ export const Profile: React.FC = () => {
                 marginTop: '6px',
               }}
             >
-              CERTIFIED KNOCKOUT ORACLE
+              CERTIFIED FOOTBALL ORACLE
             </span>
           </div>
         </div>
