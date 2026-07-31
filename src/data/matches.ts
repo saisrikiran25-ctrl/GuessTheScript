@@ -88,7 +88,7 @@ export const MATCHES: Match[] = [
     },
     kickoff: '2026-08-22T14:00:00Z',
     status: 'upcoming',
-    venue: 'Goodison Park',
+    venue: 'Hill Dickinson Stadium',
     city: 'Liverpool',
     scripts: ALL_SCRIPTS,
     sideOptions: SIDE_PREDICTION_SETS.default,
