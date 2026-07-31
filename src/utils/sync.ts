@@ -93,3 +93,24 @@ export async function syncReadAllMatchResolutions(): Promise<
   }
 }
 
+// ─── Admin: Reset all members in a group to zero ─────────────
+// Iterates every document in groups/{groupCode}/members and
+// overwrites score / matchScores / streak / badges to season-zero state.
+export async function resetAllGroupMembers(groupCode: string): Promise<void> {
+  const membersRef = collection(db, `groups/${groupCode}/members`);
+  const snapshot = await getDocs(membersRef);
+  const updates = snapshot.docs.map((docSnap) =>
+    setDoc(
+      docSnap.ref,
+      {
+        score: 0,
+        streak: 0,
+        badges: [],
+        matchScores: {},
+        updatedAt: new Date().toISOString(),
+      },
+      { merge: true }
+    )
+  );
+  await Promise.all(updates);
+}

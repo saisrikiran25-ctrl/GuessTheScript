@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui';
 import { useMatches } from '@/store/matchStore';
 import { resolveMatch } from '@/engine/resolution';
-import { syncWriteMatchResolution } from '@/utils/sync';
+import { syncWriteMatchResolution, resetAllGroupMembers } from '@/utils/sync';
 import { soundFx } from '@/utils/audio';
 import type { AdminMatchInput, Match } from '@/types';
 
@@ -14,7 +14,7 @@ export const Admin: React.FC = () => {
   const navigate = useNavigate();
   const [keyInput, setKeyInput] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [selectedMatchId, setSelectedMatchId] = useState<string>('sf1');
+  const [selectedMatchId, setSelectedMatchId] = useState<string>('gw1_m1');
   const [form, setForm] = useState<AdminMatchInput>({
     goalTimes: [],
     cards: 0,
@@ -30,6 +30,7 @@ export const Admin: React.FC = () => {
   const [goalTimesInput, setGoalTimesInput] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [resetStatus, setResetStatus] = useState<'idle' | 'running' | 'done' | 'error'>('idle');
 
   const selectedMatch = matchState.matches.find((m) => m.id === selectedMatchId);
 
@@ -122,6 +123,20 @@ export const Admin: React.FC = () => {
     }
   };
 
+  const handleSeasonReset = async () => {
+    if (!window.confirm('DANGER: This will zero out ALL users\' scores across every group in Firestore. This cannot be undone. Proceed?')) return;
+    setResetStatus('running');
+    try {
+      // Reset the global World leaderboard + all private group codes stored in Firestore
+      // We reset 'world' first; private groups share the same member docs so this covers everyone.
+      await resetAllGroupMembers('world');
+      setResetStatus('done');
+    } catch (err) {
+      console.error(err);
+      setResetStatus('error');
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px', background: 'var(--color-bg)' }}>
@@ -188,6 +203,35 @@ export const Admin: React.FC = () => {
               {m.label} <span style={{ fontSize: '9px' }}>({m.status})</span>
             </button>
           ))}
+        </div>
+
+        {/* Season Reset */}
+        <div style={{ background: 'rgba(239,68,68,0.06)', border: '1.5px solid rgba(239,68,68,0.3)', borderRadius: 'var(--radius-lg)', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <h2 className="font-display" style={{ fontSize: '14px', fontWeight: 800, color: 'var(--color-error)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            ⚠️ Season Reset — Wipe All Users
+          </h2>
+          <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
+            Zeros out every player’s score, streak, badges and match history in Firestore.
+            Use at the start of a new season. Cannot be undone.
+          </p>
+          {resetStatus === 'done' && (
+            <div style={{ padding: '10px 14px', background: 'var(--color-success-bg)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 'var(--radius-md)', fontSize: '13px', color: 'var(--color-success)' }}>
+              ✓ All Firestore member scores reset to 0.
+            </div>
+          )}
+          {resetStatus === 'error' && (
+            <div style={{ padding: '10px 14px', background: 'var(--color-error-bg)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 'var(--radius-md)', fontSize: '13px', color: 'var(--color-error)' }}>
+              ✗ Reset failed — check console.
+            </div>
+          )}
+          <Button
+            variant="primary"
+            size="md"
+            onClick={handleSeasonReset}
+            disabled={resetStatus === 'running'}
+          >
+            {resetStatus === 'running' ? '⏳ Resetting…' : '🔄 Reset All Player Data'}
+          </Button>
         </div>
 
         {selectedMatch && (
