@@ -163,7 +163,7 @@ export const Home: React.FC = () => {
           >
             <div>
               <div style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '4px' }}>
-                ORACLE SCORE
+              YOUR SCORE
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
                 <span className="font-display gold-gradient-text" style={{ fontSize: '32px', fontWeight: 800, lineHeight: 1 }}>
@@ -175,7 +175,7 @@ export const Home: React.FC = () => {
 
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '4px' }}>
-                ORACLE STREAK
+              YOUR STREAK
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'flex-end' }}>
                 <span className="font-display" style={{ fontSize: '28px', fontWeight: 800, color: streak >= 2 ? 'var(--color-success)' : 'var(--color-text-primary)', lineHeight: 1 }}>
