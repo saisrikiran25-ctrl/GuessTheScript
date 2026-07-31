@@ -182,7 +182,7 @@ export const AppWordmark: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'm
             marginTop: '3px',
           }}
         >
-          Premier League 2026/27
+          The Football Oracle
         </span>
       </div>
     </div>
