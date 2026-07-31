@@ -12,6 +12,8 @@ import {
 import { generatePlayerId } from '@/utils/format';
 import { SEASON_ID } from '@/engine/scoring';
 
+import { syncUploadMember } from '@/utils/sync';
+
 // ─── State ────────────────────────────────────────────────────
 interface PlayerState {
   player: Player | null;
@@ -57,6 +59,7 @@ function reducer(state: PlayerState, action: PlayerAction): PlayerState {
         badges: newBadges,
       };
       savePlayer(updated);
+      syncUploadMember('world', updated);
       return { ...state, player: updated };
     }
 
@@ -93,7 +96,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     hasOnboarded: false,
   });
 
-  // Initialize from storage — with automatic season reset detection
+  // Initialize from storage — with automatic season reset detection & global sync
   useEffect(() => {
     const storedSeason = getStoredSeasonId();
     if (storedSeason !== SEASON_ID) {
@@ -103,6 +106,9 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
     const player = loadPlayer();
     const hasOnboarded = isOnboarded();
+    if (player) {
+      syncUploadMember('world', player);
+    }
     dispatch({ type: 'INIT', player, hasOnboarded });
   }, []);
 
@@ -118,6 +124,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       matchScores: {},
     };
     savePlayer(player);
+    syncUploadMember('world', player);
     dispatch({ type: 'SET_PLAYER', player });
     dispatch({ type: 'COMPLETE_ONBOARDING' });
   }, []);

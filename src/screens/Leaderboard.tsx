@@ -30,14 +30,41 @@ export const Leaderboard: React.FC = () => {
   }, [viewMode, selectedGW]);
 
   useEffect(() => {
-    setIsLoading(true);
+    let isMounted = true;
 
     const buildEntries = async () => {
       const allScores = loadAllScores();
 
-      let playerEntry: LeaderboardEntry | null = null;
+      // Always sync current player to Firestore so all other users see them
       if (player) {
-        const matchScores: Record<string, number> = Object.fromEntries(
+        await syncUploadMember('world', player);
+      }
+
+      const worldMembers = await syncDownloadMembers('world');
+      if (!isMounted) return;
+
+      const entryMap = new Map<string, LeaderboardEntry>();
+
+      // 1. Add all real members from Firestore
+      worldMembers.forEach((m) => {
+        const matchScores = m.matchScores ?? {};
+        const exactCount = Object.values(matchScores).filter((s) => (s as number) >= 100).length;
+        entryMap.set(m.playerId, {
+          rank: 0,
+          playerId: m.playerId,
+          name: m.name,
+          tournamentScore: m.score,
+          matchScores,
+          streak: m.streak,
+          badges: m.badges ?? [],
+          isCurrentPlayer: m.playerId === player?.id,
+          exactMatchCount: exactCount,
+        });
+      });
+
+      // 2. Add or update current local player (ensuring 100% accurate local score)
+      if (player) {
+        const localMatchScores: Record<string, number> = Object.fromEntries(
           matchState.matches
             .map((m) => {
               const score = allScores[`${m.id}__${player.id}`];
@@ -45,52 +72,46 @@ export const Leaderboard: React.FC = () => {
             })
             .filter(([, v]) => v > 0)
         );
-        const tournamentScore = Object.values(matchScores).reduce((a, b) => (a as number) + (b as number), 0) as number;
-        const exactCount = Object.values(matchScores).filter((s) => (s as number) >= 100).length;
+        const mergedMatchScores = { ...player.matchScores, ...localMatchScores };
+        const tournamentScore = Math.max(
+          player.tournamentScore,
+          Object.values(mergedMatchScores).reduce((a, b) => a + b, 0)
+        );
+        const exactCount = Object.values(mergedMatchScores).filter((s) => s >= 100).length;
 
-        playerEntry = {
+        entryMap.set(player.id, {
           rank: 0,
           playerId: player.id,
           name: player.name,
           tournamentScore,
-          matchScores,
+          matchScores: mergedMatchScores,
           streak: player.streak,
           badges: player.badges,
           isCurrentPlayer: true,
           exactMatchCount: exactCount,
-        };
+        });
       }
 
-      const worldMembers = await syncDownloadMembers('world');
-      const firestoreEntries: LeaderboardEntry[] = worldMembers
-        .filter((m) => m.playerId !== player?.id)
-        .map((m) => {
-          const matchScores = m.matchScores ?? {};
-          const exactCount = Object.values(matchScores).filter((s) => (s as number) >= 100).length;
-          return {
-            rank: 0,
-            playerId: m.playerId,
-            name: m.name,
-            tournamentScore: m.score,
-            matchScores,
-            streak: m.streak,
-            badges: m.badges ?? [],
-            isCurrentPlayer: false,
-            exactMatchCount: exactCount,
-          };
-        });
+      // 3. Add mock players ONLY if they do not collide with real user names/IDs
+      MOCK_LEADERBOARD.forEach((mock) => {
+        const nameKey = mock.name.toLowerCase();
+        const nameExists = Array.from(entryMap.values()).some((e) => e.name.toLowerCase() === nameKey);
+        if (!nameExists && !entryMap.has(mock.playerId)) {
+          entryMap.set(mock.playerId, { ...mock, rank: 0 });
+        }
+      });
 
-      const combined = [
-        ...MOCK_LEADERBOARD.map((e) => ({ ...e, rank: 0 })),
-        ...firestoreEntries,
-        ...(playerEntry ? [playerEntry] : []),
-      ];
-
+      const combined = Array.from(entryMap.values());
       setEntries(combined);
       setIsLoading(false);
     };
 
     buildEntries();
+    const interval = setInterval(buildEntries, 10000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [player, matchState.matches]);
 
   // Compute entries filtered and ranked by mode

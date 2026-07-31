@@ -64,9 +64,7 @@ export const Group: React.FC = () => {
 
   const performSync = useCallback(async (groupCode: string) => {
     if (!player) return;
-    if (player.tournamentScore > 0) {
-      await syncUploadMember(groupCode, player);
-    }
+    await syncUploadMember(groupCode, player);
     const latest = await syncDownloadMembers(groupCode);
     if (latest.length > 0) {
       setGroups((prevGroups) => {
