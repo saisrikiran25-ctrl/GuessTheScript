@@ -8,7 +8,7 @@ import { MOCK_LEADERBOARD } from '@/data/mockLeaderboard';
 import { loadAllScores } from '@/utils/storage';
 import { getBadgeById } from '@/data/badges';
 import { Analytics } from '@/utils/analytics';
-import { syncDownloadMembers } from '@/utils/sync';
+import { syncUploadMember, syncDownloadMembers } from '@/utils/sync';
 import { MAX_TOURNAMENT_SCORE } from '@/engine/scoring';
 import { soundFx } from '@/utils/audio';
 import type { LeaderboardEntry } from '@/types';
