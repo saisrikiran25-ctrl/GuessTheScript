@@ -161,20 +161,17 @@ export const AppWordmark: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'm
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ fontSize: s.main }}>⚽</span>
-          <span
-            className="font-display"
-            style={{
-              fontSize: s.main,
-              fontWeight: 800,
-              letterSpacing: '-0.02em',
-              color: 'var(--color-text-primary)',
-            }}
-          >
-            GUESS THE <span className="gold-gradient-text">SCRIPT</span>
-          </span>
-        </div>
+        <span
+          className="font-display"
+          style={{
+            fontSize: s.main,
+            fontWeight: 800,
+            letterSpacing: '-0.02em',
+            color: 'var(--color-text-primary)',
+          }}
+        >
+          GUESS THE <span className="gold-gradient-text">SCRIPT</span>
+        </span>
         <span
           style={{
             fontSize: s.sub,
@@ -183,12 +180,8 @@ export const AppWordmark: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'm
             textTransform: 'uppercase',
             color: '#10B981',
             marginTop: '3px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
           }}
         >
-          <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px #10B981' }} />
           The Football Oracle
         </span>
       </div>
