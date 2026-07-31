@@ -28,6 +28,7 @@ export interface ScriptOption {
   family: ScriptFamily;
   familyLabel: string;
   familyColor: string;
+  isKnockoutOnly?: boolean;
   // Narrative dimensions for closeness scoring
   dimensions: {
     firstHalfTempo: FirstHalfTempo | null;
@@ -55,6 +56,7 @@ export interface Match {
   status: MatchStatus;
   venue: string;
   city: string;
+  isKnockout?: boolean;
   scripts: ScriptOption[];
   sideOptions: SidePredictionOption[];
   resolution?: MatchResolution;

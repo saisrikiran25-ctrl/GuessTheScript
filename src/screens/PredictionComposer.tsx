@@ -9,7 +9,7 @@ import { useMatches } from '@/store/matchStore';
 import { usePlayer } from '@/store/playerStore';
 import { savePrediction } from '@/utils/storage';
 import { isBeforeKickoff } from '@/utils/format';
-import { getScriptById } from '@/data/scripts';
+import { getScriptById, getScriptsForMatch } from '@/data/scripts';
 import { Analytics } from '@/utils/analytics';
 import { useToast } from '@/components/ui/Toast';
 import { soundFx } from '@/utils/audio';
@@ -164,7 +164,7 @@ export const PredictionComposer: React.FC = () => {
               />
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-                {match.scripts.map((script, i) => (
+                {getScriptsForMatch(match).map((script, i) => (
                   <ScriptCard
                     key={script.id}
                     script={script}

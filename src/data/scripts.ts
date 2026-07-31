@@ -1,62 +1,51 @@
-import type { ScriptOption, SidePredictionOption } from '@/types';
+import type { ScriptOption, SidePredictionOption, Match } from '@/types';
 
-// ─── All 9 Script Definitions ────────────────────────────────
-// These are the canonical script taxonomy.
-// Each match surfaces 6–8 of these based on context.
+// ─── All 11 Premier League & League Match Scripts ─────────────
+// 4 Families:
+// Family A — Control & Dominance (#00F2FE)
+// Family B — Drama & Momentum (#FF5E36)
+// Family C — Tactical Shifts & Incidents (#D946EF)
+// Family D — High Entertainment & Upsets (#FF2A55)
 
 export const ALL_SCRIPTS: ScriptOption[] = [
-  // FAMILY A — Tempo & Control
+  // ─── FAMILY A — Control & Dominance ────────────────────────
   {
-    id: 'A1',
-    label: 'Cagey & Controlled',
-    description: 'Both teams careful, organized, low risk. Minimal chances in the first half. Decided by the smallest margin — a set piece or a moment of individual quality.',
+    id: 'S1',
+    label: 'Routine/Dominant Win',
+    description: 'Better side controls possession, territory, and chances from early on; scoreline just confirms it. No real tension after ~60 mins. (e.g., 3-0, 4-1)',
     family: 'A',
-    familyLabel: 'Tempo & Control',
-    familyColor: '#4A90D9',
+    familyLabel: 'Control & Dominance',
+    familyColor: '#00F2FE',
+    dimensions: {
+      firstHalfTempo: 'active',
+      scoringTiming: 'early',
+      dramaLevel: 'low',
+      resolutionType: 'normal',
+    },
+  },
+  {
+    id: 'S7',
+    label: 'Cagey Stalemate',
+    description: 'Tactical chess match, low event count, few clear chances. 0-0 or a scrappy 1-0/1-1 where the story is what didn\'t happen rather than what did.',
+    family: 'A',
+    familyLabel: 'Control & Dominance',
+    familyColor: '#00F2FE',
     dimensions: {
       firstHalfTempo: 'quiet',
-      scoringTiming: 'mid',
-      dramaLevel: 'low',
-      resolutionType: 'normal',
-    },
-  },
-  {
-    id: 'A2',
-    label: 'Fast Start, Then Control',
-    description: 'An early goal before the 20th minute flips the dynamic. The leading side then manages the game — clinical, efficient, controlled.',
-    family: 'A',
-    familyLabel: 'Tempo & Control',
-    familyColor: '#4A90D9',
-    dimensions: {
-      firstHalfTempo: 'active',
-      scoringTiming: 'early',
-      dramaLevel: 'low',
-      resolutionType: 'normal',
-    },
-  },
-  {
-    id: 'A3',
-    label: 'One-Sided Dominance',
-    description: 'One team controls possession, creates chance after chance. Comfortable winning margin. The result feels inevitable by the 60th minute.',
-    family: 'A',
-    familyLabel: 'Tempo & Control',
-    familyColor: '#4A90D9',
-    dimensions: {
-      firstHalfTempo: 'active',
-      scoringTiming: 'early',
+      scoringTiming: 'deadlock',
       dramaLevel: 'low',
       resolutionType: 'normal',
     },
   },
 
-  // FAMILY B — Drama & Chaos
+  // ─── FAMILY B — Drama & Momentum ───────────────────────────
   {
-    id: 'B1',
-    label: 'Quiet Start, Explosive Finish',
-    description: 'A cagey first half gives way to a dramatic second. Two or more significant events — goals, cards, substitutions — reshape the match after the break.',
+    id: 'S3',
+    label: 'Late Drama',
+    description: 'Tense, tight game broken open in the final 10-15 minutes or stoppage time — a winner or a last-gasp equalizer. Arguably the most replayed narrative type in the PL.',
     family: 'B',
-    familyLabel: 'Drama & Chaos',
-    familyColor: '#E67E22',
+    familyLabel: 'Drama & Momentum',
+    familyColor: '#FF5E36',
     dimensions: {
       firstHalfTempo: 'quiet',
       scoringTiming: 'late',
@@ -65,12 +54,56 @@ export const ALL_SCRIPTS: ScriptOption[] = [
     },
   },
   {
-    id: 'B2',
-    label: 'Card-Heavy Chaos',
-    description: 'Physical, disjointed, VAR-influenced. Four or more bookings or a red card changes the shape of the game. Tension overrides football.',
+    id: 'S4',
+    label: 'The Comeback',
+    description: 'Team goes down (often by 2+) and claws back to win or draw. Reads as a resilience/mentality story.',
     family: 'B',
-    familyLabel: 'Drama & Chaos',
-    familyColor: '#E67E22',
+    familyLabel: 'Drama & Momentum',
+    familyColor: '#FF5E36',
+    dimensions: {
+      firstHalfTempo: 'active',
+      scoringTiming: 'mid',
+      dramaLevel: 'high',
+      resolutionType: 'normal',
+    },
+  },
+  {
+    id: 'S5',
+    label: 'The Collapse',
+    description: 'Mirror image of #4 — team builds a seemingly safe lead, then concedes control and points late. Reads as a bottle-job/capitulation story.',
+    family: 'B',
+    familyLabel: 'Drama & Momentum',
+    familyColor: '#FF5E36',
+    dimensions: {
+      firstHalfTempo: 'active',
+      scoringTiming: 'late',
+      dramaLevel: 'high',
+      resolutionType: 'normal',
+    },
+  },
+
+  // ─── FAMILY C — Tactical Shifts & Incidents ─────────────────
+  {
+    id: 'S2',
+    label: 'Smash and Grab / Backs-to-the-Wall',
+    description: 'One team dominates the run of play but the other nicks a goal (counter, set piece, moment of quality) and holds on. Classic "wrong side of the stats sheet" result.',
+    family: 'C',
+    familyLabel: 'Tactical Shifts & Incidents',
+    familyColor: '#D946EF',
+    dimensions: {
+      firstHalfTempo: 'quiet',
+      scoringTiming: 'mid',
+      dramaLevel: 'medium',
+      resolutionType: 'normal',
+    },
+  },
+  {
+    id: 'S8',
+    label: 'Red Card Turning Point',
+    description: 'An early or pre-halftime sending-off reshapes the whole match, usually tilting it decisively toward the side with the extra man.',
+    family: 'C',
+    familyLabel: 'Tactical Shifts & Incidents',
+    familyColor: '#D946EF',
     dimensions: {
       firstHalfTempo: null,
       scoringTiming: null,
@@ -79,28 +112,12 @@ export const ALL_SCRIPTS: ScriptOption[] = [
     },
   },
   {
-    id: 'B3',
-    label: 'Comeback Story',
-    description: 'A team goes behind but fights back to equalize or win. A momentum shift that makes the first half feel like a different match.',
-    family: 'B',
-    familyLabel: 'Drama & Chaos',
-    familyColor: '#E67E22',
-    dimensions: {
-      firstHalfTempo: 'active',
-      scoringTiming: 'mid',
-      dramaLevel: 'high',
-      resolutionType: 'normal',
-    },
-  },
-
-  // FAMILY C — Deadline Drama
-  {
-    id: 'C1',
-    label: 'Late Winner',
-    description: 'The match is decided after the 75th minute. A goal deep in normal time — possibly in stoppage time — ends it. Late drama, late heartbreak.',
+    id: 'S10',
+    label: 'Decided by One Moment',
+    description: 'An otherwise even, balanced game turned by a single incident — a wondergoal, a VAR/penalty controversy, a defensive howler. The narrative is "the game was even until X happened."',
     family: 'C',
-    familyLabel: 'Deadline Drama',
-    familyColor: '#9B59B6',
+    familyLabel: 'Tactical Shifts & Incidents',
+    familyColor: '#D946EF',
     dimensions: {
       firstHalfTempo: 'quiet',
       scoringTiming: 'late',
@@ -108,37 +125,61 @@ export const ALL_SCRIPTS: ScriptOption[] = [
       resolutionType: 'normal',
     },
   },
+
+  // ─── FAMILY D — High Entertainment & Upsets ────────────────
   {
-    id: 'C2',
-    label: 'Extra Time After Deadlock',
-    description: 'Ninety minutes of tension produces no winner. Both teams leave it all on the pitch in extra time. The match runs 120 minutes.',
-    family: 'C',
-    familyLabel: 'Deadline Drama',
-    familyColor: '#9B59B6',
+    id: 'S6',
+    label: 'End-to-End Shootout',
+    description: 'Both sides trade goals, momentum swings repeatedly, defense optional. High entertainment, often called "end-to-end" or "basketball score." (e.g., 3-3, 5-2, 4-3)',
+    family: 'D',
+    familyLabel: 'High Entertainment & Upsets',
+    familyColor: '#FF2A55',
+    dimensions: {
+      firstHalfTempo: 'active',
+      scoringTiming: 'mid',
+      dramaLevel: 'high',
+      resolutionType: 'normal',
+    },
+  },
+  {
+    id: 'S9',
+    label: 'The Upset / Giant-Killing',
+    description: 'Clear underdog beats or holds a heavy favorite. More common in cups and UCL group/league phase, but happens in the PL against "bigger" clubs too.',
+    family: 'D',
+    familyLabel: 'High Entertainment & Upsets',
+    familyColor: '#FF2A55',
     dimensions: {
       firstHalfTempo: 'quiet',
+      scoringTiming: 'mid',
+      dramaLevel: 'high',
+      resolutionType: 'normal',
+    },
+  },
+  {
+    id: 'S11',
+    label: 'Knockout Theatre (UCL-specific)',
+    description: 'Two-legged ties or knockout fixtures decided by extra time, penalties, or a late aggregate swing across 180 minutes rather than within one match.',
+    family: 'D',
+    familyLabel: 'High Entertainment & Upsets',
+    familyColor: '#FF2A55',
+    isKnockoutOnly: true,
+    dimensions: {
+      firstHalfTempo: 'active',
       scoringTiming: 'deadlock',
-      dramaLevel: 'medium',
+      dramaLevel: 'high',
       resolutionType: 'extra_time',
     },
   },
-
-  // FAMILY D — Shootout
-  {
-    id: 'D1',
-    label: 'Penalties After Deadlock',
-    description: 'Neither team can win in 120 minutes. It goes to a penalty shootout. The lottery of football. The highest drama the game can produce.',
-    family: 'D',
-    familyLabel: 'Shootout',
-    familyColor: '#C0392B',
-    dimensions: {
-      firstHalfTempo: 'quiet',
-      scoringTiming: 'deadlock',
-      dramaLevel: 'high',
-      resolutionType: 'penalties',
-    },
-  },
 ];
+
+// Helper: get available scripts for a match
+// Excludes Knockout Theatre unless match.isKnockout === true
+export function getScriptsForMatch(match?: Match): ScriptOption[] {
+  if (!match || !match.isKnockout) {
+    return ALL_SCRIPTS.filter((s) => !s.isKnockoutOnly);
+  }
+  return ALL_SCRIPTS;
+}
 
 // ─── Side Prediction Options (used across matches) ────────────
 
@@ -154,27 +195,27 @@ export const SIDE_PREDICTION_SETS: Record<string, SidePredictionOption[]> = {
     },
     {
       id: 'sp_normal_time',
-      question: 'Decided in normal time?',
+      question: 'Both teams score?',
       choices: [
         { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'Goes beyond' },
+        { value: 'no', label: 'No' },
       ],
     },
     {
       id: 'sp_both_score',
-      question: 'Both teams score?',
+      question: 'Clean sheet kept?',
       choices: [
         { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'One team blanked' },
+        { value: 'no', label: 'No' },
       ],
     },
     {
       id: 'sp_total_goals',
       question: 'Total goals in the match?',
       choices: [
-        { value: 'low', label: '0–1' },
-        { value: 'mid', label: '2–3' },
-        { value: 'high', label: '4+' },
+        { value: 'low', label: '0–1 Goals' },
+        { value: 'mid', label: '2–3 Goals' },
+        { value: 'high', label: '4+ Goals' },
       ],
     },
     {
@@ -190,77 +231,7 @@ export const SIDE_PREDICTION_SETS: Record<string, SidePredictionOption[]> = {
       question: 'A team comes from behind?',
       choices: [
         { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'No comeback' },
-      ],
-    },
-  ],
-  chaos: [
-    {
-      id: 'sp_red_card',
-      question: 'At least one red card?',
-      choices: [
-        { value: 'yes', label: 'Yes' },
         { value: 'no', label: 'No' },
-      ],
-    },
-    {
-      id: 'sp_total_goals',
-      question: 'Total goals in the match?',
-      choices: [
-        { value: 'low', label: '0–1' },
-        { value: 'mid', label: '2–3' },
-        { value: 'high', label: '4+' },
-      ],
-    },
-  ],
-  final: [
-    {
-      id: 'sp_penalties',
-      question: 'Does it go to penalties?',
-      choices: [
-        { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'No' },
-      ],
-    },
-    {
-      id: 'sp_goals_scored',
-      question: 'Both teams score?',
-      choices: [
-        { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'One team blanked' },
-      ],
-    },
-    {
-      id: 'sp_early_goal',
-      question: 'Goal before the 20th minute?',
-      choices: [
-        { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'No' },
-      ],
-    },
-    {
-      id: 'sp_total_goals',
-      question: 'Total goals in the match?',
-      choices: [
-        { value: 'low', label: '0–1' },
-        { value: 'mid', label: '2–3' },
-        { value: 'high', label: '4+' },
-      ],
-    },
-    {
-      id: 'sp_red_card',
-      question: 'At least one red card?',
-      choices: [
-        { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'No' },
-      ],
-    },
-    {
-      id: 'sp_comeback',
-      question: 'A team comes from behind?',
-      choices: [
-        { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'No comeback' },
       ],
     },
   ],
