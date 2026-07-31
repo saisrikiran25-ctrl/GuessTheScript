@@ -1,6 +1,7 @@
 import type { Match, PlayerScore, Player } from '@/types';
 import { getScriptById } from '@/data/scripts';
 import { loadPrediction } from '@/utils/storage';
+import { getTeamBadgeUrl } from '@/data/teams';
 
 // ─── Generate share card via Canvas API ──────────────────────
 // Returns a data URL (PNG) of an equitably spaced, viral VIP Oracle Match Pass
@@ -33,10 +34,13 @@ export async function generateShareCard(
   const isResolved = match.status === 'resolved';
   const familyColor = script?.familyColor ?? '#F5D061';
 
+  const badgeUrlA = getTeamBadgeUrl(match.teamA) || (match.teamA.flagCode ? `https://flagcdn.com/w160/${match.teamA.flagCode}.png` : null);
+  const badgeUrlB = getTeamBadgeUrl(match.teamB) || (match.teamB.flagCode ? `https://flagcdn.com/w160/${match.teamB.flagCode}.png` : null);
+
   let flagAImg: HTMLImageElement | null = null;
   let flagBImg: HTMLImageElement | null = null;
-  if (match.teamA.flagCode) flagAImg = await loadFlagImage(`https://flagcdn.com/w160/${match.teamA.flagCode}.png`);
-  if (match.teamB.flagCode) flagBImg = await loadFlagImage(`https://flagcdn.com/w160/${match.teamB.flagCode}.png`);
+  if (badgeUrlA) flagAImg = await loadFlagImage(badgeUrlA);
+  if (badgeUrlB) flagBImg = await loadFlagImage(badgeUrlB);
 
   // ─── 1. Deep Atmospheric Background ─────────────────────
   const bgGrad = ctx.createLinearGradient(0, 0, 0, H);

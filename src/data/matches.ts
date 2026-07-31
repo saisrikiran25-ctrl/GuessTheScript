@@ -1,5 +1,6 @@
 import type { Match } from '@/types';
 import { ALL_SCRIPTS, SIDE_PREDICTION_SETS } from './scripts';
+import { getTeamBadgeUrl } from './teams';
 
 // ─── Match Data — Premier League 2026/27 · Gameweek 1 ───────
 // All kickoff times stored as UTC. BST = UTC+1.
@@ -17,6 +18,7 @@ export const MATCHES: Match[] = [
       shortCode: 'ARS',
       flagEmoji: '🔴',
       primaryColor: '#EF0107',
+      badgeUrl: getTeamBadgeUrl('ars'),
     },
     teamB: {
       id: 'cov',
@@ -24,6 +26,7 @@ export const MATCHES: Match[] = [
       shortCode: 'COV',
       flagEmoji: '⚽',
       primaryColor: '#005FA4',
+      badgeUrl: getTeamBadgeUrl('cov'),
     },
     kickoff: '2026-08-21T19:00:00Z',
     status: 'upcoming',
@@ -44,6 +47,7 @@ export const MATCHES: Match[] = [
       shortCode: 'HUL',
       flagEmoji: '🐯',
       primaryColor: '#F5A12D',
+      badgeUrl: getTeamBadgeUrl('hul'),
     },
     teamB: {
       id: 'mun',
@@ -51,6 +55,7 @@ export const MATCHES: Match[] = [
       shortCode: 'MUN',
       flagEmoji: '🔴',
       primaryColor: '#DA020E',
+      badgeUrl: getTeamBadgeUrl('mun'),
     },
     kickoff: '2026-08-22T11:30:00Z',
     status: 'upcoming',
@@ -71,6 +76,7 @@ export const MATCHES: Match[] = [
       shortCode: 'EVE',
       flagEmoji: '🔵',
       primaryColor: '#003399',
+      badgeUrl: getTeamBadgeUrl('eve'),
     },
     teamB: {
       id: 'cry',
@@ -78,6 +84,7 @@ export const MATCHES: Match[] = [
       shortCode: 'CRY',
       flagEmoji: '🦅',
       primaryColor: '#1B458F',
+      badgeUrl: getTeamBadgeUrl('cry'),
     },
     kickoff: '2026-08-22T14:00:00Z',
     status: 'upcoming',
@@ -97,6 +104,7 @@ export const MATCHES: Match[] = [
       shortCode: 'IPS',
       flagEmoji: '🔵',
       primaryColor: '#3A64A3',
+      badgeUrl: getTeamBadgeUrl('ips'),
     },
     teamB: {
       id: 'sun',
@@ -104,6 +112,7 @@ export const MATCHES: Match[] = [
       shortCode: 'SUN',
       flagEmoji: '🔴',
       primaryColor: '#EB172B',
+      badgeUrl: getTeamBadgeUrl('sun'),
     },
     kickoff: '2026-08-22T14:00:00Z',
     status: 'upcoming',
@@ -123,6 +132,7 @@ export const MATCHES: Match[] = [
       shortCode: 'NFO',
       flagEmoji: '🌳',
       primaryColor: '#DD0000',
+      badgeUrl: getTeamBadgeUrl('nfo'),
     },
     teamB: {
       id: 'lee',
@@ -130,6 +140,7 @@ export const MATCHES: Match[] = [
       shortCode: 'LEE',
       flagEmoji: '⚪',
       primaryColor: '#FFCD00',
+      badgeUrl: getTeamBadgeUrl('lee'),
     },
     kickoff: '2026-08-22T14:00:00Z',
     status: 'upcoming',
@@ -150,6 +161,7 @@ export const MATCHES: Match[] = [
       shortCode: 'BRE',
       flagEmoji: '⚪',
       primaryColor: '#E30613',
+      badgeUrl: getTeamBadgeUrl('bre'),
     },
     teamB: {
       id: 'spu',
@@ -157,6 +169,7 @@ export const MATCHES: Match[] = [
       shortCode: 'SPU',
       flagEmoji: '🐓',
       primaryColor: '#132257',
+      badgeUrl: getTeamBadgeUrl('spu'),
     },
     kickoff: '2026-08-22T16:30:00Z',
     status: 'upcoming',
@@ -177,6 +190,7 @@ export const MATCHES: Match[] = [
       shortCode: 'BHA',
       flagEmoji: '🔵',
       primaryColor: '#0057B8',
+      badgeUrl: getTeamBadgeUrl('bha'),
     },
     teamB: {
       id: 'avl',
@@ -184,6 +198,7 @@ export const MATCHES: Match[] = [
       shortCode: 'AVL',
       flagEmoji: '🦁',
       primaryColor: '#670E36',
+      badgeUrl: getTeamBadgeUrl('avl'),
     },
     kickoff: '2026-08-23T13:00:00Z',
     status: 'upcoming',
@@ -203,6 +218,7 @@ export const MATCHES: Match[] = [
       shortCode: 'MCI',
       flagEmoji: '🔵',
       primaryColor: '#6CABDD',
+      badgeUrl: getTeamBadgeUrl('mci'),
     },
     teamB: {
       id: 'bou',
@@ -210,6 +226,7 @@ export const MATCHES: Match[] = [
       shortCode: 'BOU',
       flagEmoji: '🍒',
       primaryColor: '#DA291C',
+      badgeUrl: getTeamBadgeUrl('bou'),
     },
     kickoff: '2026-08-23T13:00:00Z',
     status: 'upcoming',
@@ -230,6 +247,7 @@ export const MATCHES: Match[] = [
       shortCode: 'NEW',
       flagEmoji: '⚫',
       primaryColor: '#241F20',
+      badgeUrl: getTeamBadgeUrl('new'),
     },
     teamB: {
       id: 'liv',
@@ -237,6 +255,7 @@ export const MATCHES: Match[] = [
       shortCode: 'LIV',
       flagEmoji: '🔴',
       primaryColor: '#C8102E',
+      badgeUrl: getTeamBadgeUrl('liv'),
     },
     kickoff: '2026-08-23T15:30:00Z',
     status: 'upcoming',
@@ -257,6 +276,7 @@ export const MATCHES: Match[] = [
       shortCode: 'FUL',
       flagEmoji: '⚫',
       primaryColor: '#CC0000',
+      badgeUrl: getTeamBadgeUrl('ful'),
     },
     teamB: {
       id: 'che',
@@ -264,6 +284,7 @@ export const MATCHES: Match[] = [
       shortCode: 'CHE',
       flagEmoji: '🔵',
       primaryColor: '#034694',
+      badgeUrl: getTeamBadgeUrl('che'),
     },
     kickoff: '2026-08-24T19:00:00Z',
     status: 'upcoming',

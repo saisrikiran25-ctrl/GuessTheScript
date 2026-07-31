@@ -17,6 +17,7 @@ export interface Team {
   flagEmoji: string;
   primaryColor: string;
   flagCode?: string;
+  badgeUrl?: string;
 }
 
 // ─── Script Option ───────────────────────────────────────────
