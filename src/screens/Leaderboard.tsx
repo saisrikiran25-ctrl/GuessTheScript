@@ -11,6 +11,7 @@ import { Analytics } from '@/utils/analytics';
 import { syncDownloadMembers } from '@/utils/sync';
 import { MAX_TOURNAMENT_SCORE } from '@/engine/scoring';
 import { soundFx } from '@/utils/audio';
+import { getPlayerTitle } from '@/utils/titles';
 import type { LeaderboardEntry } from '@/types';
 
 type ViewMode = 'overall' | 'gameweek';
@@ -434,9 +435,12 @@ const LeaderboardRow: React.FC<{ entry: LeaderboardEntry; animate: number }> = (
           )}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--color-accent)', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '1px 5px', borderRadius: '3px', background: 'rgba(245, 208, 97, 0.08)' }}>
+            {getPlayerTitle(entry.tournamentScore)}
+          </span>
           {entry.streak >= 1 && (
             <span style={{ fontSize: '10px', color: 'var(--color-text-muted)', fontWeight: 600 }}>
-              {entry.streak}{entry.streak >= 2 ? '🔥' : '⚡️'} streak
+              · {entry.streak}{entry.streak >= 2 ? '🔥' : '⚡️'} streak
             </span>
           )}
           {topBadge && (

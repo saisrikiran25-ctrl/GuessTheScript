@@ -10,6 +10,7 @@ import { loadPrediction, loadScore } from '@/utils/storage';
 import { getScriptById } from '@/data/scripts';
 import { getBadgeById, BADGE_DEFINITIONS } from '@/data/badges';
 import { getInitials } from '@/utils/format';
+import { getPlayerTitle } from '@/utils/titles';
 import { clearAll } from '@/utils/storage';
 import { soundFx } from '@/utils/audio';
 
@@ -99,7 +100,7 @@ export const Profile: React.FC = () => {
                 marginTop: '6px',
               }}
             >
-              CERTIFIED FOOTBALL ORACLE
+              {getPlayerTitle(player.tournamentScore)}
             </span>
           </div>
         </div>
