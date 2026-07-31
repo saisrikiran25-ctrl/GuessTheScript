@@ -2,9 +2,11 @@ import type { Match, PlayerScore, Player } from '@/types';
 import { getScriptById } from '@/data/scripts';
 import { loadPrediction } from '@/utils/storage';
 import { getTeamBadgeUrl } from '@/data/teams';
+import { getPlayerTitle } from '@/utils/titles';
 
 // ─── Generate share card via Canvas API ──────────────────────
 // Returns a data URL (PNG) of an equitably spaced, viral VIP Oracle Match Pass
+// Dynamically styled for the specific match, teams, sublabel, narrative, and user title.
 
 const loadFlagImage = (url: string) => new Promise<HTMLImageElement | null>((resolve) => {
   const img = new Image();
@@ -105,11 +107,13 @@ export async function generateShareCard(
   ctx.strokeRect(p + 10, p + 10, frameW - 20, frameH - 20);
 
   // ─── SECTION 1: TOP BRAND HEADER (Y: 40 - 110) ───────────
+  const matchLeagueHeader = match.sublabel ? match.sublabel.toUpperCase() : 'PREMIER LEAGUE 2026/27';
+
   ctx.fillStyle = '#F5D061';
   ctx.font = '800 12px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '4px';
   ctx.textAlign = 'center';
-  ctx.fillText('OFFICIAL MATCH PASS · PREMIER LEAGUE 2026/27', W / 2, p + 36);
+  ctx.fillText(`OFFICIAL MATCH PASS · ${matchLeagueHeader}`, W / 2, p + 36);
 
   const titleGrad = ctx.createLinearGradient(W / 2 - 200, 0, W / 2 + 200, 0);
   titleGrad.addColorStop(0, '#FFFFFF');
@@ -320,8 +324,8 @@ export async function generateShareCard(
     ctx.fillText('SCRIPT VAULT LOCKED', W / 2, emblemY + 155);
   }
 
-  // ─── SECTION 5: PLAYER HANDLE & TAGLINE (Y: 975 - 1065) ───
-  const playerY = 975;
+  // ─── SECTION 5: PLAYER HANDLE & DYNAMIC TITLE (Y: 965 - 1055) ───
+  const playerY = 965;
 
   ctx.fillStyle = '#FFFFFF';
   ctx.font = '800 26px "Space Grotesk", sans-serif';
@@ -329,16 +333,32 @@ export async function generateShareCard(
   ctx.textAlign = 'center';
   ctx.fillText(player.name.toUpperCase(), W / 2, playerY);
 
+  // Dynamic User Title Pill Tag
+  const userTitle = getPlayerTitle(player.tournamentScore);
+  ctx.font = '800 11px "Space Grotesk", sans-serif';
+  const titleWidth = ctx.measureText(userTitle).width + 24;
+  ctx.fillStyle = 'rgba(245, 208, 97, 0.15)';
+  ctx.strokeStyle = '#F5D061';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.roundRect(W / 2 - titleWidth / 2, playerY + 10, titleWidth, 22, 11);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#F5D061';
+  ctx.letterSpacing = '1px';
+  ctx.fillText(userTitle, W / 2, playerY + 25);
+
   const challengerCall = isResolved
     ? (score.totalMatchScore >= 160
       ? 'I MASTERED THE SCRIPT. CAN YOU DO BETTER?'
       : 'FOOTBALL WRITES DRAMA. PLAY THE ORACLE.')
-    : 'I CALLED THE MATCH NARRATIVE. CAN YOU READ THE GAME?';
+    : `I CALLED THE ${match.teamA.shortCode} vs ${match.teamB.shortCode} NARRATIVE. CAN YOU READ FOOTBALL?`;
 
-  ctx.fillStyle = '#F5D061';
-  ctx.font = '800 13px "Space Grotesk", sans-serif';
-  ctx.letterSpacing = '2px';
-  ctx.fillText(challengerCall, W / 2, playerY + 30);
+  ctx.fillStyle = '#9DA3BC';
+  ctx.font = '800 12px "Space Grotesk", sans-serif';
+  ctx.letterSpacing = '1.5px';
+  ctx.fillText(challengerCall, W / 2, playerY + 54);
 
   // ─── SECTION 6: VIRAL CTA FOOTER BANNER (Y: 1125 - 1205) ──
   const footerY = 1125;
@@ -354,12 +374,14 @@ export async function generateShareCard(
   ctx.fill();
   ctx.stroke();
 
+  const ctaHeader = `PREDICT THE ${match.teamA.name.toUpperCase()} VS ${match.teamB.name.toUpperCase()} NARRATIVE`;
+
   // CTA Text & URL
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '800 15px "Space Grotesk", sans-serif';
+  ctx.font = '800 14px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '0.5px';
   ctx.textAlign = 'center';
-  ctx.fillText('PREDICT THE PREMIER LEAGUE MATCH NARRATIVE', W / 2, footerY + 32);
+  ctx.fillText(ctaHeader, W / 2, footerY + 32);
 
   ctx.fillStyle = '#F5D061';
   ctx.font = '800 14px "Space Grotesk", sans-serif';
@@ -396,16 +418,25 @@ function drawCircularFlag(
 }
 
 // ─── Trigger native share or download ────────────────────────
-export async function shareCard(dataUrl: string, fileName: string = 'guess-the-script-pass.png'): Promise<'shared' | 'downloaded'> {
+export async function shareCard(
+  dataUrl: string,
+  fileName: string = 'guess-the-script-pass.png',
+  matchInfo?: { teamA: string; teamB: string; label?: string }
+): Promise<'shared' | 'downloaded'> {
   const res = await fetch(dataUrl);
   const blob = await res.blob();
   const file = new File([blob], fileName, { type: 'image/png' });
 
+  const shareTitle = matchInfo ? `Guess the Script — ${matchInfo.teamA} vs ${matchInfo.teamB}` : 'Guess the Script — Premier League 2026/27';
+  const shareText = matchInfo
+    ? `I called the ${matchInfo.teamA} vs ${matchInfo.teamB} match narrative! Think you can read football better?`
+    : 'I called the match narrative before kickoff. Think you can read football better?';
+
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     await navigator.share({
       files: [file],
-      title: 'Guess the Script — Premier League 2026/27',
-      text: 'I called the match narrative before kickoff. Think you can read football better?',
+      title: shareTitle,
+      text: shareText,
     });
     return 'shared';
   }
@@ -413,6 +444,8 @@ export async function shareCard(dataUrl: string, fileName: string = 'guess-the-s
   const link = document.createElement('a');
   link.href = dataUrl;
   link.download = fileName;
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
   return 'downloaded';
 }

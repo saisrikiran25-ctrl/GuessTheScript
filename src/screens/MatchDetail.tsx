@@ -47,7 +47,7 @@ export const MatchDetail: React.FC = () => {
         breakdown: [],
       };
       const dataUrl = await generateShareCard(match, mockScore, player);
-      await shareCard(dataUrl, `gts-prediction-${match.id}.png`);
+      await shareCard(dataUrl, `gts-prediction-${match.id}.png`, { teamA: match.teamA.name, teamB: match.teamB.name });
       Analytics.shareCompleted(match.id, 'prediction', 'shared');
       showToast({ type: 'success', message: 'Prediction share card generated!' });
     } catch (err) {

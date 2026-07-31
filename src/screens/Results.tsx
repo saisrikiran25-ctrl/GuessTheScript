@@ -127,7 +127,7 @@ export const Results: React.FC = () => {
     try {
       Analytics.shareInitiated(match.id, 'portrait');
       const dataUrl = await generateShareCard(match, playerScore, player);
-      const method = await shareCard(dataUrl);
+      const method = await shareCard(dataUrl, `gts-result-${match.id}.png`, { teamA: match.teamA.name, teamB: match.teamB.name });
       Analytics.shareCompleted(match.id, 'portrait', method);
     } catch (err) {
       setShareError(true);
