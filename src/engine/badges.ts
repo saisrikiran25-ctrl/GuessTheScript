@@ -1,6 +1,6 @@
 import type { PlayerScore, PlayerPrediction, Player } from '@/types';
 
-// ─── Badge Award Engine ───────────────────────────────────────
+// ─── Premier League Badge Award Engine ───────────────────────
 // Returns array of badge IDs earned based on prediction outcome.
 
 export function awardBadges(
@@ -20,14 +20,19 @@ export function awardBadges(
     earned.push('first_script');
   }
 
-  // Called the Chaos — predicted B2 and it resolved
-  if (prediction.scriptId === 'B2' && resolvedScriptId === 'B2') {
-    earned.push('called_the_chaos');
+  // Clean Sheet Master — predicted A1 or A2 and it resolved
+  if ((prediction.scriptId === 'A1' || prediction.scriptId === 'A2') && (resolvedScriptId === 'A1' || resolvedScriptId === 'A2')) {
+    earned.push('clean_sheet_master');
   }
 
-  // Penalty Prophet — predicted D1 and it resolved
-  if (prediction.scriptId === 'D1' && resolvedScriptId === 'D1') {
-    earned.push('penalty_prophet');
+  // Goal Fest Oracle — predicted B1 (End-to-End Shootout) and it resolved
+  if (prediction.scriptId === 'B1' && resolvedScriptId === 'B1') {
+    earned.push('goal_fest_oracle');
+  }
+
+  // Called the Chaos — predicted B2 (Fiery Clash) and it resolved
+  if (prediction.scriptId === 'B2' && resolvedScriptId === 'B2') {
+    earned.push('called_the_chaos');
   }
 
   // Perfect Half — first-half tempo and scoring timing both correct
@@ -48,11 +53,6 @@ export function awardBadges(
     earned.push('late_drama');
   }
 
-  // Extra Time Prophet — predicted C2 and it resolved
-  if (prediction.scriptId === 'C2' && resolvedScriptId === 'C2') {
-    earned.push('extra_time_prophet');
-  }
-
   // Comeback Believer — predicted B3 and it resolved
   if (prediction.scriptId === 'B3' && resolvedScriptId === 'B3') {
     earned.push('comeback_believer');
@@ -68,7 +68,7 @@ export function awardBadges(
   return [...new Set(earned)].filter((b) => !alreadyHas.has(b));
 }
 
-// ─── Check multi-match badges ─────────────────────────────────
+// ─── Check multi-match season badges ──────────────────────────
 // Called after each match resolution with full player history.
 
 export function awardTournamentBadges(player: Player): string[] {
@@ -77,20 +77,20 @@ export function awardTournamentBadges(player: Player): string[] {
 
   const scores = Object.values(player.matchScores);
 
-  // Hat-Trick of Reads — scored ≥80 in 3 or more played matches (225/match max)
-  if (scores.length >= 3 && scores.every((s) => s >= 80)) {
+  // Hat-Trick of Reads — scored ≥160 in 3 or more played matches
+  const highScores = scores.filter((s) => s >= 160);
+  if (highScores.length >= 3) {
     earned.push('hat_trick');
   }
 
-  // Script Master — perfect script (100+) in ≥2 matches
-  // (Tracked via perfect_script badge count in match history — simplified here)
+  // Script Master — perfect script (100+) in ≥3 matches
   const perfectScriptCount = player.badges.filter((b) => b === 'perfect_script').length;
-  if (perfectScriptCount >= 2) {
+  if (perfectScriptCount >= 3) {
     earned.push('script_master');
   }
 
-  // The Oracle — perfect script in all 4
-  if (perfectScriptCount >= 3) {
+  // The Oracle — perfect script in 5 or more matches
+  if (perfectScriptCount >= 5) {
     earned.push('the_oracle');
   }
 
