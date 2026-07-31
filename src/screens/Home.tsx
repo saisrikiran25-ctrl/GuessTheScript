@@ -123,19 +123,19 @@ export const Home: React.FC = () => {
               gap: '6px',
               padding: '5px 12px',
               borderRadius: 'var(--radius-full)',
-              background: 'rgba(16, 185, 129, 0.12)',
-              border: '1px solid rgba(16, 185, 129, 0.35)',
+              background: 'rgba(245, 208, 97, 0.1)',
+              border: '1px solid var(--color-border-accent)',
               fontSize: '10px',
               fontWeight: 800,
               letterSpacing: '0.16em',
               textTransform: 'uppercase',
-              color: 'var(--color-pitch-emerald)',
+              color: 'var(--color-accent)',
               marginBottom: 'var(--space-3)',
-              boxShadow: '0 0 16px rgba(16, 185, 129, 0.15)',
+              boxShadow: '0 0 16px rgba(245, 208, 97, 0.12)',
             }}
           >
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 8px #10B981', animation: 'pulse 1.5s infinite' }} />
-            🏟️ STADIUM FLOODLIGHTS ON · PREMIER LEAGUE 2026/27 · GAMEWEEK 1
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-accent)', boxShadow: '0 0 6px var(--color-accent)' }} />
+            Premier League 2026/27 · Gameweek 1
           </div>
 
           <h1 className="type-h1 font-display" style={{ color: 'var(--color-text-primary)', fontSize: '2.2rem' }}>
