@@ -15,8 +15,14 @@ const NAV_ITEMS: BottomNavItem[] = [
     icon: (active) => (
       <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10"/>
-        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-        <path d="M2 12h20"/>
+        <path d="M12 2a10 10 0 0 0-3 19.5"/>
+        <path d="M12 2a10 10 0 0 1 3 19.5"/>
+        <polygon points="12 7 14.5 9 13.5 12 10.5 12 9.5 9 12 7" fill={active ? '#030408' : 'none'}/>
+        <line x1="12" y1="2" x2="12" y2="7"/>
+        <line x1="14.5" y1="9" x2="20" y2="7.5"/>
+        <line x1="13.5" y1="12" x2="18" y2="16.5"/>
+        <line x1="10.5" y1="12" x2="6" y2="16.5"/>
+        <line x1="9.5" y1="9" x2="4" y2="7.5"/>
       </svg>
     ),
   },

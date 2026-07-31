@@ -41,9 +41,10 @@ export const MatchCard: React.FC<MatchCardProps> = ({
       aria-label={`${match.label}: ${match.teamA.name} vs ${match.teamB.name}`}
       className="ticket-stub"
       style={{
-        borderColor: match.status === 'resolved' ? 'rgba(245, 208, 97, 0.4)' : 'var(--color-border)',
+        background: 'linear-gradient(135deg, rgba(7, 24, 17, 0.85) 0%, rgba(14, 18, 30, 0.9) 100%)',
+        borderColor: match.status === 'resolved' ? 'rgba(245, 208, 97, 0.5)' : 'rgba(16, 185, 129, 0.25)',
         padding: 'var(--space-5)',
-        boxShadow: match.status === 'resolved' ? '0 0 20px rgba(245, 208, 97, 0.15)' : '0 8px 30px rgba(0, 0, 0, 0.5)',
+        boxShadow: match.status === 'resolved' ? '0 0 20px rgba(245, 208, 97, 0.15)' : '0 8px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(16, 185, 129, 0.1)',
       }}
     >
       {/* Top Header: Label + Barcode + Status */}

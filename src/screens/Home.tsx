@@ -121,20 +121,21 @@ export const Home: React.FC = () => {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '4px 10px',
+              padding: '5px 12px',
               borderRadius: 'var(--radius-full)',
-              background: 'rgba(245, 208, 97, 0.1)',
-              border: '1px solid var(--color-border-accent)',
+              background: 'rgba(16, 185, 129, 0.12)',
+              border: '1px solid rgba(16, 185, 129, 0.35)',
               fontSize: '10px',
               fontWeight: 800,
               letterSpacing: '0.16em',
               textTransform: 'uppercase',
-              color: 'var(--color-accent)',
+              color: 'var(--color-pitch-emerald)',
               marginBottom: 'var(--space-3)',
+              boxShadow: '0 0 16px rgba(16, 185, 129, 0.15)',
             }}
           >
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-accent)' }} />
-            Premier League 2026/27 · Gameweek 1
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 8px #10B981', animation: 'pulse 1.5s infinite' }} />
+            🏟️ STADIUM FLOODLIGHTS ON · PREMIER LEAGUE 2026/27 · GAMEWEEK 1
           </div>
 
           <h1 className="type-h1 font-display" style={{ color: 'var(--color-text-primary)', fontSize: '2.2rem' }}>
@@ -151,14 +152,14 @@ export const Home: React.FC = () => {
         {player && (
           <div
             style={{
-              background: 'linear-gradient(135deg, rgba(22, 25, 41, 0.9) 0%, rgba(14, 16, 26, 0.9) 100%)',
-              border: '1px solid var(--color-border-accent)',
+              background: 'linear-gradient(135deg, rgba(8, 28, 19, 0.95) 0%, rgba(14, 18, 30, 0.95) 100%)',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
               borderRadius: 'var(--radius-lg)',
               padding: 'var(--space-5)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
+              boxShadow: '0 12px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(16, 185, 129, 0.15)',
             }}
           >
             <div>
