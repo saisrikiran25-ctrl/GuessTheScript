@@ -23,14 +23,14 @@ export const Badge: React.FC<BadgeProps> = ({
   };
 
   const rarityColors = {
-    common: { bg: 'rgba(157, 163, 188, 0.1)', border: 'rgba(157, 163, 188, 0.25)', text: '#9DA3BC', shadow: 'none' },
+    common: { bg: 'rgba(203, 213, 225, 0.1)', border: 'rgba(203, 213, 225, 0.25)', text: '#CBD5E1', shadow: 'none' },
     rare: { bg: 'rgba(0, 242, 254, 0.12)', border: 'rgba(0, 242, 254, 0.4)', text: '#00F2FE', shadow: '0 0 12px rgba(0, 242, 254, 0.2)' },
     legendary: { bg: 'rgba(245, 208, 97, 0.15)', border: 'rgba(245, 208, 97, 0.5)', text: '#F5D061', shadow: '0 0 16px rgba(245, 208, 97, 0.25)' },
   };
 
   const s = sizeMap[size];
   const colors = locked
-    ? { bg: 'rgba(92, 98, 122, 0.08)', border: 'rgba(92, 98, 122, 0.2)', text: '#5C627A', shadow: 'none' }
+    ? { bg: 'rgba(148, 163, 184, 0.08)', border: 'rgba(148, 163, 184, 0.2)', text: '#94A3B8', shadow: 'none' }
     : rarityColors[badge.rarity];
 
   return (
