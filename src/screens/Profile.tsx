@@ -141,7 +141,7 @@ export const Profile: React.FC = () => {
             <SoundToggleButton />
           </div>
 
-          {/* Match history */}
+          {/* Predictions Timeline League Selectors */}
           <section>
             <h2
               className="font-display"
@@ -158,59 +158,76 @@ export const Profile: React.FC = () => {
             </h2>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-              {matchHistory.map(({ match, prediction, score, selectedScript, resolvedScript }) => (
-                <div
-                  key={match.id}
-                  onClick={() => {
-                    soundFx.playClick();
-                    navigate(`/match/${match.id}`);
-                  }}
-                  className="ticket-stub"
-                  style={{
-                    padding: 'var(--space-4)',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div style={{ flex: 1 }}>
-                      <div className="font-display" style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: '4px' }}>
-                        {match.label}
-                      </div>
-                      <div className="font-display" style={{ fontSize: '14px', fontWeight: 800, color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <Flag team={match.teamA} size="18px" />
-                        <span>{match.teamA.shortCode}</span>
-                        <span style={{ color: 'var(--color-text-muted)', fontSize: '11px', margin: '0 2px' }}>vs</span>
-                        <Flag team={match.teamB} size="18px" />
-                        <span>{match.teamB.shortCode}</span>
-                      </div>
-                      {prediction && (
-                        <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-                          Drafted: <span style={{ color: 'var(--color-text-secondary)' }}>{selectedScript?.label ?? '—'}</span>
-                        </div>
-                      )}
-                      {match.status === 'resolved' && resolvedScript && (
-                        <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
-                          Actual: <span style={{ color: 'var(--color-accent)' }}>{resolvedScript.label}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      {score ? (
-                        <span className="font-display" style={{ fontSize: '20px', fontWeight: 800, color: score.totalMatchScore >= 160 ? 'var(--color-success)' : 'var(--color-accent)' }}>
-                          {score.totalMatchScore} <span style={{ fontSize: '10px', color: 'var(--color-text-muted)' }}>PTS</span>
-                        </span>
-                      ) : match.status === 'upcoming' ? (
-                        <span className="font-display" style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: prediction ? 'var(--color-success)' : 'var(--color-text-muted)' }}>
-                          {prediction ? '✓ Locked' : 'Draft →'}
-                        </span>
-                      ) : (
-                        <span style={{ fontSize: '10px', color: 'var(--color-text-muted)' }}>—</span>
-                      )}
-                    </div>
+              {/* Premier League Card Option */}
+              <div
+                onClick={() => {
+                  soundFx.playClick();
+                  navigate('/timeline/premier-league');
+                }}
+                className="ticket-stub"
+                style={{
+                  padding: 'var(--space-5)',
+                  cursor: 'pointer',
+                  background: 'linear-gradient(135deg, rgba(245, 208, 97, 0.12) 0%, rgba(22, 25, 41, 0.9) 100%)',
+                  border: '1px solid var(--color-border-accent)',
+                  boxShadow: '0 0 20px rgba(245, 208, 97, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div>
+                  <div
+                    className="font-display"
+                    style={{
+                      fontSize: '10px',
+                      fontWeight: 800,
+                      letterSpacing: '0.14em',
+                      textTransform: 'uppercase',
+                      color: 'var(--color-accent)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    ENGLISH TOP FLIGHT · 2026/27
+                  </div>
+                  <div
+                    className="font-display"
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: 800,
+                      color: 'var(--color-text-primary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <span>🦁 Premier League</span>
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+                    38 Gameweeks · 380 Matches · Select Gameweek Timeline
                   </div>
                 </div>
-              ))}
+
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                  <button
+                    className="font-display"
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: 'var(--radius-full)',
+                      background: 'rgba(245, 208, 97, 0.2)',
+                      border: '1px solid var(--color-border-accent)',
+                      color: 'var(--color-accent)',
+                      fontSize: '11px',
+                      fontWeight: 800,
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Select GW →
+                  </button>
+                </div>
+              </div>
             </div>
           </section>
 

@@ -7,6 +7,7 @@ import { PredictionComposer } from '@/screens/PredictionComposer';
 import { Results } from '@/screens/Results';
 import { Leaderboard } from '@/screens/Leaderboard';
 import { Profile } from '@/screens/Profile';
+import { LeagueTimeline } from '@/screens/LeagueTimeline';
 import { Group } from '@/screens/Group';
 import { Admin } from '@/screens/Admin';
 import { usePlayer } from '@/store/playerStore';
@@ -97,6 +98,18 @@ export const Router: React.FC = () => {
         path="/profile"
         element={
           !state.hasOnboarded ? <Navigate to="/welcome" replace /> : <Profile />
+        }
+      />
+      <Route
+        path="/timeline"
+        element={
+          !state.hasOnboarded ? <Navigate to="/welcome" replace /> : <Navigate to="/timeline/premier-league" replace />
+        }
+      />
+      <Route
+        path="/timeline/:leagueId"
+        element={
+          !state.hasOnboarded ? <Navigate to="/welcome" replace /> : <LeagueTimeline />
         }
       />
       <Route
