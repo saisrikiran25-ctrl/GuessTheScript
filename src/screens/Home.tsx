@@ -143,7 +143,7 @@ export const Home: React.FC = () => {
             has a <span className="gold-gradient-text">script.</span>
           </h1>
 
-          <p style={{ color: 'var(--color-text-secondary)', marginTop: 'var(--space-3)', fontSize: '13px', lineHeight: 1.6 }}>
+          <p style={{ color: '#E2E8F0', marginTop: 'var(--space-3)', fontSize: '13.5px', fontWeight: 500, lineHeight: 1.6 }}>
             Pick the match narrative before kickoff. Outsmart football reality & claim your place on the Leaderboard.
           </p>
         </div>
@@ -163,23 +163,23 @@ export const Home: React.FC = () => {
             }}
           >
             <div>
-              <div style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '4px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#E2E8F0', marginBottom: '4px' }}>
               YOUR SCORE
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
                 <span className="font-display gold-gradient-text" style={{ fontSize: '32px', fontWeight: 800, lineHeight: 1 }}>
                   {tournamentScore}
                 </span>
-                <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 600 }}>pts</span>
+                <span style={{ fontSize: '12px', color: '#CBD5E1', fontWeight: 700 }}>pts</span>
               </div>
             </div>
 
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '4px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#E2E8F0', marginBottom: '4px' }}>
               YOUR STREAK
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'flex-end' }}>
-                <span className="font-display" style={{ fontSize: '28px', fontWeight: 800, color: streak >= 2 ? 'var(--color-success)' : 'var(--color-text-primary)', lineHeight: 1 }}>
+                <span className="font-display" style={{ fontSize: '28px', fontWeight: 800, color: streak >= 2 ? 'var(--color-success)' : '#FFFFFF', lineHeight: 1 }}>
                   {streak}
                 </span>
                 <span style={{ fontSize: '18px' }}>{streak >= 2 ? '🔥' : '⚡️'}</span>
@@ -198,7 +198,7 @@ export const Home: React.FC = () => {
                 fontWeight: 800,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: 'var(--color-text-muted)',
+                color: '#F8FAFC',
               }}
             >
               Gameweek 1 Fixtures
@@ -207,10 +207,10 @@ export const Home: React.FC = () => {
             <div
               style={{
                 display: 'flex',
-                background: 'rgba(0, 0, 0, 0.4)',
+                background: 'rgba(255, 255, 255, 0.06)',
                 padding: '3px',
                 borderRadius: 'var(--radius-full)',
-                border: '1px solid var(--color-border)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
               }}
             >
               {(['all', 'fri', 'sat', 'sun', 'mon'] as const).map((tab) => (
@@ -225,9 +225,9 @@ export const Home: React.FC = () => {
                     borderRadius: 'var(--radius-full)',
                     fontSize: '10px',
                     fontFamily: 'var(--font-display)',
-                    fontWeight: stageFilter === tab ? 800 : 600,
-                    color: stageFilter === tab ? 'var(--color-accent)' : 'var(--color-text-muted)',
-                    background: stageFilter === tab ? 'rgba(245, 208, 97, 0.15)' : 'transparent',
+                    fontWeight: stageFilter === tab ? 800 : 700,
+                    color: stageFilter === tab ? 'var(--color-accent)' : '#E2E8F0',
+                    background: stageFilter === tab ? 'rgba(245, 208, 97, 0.2)' : 'transparent',
                     border: `1px solid ${stageFilter === tab ? 'var(--color-border-accent)' : 'transparent'}`,
                     transition: 'all 0.2s ease',
                     textTransform: 'uppercase',

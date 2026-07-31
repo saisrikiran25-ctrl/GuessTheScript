@@ -62,7 +62,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           >
             {match.label}
           </span>
-          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+          <div style={{ fontSize: '11px', color: '#E2E8F0', fontWeight: 600, marginTop: '2px' }}>
             {formatKickoffDate(match.kickoff)} · {match.venue} ({match.city})
           </div>
         </div>
@@ -81,14 +81,14 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           <span
             className="font-display"
             style={{
-              color: 'var(--color-text-muted)',
+              color: '#F1F5F9',
               fontWeight: 800,
               fontSize: '14px',
               letterSpacing: '0.14em',
               padding: '4px 10px',
               borderRadius: 'var(--radius-full)',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid var(--color-border)',
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
             }}
           >
             VS
@@ -106,18 +106,18 @@ export const MatchCard: React.FC<MatchCardProps> = ({
         {/* Countdown or score */}
         {match.status === 'resolved' && playerScore !== undefined ? (
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-            <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>Score:</span>
+            <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: '#CBD5E1' }}>Score:</span>
             <span className="font-display" style={{ fontSize: '20px', fontWeight: 800, color: playerScore >= 100 ? 'var(--color-success)' : 'var(--color-accent)' }}>
-              {playerScore} <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>pts</span>
+              {playerScore} <span style={{ fontSize: '11px', color: '#CBD5E1' }}>pts</span>
             </span>
           </div>
         ) : match.status === 'upcoming' && isUpcoming ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>Kickoff:</span>
+            <span style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#E2E8F0' }}>Kickoff:</span>
             <CountdownTimer kickoffISO={match.kickoff} compact />
           </div>
         ) : (
-          <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+          <span style={{ fontSize: '12px', color: '#CBD5E1' }}>
             {match.status === 'live' ? '⏱ Underway' : 'Match Concluded'}
           </span>
         )}
@@ -156,11 +156,11 @@ export const MatchCard: React.FC<MatchCardProps> = ({
               fontWeight: 800,
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
-              color: 'var(--color-text-primary)',
+              color: '#FFFFFF',
               padding: '4px 12px',
               borderRadius: 'var(--radius-full)',
-              background: 'rgba(255, 255, 255, 0.08)',
-              border: '1px solid var(--color-border)',
+              background: 'rgba(255, 255, 255, 0.12)',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
             }}>
               Draft Script →
             </span>
@@ -180,7 +180,7 @@ const TeamDisplay: React.FC<{ team: Match['teamA']; isFinalTBD: boolean; align: 
       <div className="font-display" style={{ fontSize: '17px', fontWeight: 800, color: 'var(--color-text-primary)', lineHeight: 1 }}>
         {isFinalTBD ? '???' : team.shortCode}
       </div>
-      <div style={{ fontSize: '11px', color: 'var(--color-text-secondary)', marginTop: '3px' }}>
+      <div style={{ fontSize: '12px', color: '#CBD5E1', fontWeight: 600, marginTop: '3px' }}>
         {isFinalTBD ? 'TBD' : team.name}
       </div>
     </div>
@@ -189,10 +189,10 @@ const TeamDisplay: React.FC<{ team: Match['teamA']; isFinalTBD: boolean; align: 
 
 const StatusBadge: React.FC<{ status: Match['status'] }> = ({ status }) => {
   const styleMap: Record<string, { bg: string; color: string; border: string }> = {
-    upcoming: { bg: 'rgba(255, 255, 255, 0.06)', color: 'var(--color-text-secondary)', border: 'var(--color-border)' },
+    upcoming: { bg: 'rgba(255, 255, 255, 0.1)', color: '#F1F5F9', border: 'rgba(255, 255, 255, 0.25)' },
     live: { bg: 'rgba(239, 68, 68, 0.15)', color: 'var(--color-error)', border: 'rgba(239, 68, 68, 0.4)' },
     resolved: { bg: 'rgba(245, 208, 97, 0.12)', color: 'var(--color-accent)', border: 'var(--color-border-accent)' },
-    void: { bg: 'rgba(92, 98, 122, 0.08)', color: 'var(--color-text-muted)', border: 'transparent' },
+    void: { bg: 'rgba(148, 163, 184, 0.12)', color: '#CBD5E1', border: 'transparent' },
   };
 
   const s = styleMap[status];
