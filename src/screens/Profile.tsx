@@ -39,8 +39,9 @@ export const Profile: React.FC = () => {
     return { match, prediction, score, selectedScript, resolvedScript };
   });
 
+  const [badgeFilter, setBadgeFilter] = React.useState<'all' | 'unlocked' | 'locked'>('all');
+
   const earnedBadges = player.badges;
-  const lockedBadges = BADGE_DEFINITIONS.filter((b) => !earnedBadges.includes(b.id));
 
   return (
     <div className="screen">
@@ -108,25 +109,25 @@ export const Profile: React.FC = () => {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr 1fr',
+              gridTemplateColumns: 'repeat(3, 1fr)',
               gap: 'var(--space-3)',
             }}
           >
             <StatBox label="Points" value={player.tournamentScore} color="var(--color-accent)" />
-            <StatBox label="Streak" value={player.streak} color={player.streak >= 2 ? 'var(--color-success)' : 'var(--color-text-primary)'} suffix={player.streak >= 2 ? '🔥' : ''} />
-            <StatBox label="Badges" value={earnedBadges.length} color="var(--color-text-primary)" />
+            <StatBox label="Streak" value={player.streak} color="var(--color-accent)" suffix="🔥" />
+            <StatBox label="Badges" value={earnedBadges.length} color="var(--color-accent)" />
           </div>
 
-          {/* Sound Audio Control Box */}
+          {/* Sound Toggle */}
           <div
             style={{
-              background: 'var(--color-surface-card)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-lg)',
-              padding: 'var(--space-4) var(--space-5)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
+              padding: 'var(--space-4)',
+              background: 'var(--color-surface-card)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-lg)',
             }}
           >
             <div>
@@ -231,40 +232,226 @@ export const Profile: React.FC = () => {
             </div>
           </section>
 
-          {/* Badge shelf */}
+          {/* Badge Vault */}
           <section>
-            <h2
-              className="font-display"
-              style={{
-                fontSize: '11px',
-                fontWeight: 800,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                color: 'var(--color-text-muted)',
-                marginBottom: 'var(--space-3)',
-              }}
-            >
-              Badge Vault
-            </h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
+              <h2
+                className="font-display"
+                style={{
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: 'var(--color-text-muted)',
+                }}
+              >
+                Badge Vault ({earnedBadges.length} / {BADGE_DEFINITIONS.length})
+              </h2>
 
-            {earnedBadges.length === 0 ? (
-              <div style={{ background: 'var(--color-surface-card)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-6)', textAlign: 'center' }}>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '13px' }}>
-                  Earn badges by accurately predicting knockout narratives.
-                </p>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
-                {earnedBadges.map((badgeId) => {
-                  const badge = getBadgeById(badgeId);
-                  if (!badge) return null;
-                  return <Badge key={badgeId} badge={badge} size="sm" />;
-                })}
-                {lockedBadges.slice(0, 4).map((badge) => (
-                  <Badge key={badge.id} badge={badge} size="sm" locked />
+              {/* Filter Pills */}
+              <div style={{ display: 'flex', gap: '4px' }}>
+                {(['all', 'unlocked', 'locked'] as const).map((filterMode) => (
+                  <button
+                    key={filterMode}
+                    onClick={() => {
+                      soundFx.playClick();
+                      setBadgeFilter(filterMode);
+                    }}
+                    className="font-display"
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: 'var(--radius-full)',
+                      border: `1px solid ${badgeFilter === filterMode ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                      background: badgeFilter === filterMode ? 'rgba(245, 208, 97, 0.15)' : 'var(--color-surface-card)',
+                      color: badgeFilter === filterMode ? 'var(--color-accent)' : 'var(--color-text-muted)',
+                      fontSize: '10px',
+                      fontWeight: 800,
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {filterMode}
+                  </button>
                 ))}
               </div>
-            )}
+            </div>
+
+            {/* Progress bar */}
+            <div
+              style={{
+                height: '6px',
+                width: '100%',
+                background: 'var(--color-surface-card)',
+                borderRadius: 'var(--radius-full)',
+                overflow: 'hidden',
+                marginBottom: 'var(--space-4)',
+                border: '1px solid var(--color-border)',
+              }}
+            >
+              <div
+                style={{
+                  height: '100%',
+                  width: `${(earnedBadges.length / BADGE_DEFINITIONS.length) * 100}%`,
+                  background: 'linear-gradient(90deg, #F5D061 0%, #10B981 100%)',
+                  borderRadius: 'var(--radius-full)',
+                  transition: 'width 0.4s ease',
+                  boxShadow: '0 0 10px rgba(245, 208, 97, 0.5)',
+                }}
+              />
+            </div>
+
+            {/* Badge Grid List */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 'var(--space-3)' }}>
+              {BADGE_DEFINITIONS.filter((badge) => {
+                const isUnlocked = earnedBadges.includes(badge.id);
+                if (badgeFilter === 'unlocked') return isUnlocked;
+                if (badgeFilter === 'locked') return !isUnlocked;
+                return true;
+              }).map((badge) => {
+                const isUnlocked = earnedBadges.includes(badge.id);
+
+                const rarityColorMap = {
+                  common: { text: '#9DA3BC', border: 'rgba(157, 163, 188, 0.3)', glow: 'rgba(157, 163, 188, 0.1)' },
+                  rare: { text: '#00F2FE', border: 'rgba(0, 242, 254, 0.4)', glow: 'rgba(0, 242, 254, 0.15)' },
+                  legendary: { text: '#F5D061', border: 'rgba(245, 208, 97, 0.5)', glow: 'rgba(245, 208, 97, 0.2)' },
+                };
+                const rarityStyle = rarityColorMap[badge.rarity];
+
+                return (
+                  <div
+                    key={badge.id}
+                    className="ticket-stub"
+                    style={{
+                      padding: 'var(--space-4)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 'var(--space-4)',
+                      background: isUnlocked
+                        ? `linear-gradient(135deg, ${rarityStyle.glow} 0%, rgba(18, 20, 34, 0.9) 100%)`
+                        : 'rgba(14, 16, 26, 0.5)',
+                      border: `1.5px solid ${isUnlocked ? rarityStyle.border : 'var(--color-border)'}`,
+                      borderRadius: 'var(--radius-lg)',
+                      boxShadow: isUnlocked ? `0 0 16px ${rarityStyle.glow}` : 'none',
+                      opacity: isUnlocked ? 1 : 0.6,
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    {/* Badge Icon */}
+                    <div
+                      style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: '50%',
+                        background: isUnlocked
+                          ? 'rgba(255, 255, 255, 0.08)'
+                          : 'rgba(0, 0, 0, 0.3)',
+                        border: `1.5px solid ${isUnlocked ? rarityStyle.text : 'rgba(255, 255, 255, 0.1)'}`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '22px',
+                        flexShrink: 0,
+                        position: 'relative',
+                        boxShadow: isUnlocked ? `0 0 12px ${rarityStyle.glow}` : 'none',
+                      }}
+                    >
+                      {badge.icon}
+                      {!isUnlocked && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            bottom: -2,
+                            right: -2,
+                            fontSize: '11px',
+                            background: '#0F111E',
+                            borderRadius: '50%',
+                            padding: '2px',
+                            border: '1px solid var(--color-border)',
+                          }}
+                        >
+                          🔒
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Badge Details */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
+                        <span
+                          className="font-display"
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: 800,
+                            color: isUnlocked ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
+                          }}
+                        >
+                          {badge.label}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: '9px',
+                            fontWeight: 800,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase',
+                            padding: '1px 6px',
+                            borderRadius: '4px',
+                            color: rarityStyle.text,
+                            background: `${rarityStyle.text}18`,
+                            border: `1px solid ${rarityStyle.text}33`,
+                          }}
+                        >
+                          {badge.rarity}
+                        </span>
+                      </div>
+                      <p style={{ fontSize: '12px', color: isUnlocked ? 'var(--color-text-secondary)' : 'var(--color-text-muted)', lineHeight: 1.4, margin: 0 }}>
+                        {badge.description}
+                      </p>
+                    </div>
+
+                    {/* Unlocked / Locked Status Tag */}
+                    <div style={{ flexShrink: 0, textAlign: 'right' }}>
+                      {isUnlocked ? (
+                        <span
+                          className="font-display"
+                          style={{
+                            fontSize: '10px',
+                            fontWeight: 800,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase',
+                            color: 'var(--color-success)',
+                            background: 'rgba(16, 185, 129, 0.12)',
+                            border: '1px solid rgba(16, 185, 129, 0.3)',
+                            padding: '4px 10px',
+                            borderRadius: 'var(--radius-full)',
+                            boxShadow: '0 0 10px rgba(16, 185, 129, 0.2)',
+                          }}
+                        >
+                          ✓ UNLOCKED
+                        </span>
+                      ) : (
+                        <span
+                          className="font-display"
+                          style={{
+                            fontSize: '10px',
+                            fontWeight: 700,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase',
+                            color: 'var(--color-text-muted)',
+                            background: 'rgba(255, 255, 255, 0.04)',
+                            border: '1px solid var(--color-border)',
+                            padding: '4px 10px',
+                            borderRadius: 'var(--radius-full)',
+                          }}
+                        >
+                          🔒 LOCKED
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </section>
 
           {/* Dev: Reset */}

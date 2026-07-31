@@ -46,7 +46,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   {
     id: 'the_oracle',
     label: 'The Oracle',
-    description: 'Perfect Script on all 4 World Cup matches. Rarest achievement.',
+    description: 'Perfect Script on 4 matches in a row. Rarest achievement.',
     icon: '🔮',
     rarity: 'legendary',
   },
