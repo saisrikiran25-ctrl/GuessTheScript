@@ -14,7 +14,7 @@ import { getMatchOrder } from '@/data/matches';
 import { soundFx } from '@/utils/audio';
 import type { LeaderboardEntry } from '@/types';
 
-type LeaderboardTab = 'tournament' | 'sf1' | 'sf2' | 'tp' | 'final';
+type LeaderboardTab = 'tournament' | 'gw1_m1' | 'gw1_m2' | 'gw1_m3' | 'gw1_m4' | 'gw1_m5' | 'gw1_m6' | 'gw1_m7' | 'gw1_m8' | 'gw1_m9' | 'gw1_m10';
 
 export const Leaderboard: React.FC = () => {
   const { state: playerState } = usePlayer();
@@ -100,10 +100,16 @@ export const Leaderboard: React.FC = () => {
   }, [player, matchState.matches]);
 
   const MATCH_LABEL_MAP: Record<string, string> = {
-    sf1: 'Semi 1',
-    sf2: 'Semi 2',
-    tp: '3rd Place',
-    final: 'Final',
+    gw1_m1: 'ARS-COV',
+    gw1_m2: 'HUL-MUN',
+    gw1_m3: 'EVE-CRY',
+    gw1_m4: 'IPS-SUN',
+    gw1_m5: 'NFO-LEE',
+    gw1_m6: 'BRE-SPU',
+    gw1_m7: 'BHA-AVL',
+    gw1_m8: 'MCI-BOU',
+    gw1_m9: 'NEW-LIV',
+    gw1_m10: 'FUL-CHE',
   };
   const TABS: { id: LeaderboardTab; label: string }[] = [
     { id: 'tournament', label: 'Overall' },
@@ -208,7 +214,7 @@ export const Leaderboard: React.FC = () => {
 
         <div style={{ padding: 'var(--space-6)', textAlign: 'center' }}>
           <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
-            Rankings reflect official World Cup oracle accuracy.
+          Rankings reflect official Premier League oracle accuracy.
             <br />
             Maximum {MAX_TOURNAMENT_SCORE} pts available.
           </p>

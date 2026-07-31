@@ -8,7 +8,7 @@ import { soundFx } from '@/utils/audio';
 const SLIDES = [
   {
     id: 1,
-    eyebrow: 'FIFA World Cup 2026',
+    eyebrow: 'Premier League 2026/27',
     headline: 'Every match\nhas a script.',
     sub: 'Tactile openers. High press chaos. Penalty shootouts. Football writes legendary stories.',
     icon: '📜',

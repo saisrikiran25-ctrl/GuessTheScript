@@ -182,7 +182,7 @@ export const AppWordmark: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'm
             marginTop: '3px',
           }}
         >
-          FIFA World Cup 2026
+          Premier League 2026/27
         </span>
       </div>
     </div>

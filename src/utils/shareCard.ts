@@ -105,7 +105,7 @@ export async function generateShareCard(
   ctx.font = '800 12px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '4px';
   ctx.textAlign = 'center';
-  ctx.fillText('OFFICIAL MATCH PASS · FIFA WORLD CUP 2026', W / 2, p + 36);
+  ctx.fillText('OFFICIAL MATCH PASS · PREMIER LEAGUE 2026/27', W / 2, p + 36);
 
   const titleGrad = ctx.createLinearGradient(W / 2 - 200, 0, W / 2 + 200, 0);
   titleGrad.addColorStop(0, '#FFFFFF');
@@ -355,7 +355,7 @@ export async function generateShareCard(
   ctx.font = '800 15px "Space Grotesk", sans-serif';
   ctx.letterSpacing = '0.5px';
   ctx.textAlign = 'center';
-  ctx.fillText('PREDICT THE WORLD CUP KNOCKOUT NARRATIVE', W / 2, footerY + 32);
+  ctx.fillText('PREDICT THE PREMIER LEAGUE MATCH NARRATIVE', W / 2, footerY + 32);
 
   ctx.fillStyle = '#F5D061';
   ctx.font = '800 14px "Space Grotesk", sans-serif';
@@ -400,7 +400,7 @@ export async function shareCard(dataUrl: string, fileName: string = 'guess-the-s
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     await navigator.share({
       files: [file],
-      title: 'Guess the Script — World Cup Oracle Pass',
+      title: 'Guess the Script — Premier League 2026/27',
       text: 'I called the match narrative before kickoff. Think you can read football better?',
     });
     return 'shared';

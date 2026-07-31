@@ -16,7 +16,7 @@ export const Home: React.FC = () => {
   const navigate = useNavigate();
   const player = playerState.player;
 
-  const [stageFilter, setStageFilter] = useState<'all' | 'semifinal' | 'final'>('all');
+  const [stageFilter, setStageFilter] = useState<'all' | 'fri' | 'sat' | 'sun' | 'mon'>('all');
 
   useEffect(() => {
     Analytics.appOpen(player?.isGuest ?? true);
@@ -36,8 +36,15 @@ export const Home: React.FC = () => {
   const tournamentScore = player?.tournamentScore ?? 0;
 
   const filteredMatches = matchState.matches.filter((m) => {
-    if (stageFilter === 'semifinal') return m.id.startsWith('sf');
-    if (stageFilter === 'final') return m.id === 'final';
+    if (stageFilter === 'all') return true;
+    const kickoff = new Date(m.kickoff);
+    // Convert UTC to BST (UTC+1) for day comparison
+    const bstDate = new Date(kickoff.getTime() + 60 * 60 * 1000);
+    const day = bstDate.getUTCDay(); // 0=Sun, 1=Mon, 2=Tue, 5=Fri, 6=Sat
+    if (stageFilter === 'fri') return day === 5;
+    if (stageFilter === 'sat') return day === 6;
+    if (stageFilter === 'sun') return day === 0;
+    if (stageFilter === 'mon') return day === 1;
     return true;
   });
 
@@ -128,7 +135,7 @@ export const Home: React.FC = () => {
             }}
           >
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-accent)' }} />
-            Knockout Oracle · MetLife & Rose Bowl
+            Premier League 2026/27 · Gameweek 1
           </div>
 
           <h1 className="type-h1 font-display" style={{ color: 'var(--color-text-primary)', fontSize: '2.2rem' }}>
@@ -194,7 +201,7 @@ export const Home: React.FC = () => {
                 color: 'var(--color-text-muted)',
               }}
             >
-              The Fixture Pass
+              Gameweek 1 Fixtures
             </h2>
 
             <div
@@ -206,7 +213,7 @@ export const Home: React.FC = () => {
                 border: '1px solid var(--color-border)',
               }}
             >
-              {(['all', 'semifinal', 'final'] as const).map((tab) => (
+              {(['all', 'fri', 'sat', 'sun', 'mon'] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => {
@@ -214,7 +221,7 @@ export const Home: React.FC = () => {
                     setStageFilter(tab);
                   }}
                   style={{
-                    padding: '4px 12px',
+                    padding: '4px 10px',
                     borderRadius: 'var(--radius-full)',
                     fontSize: '10px',
                     fontFamily: 'var(--font-display)',
@@ -227,7 +234,7 @@ export const Home: React.FC = () => {
                     letterSpacing: '0.06em',
                   }}
                 >
-                  {tab === 'all' ? 'All' : tab === 'semifinal' ? 'Semis' : 'Final'}
+                  {tab === 'all' ? 'All' : tab === 'fri' ? 'Fri' : tab === 'sat' ? 'Sat' : tab === 'sun' ? 'Sun' : 'Mon'}
                 </button>
               ))}
             </div>
