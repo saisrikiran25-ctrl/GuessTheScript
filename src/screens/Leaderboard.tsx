@@ -128,7 +128,7 @@ export const Leaderboard: React.FC = () => {
 
   return (
     <div className="screen">
-      <ScreenHeader title="Hall of Oracles" />
+      <ScreenHeader title="Leaderboard" />
 
       {/* Tab bar */}
       <div

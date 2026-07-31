@@ -143,7 +143,7 @@ export const Home: React.FC = () => {
           </h1>
 
           <p style={{ color: 'var(--color-text-secondary)', marginTop: 'var(--space-3)', fontSize: '13px', lineHeight: 1.6 }}>
-            Pick the match narrative before kickoff. Outsmart football reality & claim your place in the Hall of Oracles.
+            Pick the match narrative before kickoff. Outsmart football reality & claim your place on the Leaderboard.
           </p>
         </div>
 

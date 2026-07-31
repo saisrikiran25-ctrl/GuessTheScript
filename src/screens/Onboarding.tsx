@@ -22,7 +22,7 @@ const SLIDES = [
   },
   {
     id: 3,
-    eyebrow: 'The Hall of Oracles',
+    eyebrow: 'The Leaderboard',
     headline: 'See if football\nagreed.',
     sub: 'Compete in private friend leagues, earn legendary badges, and prove your football instinct.',
     icon: '👑',
