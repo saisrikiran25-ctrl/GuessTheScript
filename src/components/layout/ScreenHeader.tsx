@@ -178,7 +178,7 @@ export const AppWordmark: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'm
             fontWeight: 700,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color: '#10B981',
+            color: '#FFFFFF',
             marginTop: '3px',
           }}
         >
