@@ -70,8 +70,8 @@ export const ScriptStoryPreview: React.FC<ScriptStoryPreviewProps> = ({
             OFFICIAL MATCH SCRIPT DRAFT
           </span>
         </div>
-        <span style={{ fontSize: '10px', color: 'var(--color-text-muted)', fontFamily: 'var(--font-display)' }}>
-          PRESS PASS CONFIDENTIAL
+        <span style={{ fontSize: '10px', color: '#CBD5E1', fontWeight: 700, fontFamily: 'var(--font-display)', letterSpacing: '0.1em' }}>
+          YOUR NARRATIVE
         </span>
       </div>
 
