@@ -43,6 +43,8 @@ export interface SidePredictionOption {
   id: string;
   question: string;
   choices: { value: string; label: string }[];
+  isTextInput?: boolean;
+  placeholder?: string;
 }
 
 // ─── Match ───────────────────────────────────────────────────
@@ -66,6 +68,7 @@ export interface Match {
 export interface MatchResolution {
   resolvedScriptId: string;
   resolvedAt: string; // ISO8601
+  scorers?: string[]; // Array of full names of players who scored in the match
   details: {
     firstHalfTempo: FirstHalfTempo;
     scoringTiming: ScoringTiming;
@@ -171,6 +174,7 @@ export interface AdminMatchInput {
   extraTime: boolean;
   penalties: boolean;
   narrativeSummary: string;
+  scorersInput?: string;
   sideResults: { optionId: string; correct: string }[];
   resolvedScriptId: string;
 }

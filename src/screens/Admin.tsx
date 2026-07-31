@@ -47,6 +47,7 @@ export const Admin: React.FC = () => {
           extraTime: res.details.resolutionType === 'extra_time' || res.details.resolutionType === 'penalties',
           penalties: res.details.resolutionType === 'penalties',
           narrativeSummary: res.narrativeSummary,
+          scorersInput: (res.scorers || []).join(', '),
           sideResults: res.sideResults,
           resolvedScriptId: res.resolvedScriptId,
         });
@@ -61,6 +62,7 @@ export const Admin: React.FC = () => {
           extraTime: false,
           penalties: false,
           narrativeSummary: '',
+          scorersInput: '',
           sideResults: [],
           resolvedScriptId: '',
         });
@@ -273,6 +275,16 @@ export const Admin: React.FC = () => {
                 value={goalTimesInput}
                 onChange={(e) => setGoalTimesInput(e.target.value)}
                 placeholder="67, 78, 89"
+                style={inputStyle}
+              />
+            </AdminField>
+
+            <AdminField label="Match Goalscorers (Comma-separated full names, e.g. Bukayo Saka, Gabriel Martinelli)">
+              <input
+                type="text"
+                value={form.scorersInput || ''}
+                onChange={(e) => setForm({ ...form, scorersInput: e.target.value })}
+                placeholder="Bukayo Saka, Gabriel Martinelli, Viktor Gyökeres"
                 style={inputStyle}
               />
             </AdminField>

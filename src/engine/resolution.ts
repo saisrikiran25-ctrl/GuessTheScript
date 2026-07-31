@@ -72,9 +72,14 @@ export function resolveMatch(
   const dramaLevel = script ? script.dimensions.dramaLevel : computedDramaLevel;
   const resolutionType = script ? script.dimensions.resolutionType : computedResolutionType;
 
+  const scorers = input.scorersInput
+    ? input.scorersInput.split(',').map((s) => s.trim()).filter(Boolean)
+    : [];
+
   return {
     resolvedScriptId: resolved,
     resolvedAt: new Date().toISOString(),
+    scorers,
     details: {
       firstHalfTempo,
       scoringTiming,

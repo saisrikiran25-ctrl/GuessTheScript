@@ -164,6 +164,49 @@ export function scorePrediction(
   const sideBreakdown: ScoreBreakdownItem[] = [];
 
   for (const sel of prediction.sideSelections) {
+    if (sel.optionId === 'sp_goalscorer') {
+      const rawAns = sel.answer.trim();
+      const hasMultipleNames =
+        rawAns.includes(',') ||
+        rawAns.includes('/') ||
+        /\b(or|and|&)\b/i.test(rawAns) ||
+        rawAns.split(/\s+/).filter(Boolean).length > 3;
+
+      if (hasMultipleNames) {
+        sideBreakdown.push({
+          label: 'Goalscorer Prediction',
+          points: 0,
+          earned: false,
+          detail: `Invalid: Multiple names detected. Must write a single full name.`,
+        });
+      } else {
+        const adminScorers = resolution.scorers || [];
+        const isMatch = adminScorers.some(
+          (scorer) => scorer.trim().toLowerCase() === rawAns.toLowerCase()
+        );
+
+        if (isMatch) {
+          sidePredictionScore += SIDE_PRED_SCORE;
+          sideBreakdown.push({
+            label: 'Goalscorer Prediction',
+            points: SIDE_PRED_SCORE,
+            earned: true,
+            detail: `Correct: "${rawAns}" scored in the match.`,
+          });
+        } else {
+          sideBreakdown.push({
+            label: 'Goalscorer Prediction',
+            points: 0,
+            earned: false,
+            detail: adminScorers.length > 0
+              ? `Incorrect: "${rawAns}" did not score. (Actual: ${adminScorers.join(', ')})`
+              : `Incorrect: No goalscorers in this match.`,
+          });
+        }
+      }
+      continue;
+    }
+
     const result = resolution.sideResults.find((r) => r.optionId === sel.optionId);
     if (result) {
       const correct = result.correct === sel.answer;

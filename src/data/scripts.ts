@@ -194,12 +194,11 @@ export const SIDE_PREDICTION_SETS: Record<string, SidePredictionOption[]> = {
       ],
     },
     {
-      id: 'sp_normal_time',
-      question: 'Both teams score?',
-      choices: [
-        { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'No' },
-      ],
+      id: 'sp_goalscorer',
+      question: 'Write the name of the scorer or one of the scorers:',
+      isTextInput: true,
+      placeholder: 'e.g. Bukayo Saka',
+      choices: [],
     },
     {
       id: 'sp_both_score',
