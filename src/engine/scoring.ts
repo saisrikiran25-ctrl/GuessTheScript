@@ -17,6 +17,11 @@ const DIMENSION_BONUS_PER_DIM = 10;
 const SIDE_PRED_SCORE = 10;  // 6 questions × 10 pts = 60 pts max
 const PERFECT_BONUS = 25;
 
+// ─── Season Config ────────────────────────────────────────────
+// Change this constant each new season to trigger automatic data reset for all users.
+export const SEASON_ID = 'pl_2026_27';
+export const TOTAL_SEASON_MATCHES = 380;
+
 // ─── Score a single prediction against a resolved match ───────
 export function scorePrediction(
   prediction: PlayerPrediction,
@@ -267,7 +272,7 @@ export function getClosenessMessage(
   };
 }
 
-// 100 (exact) + 40 (4 dims × 10) + 60 (6 sides × 10) + 25 (perfect bonus) = 225
+// Per match: 100 (exact) + 40 (4 dims × 10) + 60 (6 sides × 10) + 25 (perfect bonus) = 225
 export const MAX_SCORE_PER_MATCH = 225;
-// 225 × 4 matches (sf1, sf2, tp, final) = 900
-export const MAX_TOURNAMENT_SCORE = 900;
+// Full Premier League season: 225 × 380 matches = 85,500
+export const MAX_TOURNAMENT_SCORE = MAX_SCORE_PER_MATCH * TOTAL_SEASON_MATCHES; // 85,500

@@ -7,7 +7,6 @@ import { useMatches } from '@/store/matchStore';
 import { usePlayer } from '@/store/playerStore';
 import { loadPrediction, loadScore } from '@/utils/storage';
 import { Analytics } from '@/utils/analytics';
-import { MAX_TOURNAMENT_SCORE } from '@/engine/scoring';
 import { soundFx } from '@/utils/audio';
 
 export const Home: React.FC = () => {
@@ -170,7 +169,7 @@ export const Home: React.FC = () => {
                 <span className="font-display gold-gradient-text" style={{ fontSize: '32px', fontWeight: 800, lineHeight: 1 }}>
                   {tournamentScore}
                 </span>
-                <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 600 }}>/ {MAX_TOURNAMENT_SCORE} pts</span>
+                <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: 600 }}>pts</span>
               </div>
             </div>
 

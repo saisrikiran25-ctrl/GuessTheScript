@@ -8,6 +8,7 @@ const KEYS = {
   scores: `${PREFIX}scores`,
   onboarded: `${PREFIX}onboarded`,
   matches: `${PREFIX}matches`,
+  seasonId: `${PREFIX}season_id`,
 } as const;
 
 // ─── Player ───────────────────────────────────────────────────
@@ -113,4 +114,36 @@ export function loadMatches(): Match[] | null {
 // ─── Clear all (dev/test use) ─────────────────────────────────
 export function clearAll(): void {
   Object.values(KEYS).forEach((k) => localStorage.removeItem(k));
+}
+
+// ─── Season ID tracking ───────────────────────────────────────
+// Used to auto-reset user prediction/score data when a new season starts.
+export function getStoredSeasonId(): string | null {
+  return localStorage.getItem(KEYS.seasonId);
+}
+
+export function setStoredSeasonId(id: string): void {
+  localStorage.setItem(KEYS.seasonId, id);
+}
+
+// Wipes all per-season data (predictions, scores, match cache, player stats)
+// but preserves player identity (name, id, onboarded flag).
+export function resetSeasonData(): void {
+  // Preserve identity
+  const player = loadPlayer();
+  // Clear all season-specific data
+  localStorage.removeItem(KEYS.predictions);
+  localStorage.removeItem(KEYS.scores);
+  localStorage.removeItem(KEYS.matches);
+  // Reset player stats but keep identity fields
+  if (player) {
+    const resetPlayer = {
+      ...player,
+      streak: 0,
+      tournamentScore: 0,
+      badges: [],
+      matchScores: {},
+    };
+    localStorage.setItem(KEYS.player, JSON.stringify(resetPlayer));
+  }
 }

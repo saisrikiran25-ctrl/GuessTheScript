@@ -5,8 +5,12 @@ import {
   loadPlayer,
   isOnboarded,
   setOnboarded,
+  getStoredSeasonId,
+  setStoredSeasonId,
+  resetSeasonData,
 } from '@/utils/storage';
 import { generatePlayerId } from '@/utils/format';
+import { SEASON_ID } from '@/engine/scoring';
 
 // ─── State ────────────────────────────────────────────────────
 interface PlayerState {
@@ -20,6 +24,7 @@ type PlayerAction =
   | { type: 'INIT'; player: Player | null; hasOnboarded: boolean }
   | { type: 'SET_PLAYER'; player: Player }
   | { type: 'UPDATE_SCORE'; matchId: string; score: number; badges: string[] }
+  | { type: 'RESET_SEASON'; player: Player }
   | { type: 'COMPLETE_ONBOARDING' };
 
 function reducer(state: PlayerState, action: PlayerAction): PlayerState {
@@ -30,6 +35,9 @@ function reducer(state: PlayerState, action: PlayerAction): PlayerState {
     case 'SET_PLAYER':
       return { ...state, player: action.player };
 
+    case 'RESET_SEASON':
+      return { ...state, player: action.player };
+
     case 'UPDATE_SCORE': {
       if (!state.player) return state;
       const newMatchScores = {
@@ -38,8 +46,7 @@ function reducer(state: PlayerState, action: PlayerAction): PlayerState {
       };
       const newTournamentScore = Object.values(newMatchScores).reduce((a, b) => a + b, 0);
       const scores = Object.values(newMatchScores);
-      // Streak: scored ≥80 pts in a match (roughly equivalent to family match + some bonuses)
-      // Previously ≥40 (out of 195 max), now ≥80 (out of 225 max) — same relative bar
+      // Streak: count of matches where player scored ≥80 pts (family match or better)
       const streak = scores.filter((s) => s >= 80).length;
       const newBadges = [...new Set([...state.player.badges, ...action.badges])];
       const updated: Player = {
@@ -86,8 +93,14 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     hasOnboarded: false,
   });
 
-  // Initialize from storage
+  // Initialize from storage — with automatic season reset detection
   useEffect(() => {
+    const storedSeason = getStoredSeasonId();
+    if (storedSeason !== SEASON_ID) {
+      // New season detected: wipe all stale prediction/score data, keep identity
+      resetSeasonData();
+      setStoredSeasonId(SEASON_ID);
+    }
     const player = loadPlayer();
     const hasOnboarded = isOnboarded();
     dispatch({ type: 'INIT', player, hasOnboarded });
