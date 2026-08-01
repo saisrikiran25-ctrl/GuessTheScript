@@ -201,33 +201,66 @@ export const AppWordmark: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'm
             opacity="0.35"
           />
 
-          {/* Football Pentagon at Crest Center */}
-          <polygon
-            points="20,11 24.5,14 23,19 17,19 15.5,14"
-            fill="url(#gts-gold-metal)"
-            opacity="0.25"
-          />
-          <polygon
-            points="20,11 24.5,14 23,19 17,19 15.5,14"
-            fill="none"
-            stroke="url(#gts-gold-metal)"
-            strokeWidth="1"
-            opacity="0.8"
-          />
-          {/* Seam lines expanding from pentagon to shield border */}
-          <line x1="20" y1="11" x2="20" y2="7.5" stroke="url(#gts-gold-metal)" strokeWidth="0.8" opacity="0.5" />
-          <line x1="24.5" y1="14" x2="30" y2="12.5" stroke="url(#gts-gold-metal)" strokeWidth="0.8" opacity="0.5" />
-          <line x1="23" y1="19" x2="27.5" y2="23" stroke="url(#gts-gold-metal)" strokeWidth="0.8" opacity="0.5" />
-          <line x1="17" y1="19" x2="12.5" y2="23" stroke="url(#gts-gold-metal)" strokeWidth="0.8" opacity="0.5" />
-          <line x1="15.5" y1="14" x2="10" y2="12.5" stroke="url(#gts-gold-metal)" strokeWidth="0.8" opacity="0.5" />
+          {/* ── Clip path for inner shield pattern ── */}
+          <clipPath id="gts-inner-shield-clip">
+            <path d="M 20 4.5 L 32.5 9.8 L 32.5 21.5 C 32.5 28.5 20 34.8 20 34.8 C 20 34.8 7.5 28.5 7.5 21.5 L 7.5 9.8 Z" />
+          </clipPath>
 
+          {/* ── Complete Football Geodesic Pattern Across Entire Crest ── */}
+          <g clipPath="url(#gts-inner-shield-clip)">
+            {/* Center Pentagon Patch */}
+            <polygon
+              points="20,13 24.75,16.45 22.94,22.05 17.06,22.05 15.25,16.45"
+              fill="url(#gts-gold-metal)"
+              opacity="0.3"
+            />
+            <polygon
+              points="20,13 24.75,16.45 22.94,22.05 17.06,22.05 15.25,16.45"
+              fill="none"
+              stroke="url(#gts-gold-metal)"
+              strokeWidth="1.2"
+              opacity="0.9"
+            />
 
+            {/* Top Outer Patch */}
+            <polygon
+              points="20,13 24.75,16.45 29.5,13.5 26.5,8 20,7"
+              fill="url(#gts-gold-metal)"
+              opacity="0.12"
+            />
+            {/* Bottom-Right Outer Patch */}
+            <polygon
+              points="22.94,22.05 24.75,16.45 30,15 31.5,22 26.5,27.5"
+              fill="url(#gts-gold-metal)"
+              opacity="0.12"
+            />
+            {/* Bottom-Left Outer Patch */}
+            <polygon
+              points="17.06,22.05 15.25,16.45 10,15 8.5,22 13.5,27.5"
+              fill="url(#gts-gold-metal)"
+              opacity="0.12"
+            />
 
-          {/* Oracle 4-Point Star Sparkle at Top-Right */}
-          <path
-            d="M 30.5 5.5 L 31.3 7.7 L 33.5 8.5 L 31.3 9.3 L 30.5 11.5 L 29.7 9.3 L 27.5 8.5 L 29.7 7.7 Z"
-            fill="url(#gts-gold-metal)"
-          />
+            {/* Radiating Pentagon Edge Lines to Outer Crest Boundaries */}
+            <line x1="20" y1="13" x2="20" y2="4.5" stroke="url(#gts-gold-metal)" strokeWidth="1" opacity="0.65" />
+            <line x1="24.75" y1="16.45" x2="32.5" y2="13.5" stroke="url(#gts-gold-metal)" strokeWidth="1" opacity="0.65" />
+            <line x1="22.94" y1="22.05" x2="28" y2="29" stroke="url(#gts-gold-metal)" strokeWidth="1" opacity="0.65" />
+            <line x1="17.06" y1="22.05" x2="12" y2="29" stroke="url(#gts-gold-metal)" strokeWidth="1" opacity="0.65" />
+            <line x1="15.25" y1="16.45" x2="7.5" y2="13.5" stroke="url(#gts-gold-metal)" strokeWidth="1" opacity="0.65" />
+
+            {/* Geodesic Ring Connecting Outer Points */}
+            <path
+              d="M 20 7.5 L 28 9.5 L 31 16 L 28 24 L 20 30.5 L 12 24 L 9 16 L 12 9.5 Z"
+              fill="none"
+              stroke="url(#gts-gold-metal)"
+              strokeWidth="0.9"
+              opacity="0.55"
+            />
+
+            {/* Lower Crest Seam Splines for full vertical coverage */}
+            <line x1="20" y1="22.05" x2="20" y2="34.8" stroke="url(#gts-gold-metal)" strokeWidth="1" opacity="0.6" />
+            <line x1="22.94" y1="22.05" x2="17.06" y2="22.05" stroke="url(#gts-gold-metal)" strokeWidth="1" opacity="0.6" />
+          </g>
         </svg>
       </div>
 
