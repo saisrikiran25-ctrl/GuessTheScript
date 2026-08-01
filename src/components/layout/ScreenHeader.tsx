@@ -141,51 +141,113 @@ export const AppWordmark: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'm
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
 
-      {/* ── Emblem: clean pill container + quill icon ─────────── */}
+      {/* ── Iconic GTS Emblem: Shield + Football + Script Quill + Oracle Star ── */}
       <div
         style={{
           width: e,
           height: e,
-          borderRadius: Math.round(e * 0.28),
-          background: 'linear-gradient(145deg, rgba(245,208,97,0.18) 0%, rgba(201,158,46,0.06) 100%)',
-          border: '1.5px solid rgba(245,208,97,0.45)',
-          boxShadow: '0 0 14px rgba(245,208,97,0.18), inset 0 1px 0 rgba(255,255,255,0.06)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          position: 'relative',
           flexShrink: 0,
         }}
       >
         <svg
-          width={Math.round(e * 0.58)}
-          height={Math.round(e * 0.58)}
-          viewBox="0 0 24 24"
+          width={e}
+          height={e}
+          viewBox="0 0 40 40"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          style={{ display: 'block', filter: 'drop-shadow(0 2px 8px rgba(245, 208, 97, 0.25))' }}
         >
           <defs>
-            <linearGradient id="gts-g" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#FFE580" />
-              <stop offset="100%" stopColor="#C99E2E" />
+            {/* Rich gold metallic gradient */}
+            <linearGradient id="gts-gold-metal" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#FFF2AD" />
+              <stop offset="35%" stopColor="#F5D061" />
+              <stop offset="70%" stopColor="#D49B24" />
+              <stop offset="100%" stopColor="#996D13" />
             </linearGradient>
+
+            {/* Dark inner shield gradient */}
+            <linearGradient id="gts-shield-bg" x1="20" y1="4" x2="20" y2="36" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#1B1E32" />
+              <stop offset="100%" stopColor="#080A12" />
+            </linearGradient>
+
+            {/* Subtle glow filter */}
+            <filter id="gts-gold-glow" x="-10%" y="-10%" width="120%" height="120%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
           </defs>
-          {/* Quill diagonal stroke */}
+
+          {/* Badge Background Shield */}
           <path
-            d="M18 3 C20 3 21 5 19 7 L8 20"
-            stroke="url(#gts-g)"
-            strokeWidth="2"
-            strokeLinecap="round"
+            d="M 20 4 L 33 9.5 L 33 21.5 C 33 29 20 35.5 20 35.5 C 20 35.5 7 29 7 21.5 L 7 9.5 Z"
+            fill="url(#gts-shield-bg)"
+            stroke="url(#gts-gold-metal)"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+          />
+
+          {/* Inner Shield Accent Rim */}
+          <path
+            d="M 20 7.5 L 30 11.8 L 30 20.8 C 30 26.5 20 32 20 32 C 20 32 10 26.5 10 20.8 L 10 11.8 Z"
             fill="none"
+            stroke="url(#gts-gold-metal)"
+            strokeWidth="0.8"
+            opacity="0.35"
           />
-          {/* Nib tip */}
+
+          {/* Football Pentagon at Crest Center */}
+          <polygon
+            points="20,11 24.5,14 23,19 17,19 15.5,14"
+            fill="url(#gts-gold-metal)"
+            opacity="0.25"
+          />
+          <polygon
+            points="20,11 24.5,14 23,19 17,19 15.5,14"
+            fill="none"
+            stroke="url(#gts-gold-metal)"
+            strokeWidth="1"
+            opacity="0.8"
+          />
+          {/* Seam lines expanding from pentagon to shield border */}
+          <line x1="20" y1="11" x2="20" y2="7.5" stroke="url(#gts-gold-metal)" strokeWidth="0.8" opacity="0.5" />
+          <line x1="24.5" y1="14" x2="30" y2="12.5" stroke="url(#gts-gold-metal)" strokeWidth="0.8" opacity="0.5" />
+          <line x1="23" y1="19" x2="27.5" y2="23" stroke="url(#gts-gold-metal)" strokeWidth="0.8" opacity="0.5" />
+          <line x1="17" y1="19" x2="12.5" y2="23" stroke="url(#gts-gold-metal)" strokeWidth="0.8" opacity="0.5" />
+          <line x1="15.5" y1="14" x2="10" y2="12.5" stroke="url(#gts-gold-metal)" strokeWidth="0.8" opacity="0.5" />
+
+          {/* Sleek Golden Script Quill slicing across */}
           <path
-            d="M8 20 L6 22 L10 21 Z"
-            fill="url(#gts-g)"
+            d="M 28 13 C 25 17 21 21.5 14 27.5"
+            stroke="url(#gts-gold-metal)"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            filter="url(#gts-gold-glow)"
           />
-          {/* Ruled line 1 */}
-          <line x1="4" y1="16" x2="13" y2="13" stroke="url(#gts-g)" strokeWidth="1.4" strokeLinecap="round" opacity="0.65" />
-          {/* Ruled line 2 */}
-          <line x1="4" y1="19.5" x2="10" y2="17.5" stroke="url(#gts-g)" strokeWidth="1.1" strokeLinecap="round" opacity="0.4" />
+          {/* Quill Nib Triangle */}
+          <polygon
+            points="14,27.5 12,30 16.5,28"
+            fill="url(#gts-gold-metal)"
+          />
+          {/* Written Narrative Flourish Line */}
+          <path
+            d="M 12.5 30.5 C 16 29 19 30 22 28.5"
+            stroke="url(#gts-gold-metal)"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            opacity="0.85"
+          />
+
+          {/* Oracle 4-Point Star Sparkle at Top-Right */}
+          <path
+            d="M 30.5 5.5 L 31.3 7.7 L 33.5 8.5 L 31.3 9.3 L 30.5 11.5 L 29.7 9.3 L 27.5 8.5 L 29.7 7.7 Z"
+            fill="url(#gts-gold-metal)"
+          />
         </svg>
       </div>
 
