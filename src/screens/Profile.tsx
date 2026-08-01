@@ -200,10 +200,15 @@ export const Profile: React.FC = () => {
                       color: 'var(--color-text-primary)',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px',
+                      gap: '10px',
                     }}
                   >
-                    <span>🦁 Premier League</span>
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/en/f/f2/Premier_League_Logo.svg"
+                      alt="Premier League"
+                      style={{ width: 28, height: 28, objectFit: 'contain', flexShrink: 0 }}
+                    />
+                    <span>Premier League</span>
                   </div>
                   <div style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
                     38 Gameweeks · 380 Matches · Select Gameweek Timeline
@@ -263,10 +268,15 @@ export const Profile: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '20px',
                 flexShrink: 0,
               }}>
-                📊
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="2" y="13" width="4" height="8" rx="1" fill="#00F2FE" opacity="0.7"/>
+                  <rect x="8" y="9" width="4" height="12" rx="1" fill="#00F2FE" opacity="0.85"/>
+                  <rect x="14" y="5" width="4" height="16" rx="1" fill="#00F2FE"/>
+                  <rect x="20" y="2" width="2" height="19" rx="1" fill="#00F2FE" opacity="0.4"/>
+                  <line x1="2" y1="21.5" x2="22" y2="21.5" stroke="#00F2FE" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
               </div>
               <div>
                 <div className="font-display" style={{ fontSize: '14px', fontWeight: 800, color: 'var(--color-text-primary)' }}>
