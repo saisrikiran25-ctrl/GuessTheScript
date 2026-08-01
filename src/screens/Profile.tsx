@@ -200,20 +200,35 @@ export const Profile: React.FC = () => {
                       color: 'var(--color-text-primary)',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '10px',
+                      gap: '12px',
                     }}
                   >
-                    <img
-                      src="https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Premier_League_Logo.svg/120px-Premier_League_Logo.svg.png"
-                      alt="Premier League"
+                    {/* PL Logo — icon box matching Stats card treatment */}
+                    <div
                       style={{
-                        width: 40,
-                        height: 40,
-                        objectFit: 'contain',
+                        width: 42,
+                        height: 42,
+                        borderRadius: 'var(--radius-md)',
+                        background: 'rgba(88, 24, 98, 0.55)',
+                        border: '1px solid rgba(160, 70, 180, 0.55)',
+                        boxShadow: '0 0 12px rgba(130, 40, 150, 0.35)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         flexShrink: 0,
-                        borderRadius: '4px',
+                        padding: '4px',
                       }}
-                    />
+                    >
+                      <img
+                        src="https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Premier_League_Logo.svg/120px-Premier_League_Logo.svg.png"
+                        alt="Premier League"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'contain',
+                        }}
+                      />
+                    </div>
                     <span>Premier League</span>
                   </div>
                   <div style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
