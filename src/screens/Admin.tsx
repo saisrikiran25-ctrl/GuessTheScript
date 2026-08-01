@@ -3,7 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui';
 import { useMatches } from '@/store/matchStore';
 import { resolveMatch } from '@/engine/resolution';
-import { syncWriteMatchResolution, resetAllGroupMembers } from '@/utils/sync';
+import { syncWriteMatchResolution, resetAllGroupMembers, syncWritePLSpecialResolution } from '@/utils/sync';
+import { savePLSpecialResolution, loadPlayer, savePlayer } from '@/utils/storage';
+import { loadPLSpecialPrediction, loadPLSpecialResolution } from '@/utils/storage';
+import type { PLSpecialResolution } from '@/data/specials';
+import { SPECIAL_CATEGORY_POINTS } from '@/data/specials';
+import { syncUploadMember } from '@/utils/sync';
 import { soundFx } from '@/utils/audio';
 import type { AdminMatchInput, Match } from '@/types';
 
@@ -31,6 +36,77 @@ export const Admin: React.FC = () => {
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const [resetStatus, setResetStatus] = useState<'idle' | 'running' | 'done' | 'error'>('idle');
+  const [specialsForm, setSpecialsForm] = useState({
+    goldenBoot: '',
+    goldenGlove: '',
+    pfaPlayer: '',
+  });
+
+  useEffect(() => {
+    const existingRes = loadPLSpecialResolution();
+    if (existingRes) {
+      setSpecialsForm({
+        goldenBoot: existingRes.goldenBootWinners.join(', '),
+        goldenGlove: existingRes.goldenGloveWinners.join(', '),
+        pfaPlayer: existingRes.pfaPlayerWinners.join(', '),
+      });
+    }
+  }, []);
+
+  const handleResolveSpecials = async () => {
+    if (!specialsForm.goldenBoot.trim() || !specialsForm.goldenGlove.trim() || !specialsForm.pfaPlayer.trim()) {
+      setError('Please provide winners for all 3 special categories.');
+      return;
+    }
+
+    soundFx.playStamp();
+
+    const bootWinners = specialsForm.goldenBoot.split(',').map((s) => s.trim().toLowerCase());
+    const gloveWinners = specialsForm.goldenGlove.split(',').map((s) => s.trim().toLowerCase());
+    const pfaWinners = specialsForm.pfaPlayer.split(',').map((s) => s.trim().toLowerCase());
+
+    const res: PLSpecialResolution = {
+      goldenBootWinners: specialsForm.goldenBoot.split(',').map((s) => s.trim()),
+      goldenGloveWinners: specialsForm.goldenGlove.split(',').map((s) => s.trim()),
+      pfaPlayerWinners: specialsForm.pfaPlayer.split(',').map((s) => s.trim()),
+      resolvedAt: new Date().toISOString(),
+    };
+
+    savePLSpecialResolution(res);
+    await syncWritePLSpecialResolution(res);
+
+    const player = loadPlayer();
+    if (player) {
+      const pred = loadPLSpecialPrediction(player.id);
+      let specialScore = 0;
+
+      if (pred) {
+        if (bootWinners.includes(pred.goldenBoot.trim().toLowerCase())) {
+          specialScore += SPECIAL_CATEGORY_POINTS;
+        }
+        if (gloveWinners.includes(pred.goldenGlove.trim().toLowerCase())) {
+          specialScore += SPECIAL_CATEGORY_POINTS;
+        }
+        if (pfaWinners.includes(pred.pfaPlayer.trim().toLowerCase())) {
+          specialScore += SPECIAL_CATEGORY_POINTS;
+        }
+      }
+
+      const updatedScores = { ...player.matchScores, pl_specials: specialScore };
+      const newTournamentScore = Object.values(updatedScores).reduce((a, b) => a + b, 0);
+
+      const updatedPlayer = {
+        ...player,
+        matchScores: updatedScores,
+        tournamentScore: newTournamentScore,
+      };
+
+      savePlayer(updatedPlayer);
+      await syncUploadMember('world', updatedPlayer);
+    }
+
+    setSuccess('PL Season Specials resolved successfully! Points updated.');
+  };
 
   const selectedMatch = matchState.matches.find((m) => m.id === selectedMatchId);
 
@@ -371,6 +447,63 @@ export const Admin: React.FC = () => {
             <Button variant="primary" size="lg" fullWidth onClick={handleResolve}>
               🔓 Resolve Match Narrative
             </Button>
+
+            {/* PL Season Specials Resolution Panel */}
+            <div
+              style={{
+                marginTop: 'var(--space-6)',
+                padding: 'var(--space-5)',
+                background: 'linear-gradient(135deg, rgba(245, 208, 97, 0.1) 0%, rgba(22, 25, 41, 0.95) 100%)',
+                border: '1px solid var(--color-border-accent)',
+                borderRadius: 'var(--radius-lg)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '14px',
+              }}
+            >
+              <div>
+                <div className="font-display" style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.14em', color: 'var(--color-accent)', textTransform: 'uppercase' }}>
+                  END OF SEASON RESOLUTION
+                </div>
+                <h3 className="font-display gold-gradient-text" style={{ fontSize: '18px', fontWeight: 900, marginTop: '2px' }}>
+                  PL Season Specials Resolution (1,500 PTS)
+                </h3>
+              </div>
+
+              <AdminField label="Official Golden Boot Winner(s) (Comma-separated if joint)">
+                <input
+                  type="text"
+                  value={specialsForm.goldenBoot}
+                  onChange={(e) => setSpecialsForm({ ...specialsForm, goldenBoot: e.target.value })}
+                  placeholder="e.g. Erling Haaland"
+                  style={inputStyle}
+                />
+              </AdminField>
+
+              <AdminField label="Official Golden Glove Winner(s) (Comma-separated if joint)">
+                <input
+                  type="text"
+                  value={specialsForm.goldenGlove}
+                  onChange={(e) => setSpecialsForm({ ...specialsForm, goldenGlove: e.target.value })}
+                  placeholder="e.g. David Raya"
+                  style={inputStyle}
+                />
+              </AdminField>
+
+              <AdminField label="Official PFA Player of Season Winner(s) (Comma-separated if joint)">
+                <input
+                  type="text"
+                  value={specialsForm.pfaPlayer}
+                  onChange={(e) => setSpecialsForm({ ...specialsForm, pfaPlayer: e.target.value })}
+                  placeholder="e.g. Cole Palmer"
+                  style={inputStyle}
+                />
+              </AdminField>
+
+              <Button variant="primary" size="lg" fullWidth onClick={handleResolveSpecials}>
+                🏆 Resolve PL Season Specials
+              </Button>
+            </div>
           </div>
         )}
       </div>

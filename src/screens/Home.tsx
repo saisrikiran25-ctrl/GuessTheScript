@@ -8,6 +8,7 @@ import { usePlayer } from '@/store/playerStore';
 import { loadPrediction, loadScore } from '@/utils/storage';
 import { Analytics } from '@/utils/analytics';
 import { soundFx } from '@/utils/audio';
+import { PLSpecialsCard } from '@/components/prediction/PLSpecialsCard';
 
 export const Home: React.FC = () => {
   const { state: matchState } = useMatches();
@@ -187,6 +188,9 @@ export const Home: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* PL Season Specials Category (Golden Boot, Golden Glove & PFA Player) */}
+        {player && <PLSpecialsCard playerId={player.id} />}
 
         {/* Stage Filter Switcher Tabs */}
         <section>

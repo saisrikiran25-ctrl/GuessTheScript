@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/Badge';
 import { Button, Flag } from '@/components/ui';
 import { usePlayer } from '@/store/playerStore';
 import { useMatches } from '@/store/matchStore';
-import { loadPrediction, loadScore } from '@/utils/storage';
+import { loadPrediction, loadScore, loadPLSpecialPrediction, loadPLSpecialResolution } from '@/utils/storage';
+import { isSpecialDeadlinePassed, formatDeadlineIST } from '@/data/specials';
 import { getScriptById } from '@/data/scripts';
 import { getBadgeById, BADGE_DEFINITIONS } from '@/data/badges';
 import { getInitials, formatJoinedDate } from '@/utils/format';
@@ -43,6 +44,8 @@ export const Profile: React.FC = () => {
   const [badgeFilter, setBadgeFilter] = React.useState<'all' | 'unlocked' | 'locked'>('all');
 
   const earnedBadges = player.badges;
+  const specialPrediction = loadPLSpecialPrediction(player.id);
+  const isSpecialLocked = isSpecialDeadlinePassed();
 
   return (
     <div className="screen">
@@ -258,6 +261,84 @@ export const Profile: React.FC = () => {
               </div>
             </div>
           </section>
+
+          {/* Season Oracle Special Predictions Card */}
+          {(specialPrediction || isSpecialLocked) && (
+            <section>
+              <h2
+                className="font-display"
+                style={{
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: 'var(--color-text-muted)',
+                  marginBottom: 'var(--space-3)',
+                }}
+              >
+                Your Season Oracles (1,500 PTS)
+              </h2>
+
+              <div
+                className="ticket-stub"
+                style={{
+                  padding: 'var(--space-4) var(--space-5)',
+                  background: 'linear-gradient(135deg, rgba(245, 208, 97, 0.12) 0%, rgba(22, 25, 41, 0.95) 100%)',
+                  border: '1px solid var(--color-border-accent)',
+                  borderRadius: 'var(--radius-lg)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span className="font-display" style={{ fontSize: '13px', fontWeight: 800, color: 'var(--color-accent)' }}>
+                    Premier League 2026/27 Oracles
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      color: isSpecialLocked ? '#EF4444' : 'var(--color-accent)',
+                      background: isSpecialLocked ? 'rgba(239, 68, 68, 0.12)' : 'rgba(245, 208, 97, 0.15)',
+                      padding: '2px 8px',
+                      borderRadius: 'var(--radius-full)',
+                      border: `1px solid ${isSpecialLocked ? 'rgba(239, 68, 68, 0.3)' : 'var(--color-border-accent)'}`,
+                    }}
+                  >
+                    {isSpecialLocked ? '🔒 Locked' : '⏰ Active'}
+                  </span>
+                </div>
+
+                {specialPrediction ? (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                    <div style={{ background: 'rgba(0,0,0,0.3)', padding: '8px 10px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                      <div style={{ fontSize: '10px', color: '#F5D061', fontWeight: 800 }}>⚽ Golden Boot</div>
+                      <div className="font-display" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-text-primary)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {specialPrediction.goldenBoot}
+                      </div>
+                    </div>
+                    <div style={{ background: 'rgba(0,0,0,0.3)', padding: '8px 10px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                      <div style={{ fontSize: '10px', color: '#00F2FE', fontWeight: 800 }}>🧤 Golden Glove</div>
+                      <div className="font-display" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-text-primary)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {specialPrediction.goldenGlove}
+                      </div>
+                    </div>
+                    <div style={{ background: 'rgba(0,0,0,0.3)', padding: '8px 10px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                      <div style={{ fontSize: '10px', color: '#D946EF', fontWeight: 800 }}>👑 PFA Player</div>
+                      <div className="font-display" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-text-primary)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {specialPrediction.pfaPlayer}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
+                    No predictions submitted before deadline.
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
 
           {/* Stats Entry Point */}
           <div

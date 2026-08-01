@@ -9,6 +9,8 @@ const KEYS = {
   onboarded: `${PREFIX}onboarded`,
   matches: `${PREFIX}matches`,
   seasonId: `${PREFIX}season_id`,
+  plSpecials: `${PREFIX}pl_specials`,
+  plSpecialResolution: `${PREFIX}pl_special_resolution`,
 } as const;
 
 // ─── Player ───────────────────────────────────────────────────
@@ -147,3 +149,46 @@ export function resetSeasonData(): void {
     localStorage.setItem(KEYS.player, JSON.stringify(resetPlayer));
   }
 }
+
+// ─── PL Season Specials ───────────────────────────────────────
+import type { PLSpecialPrediction, PLSpecialResolution } from '@/data/specials';
+
+export function savePLSpecialPrediction(prediction: PLSpecialPrediction): void {
+  try {
+    const raw = localStorage.getItem(KEYS.plSpecials);
+    const all: Record<string, PLSpecialPrediction> = raw ? JSON.parse(raw) : {};
+    all[prediction.playerId] = prediction;
+    localStorage.setItem(KEYS.plSpecials, JSON.stringify(all));
+  } catch {
+    console.warn('Failed to save PL special prediction');
+  }
+}
+
+export function loadPLSpecialPrediction(playerId: string): PLSpecialPrediction | null {
+  try {
+    const raw = localStorage.getItem(KEYS.plSpecials);
+    if (!raw) return null;
+    const all: Record<string, PLSpecialPrediction> = JSON.parse(raw);
+    return all[playerId] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export function savePLSpecialResolution(res: PLSpecialResolution): void {
+  try {
+    localStorage.setItem(KEYS.plSpecialResolution, JSON.stringify(res));
+  } catch {
+    console.warn('Failed to save PL special resolution');
+  }
+}
+
+export function loadPLSpecialResolution(): PLSpecialResolution | null {
+  try {
+    const raw = localStorage.getItem(KEYS.plSpecialResolution);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+

@@ -96,6 +96,48 @@ export async function syncReadAllMatchResolutions(): Promise<
 // ─── Admin: Reset all members in a group to zero ─────────────
 // Iterates every document in groups/{groupCode}/members and
 // overwrites score / matchScores / streak / badges to season-zero state.
+// ─── PL Specials: Write resolution to Firestore ───────────────
+import type { PLSpecialPrediction, PLSpecialResolution } from '@/data/specials';
+
+export async function syncWritePLSpecialResolution(
+  res: PLSpecialResolution
+): Promise<void> {
+  try {
+    const docRef = doc(db, 'specials/pl_season_2026');
+    await setDoc(docRef, res, { merge: true });
+  } catch (e) {
+    console.warn('Failed to write PL special resolution to Firestore:', e);
+  }
+}
+
+export async function syncReadPLSpecialResolution(): Promise<PLSpecialResolution | null> {
+  try {
+    const docRef = doc(db, 'specials/pl_season_2026');
+    const snap = await getDocs(collection(db, 'specials'));
+    let found: PLSpecialResolution | null = null;
+    snap.forEach((d) => {
+      if (d.id === 'pl_season_2026') {
+        found = d.data() as PLSpecialResolution;
+      }
+    });
+    return found;
+  } catch (e) {
+    console.warn('Failed to read PL special resolution from Firestore:', e);
+    return null;
+  }
+}
+
+export async function syncUploadPLSpecialPrediction(
+  prediction: PLSpecialPrediction
+): Promise<void> {
+  try {
+    const docRef = doc(db, `specials_predictions/${prediction.playerId}`);
+    await setDoc(docRef, prediction, { merge: true });
+  } catch (e) {
+    console.warn('Failed to upload PL special prediction to Firestore:', e);
+  }
+}
+
 export async function resetAllGroupMembers(groupCode: string): Promise<void> {
   const membersRef = collection(db, `groups/${groupCode}/members`);
   const snapshot = await getDocs(membersRef);

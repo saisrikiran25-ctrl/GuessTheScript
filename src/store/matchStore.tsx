@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useReducer, useCallback, useEffect } from 'react';
 import type { Match } from '@/types';
 import { MATCHES } from '@/data/matches';
-import { saveMatches, loadMatches } from '@/utils/storage';
-import { syncReadAllMatchResolutions } from '@/utils/sync';
+import { saveMatches, loadMatches, savePLSpecialResolution } from '@/utils/storage';
+import { syncReadAllMatchResolutions, syncReadPLSpecialResolution } from '@/utils/sync';
 
 // ─── Hydrate from localStorage, falling back to seed data ─────
 function getInitialMatches(): Match[] {
@@ -83,6 +83,11 @@ export const MatchProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     syncReadAllMatchResolutions().then((resolutions) => {
       if (Object.keys(resolutions).length > 0) {
         dispatch({ type: 'HYDRATE_FROM_FIRESTORE', resolutions });
+      }
+    });
+    syncReadPLSpecialResolution().then((specialRes) => {
+      if (specialRes) {
+        savePLSpecialResolution(specialRes);
       }
     });
   }, []);
