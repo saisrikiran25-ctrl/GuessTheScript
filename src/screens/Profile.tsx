@@ -204,9 +204,15 @@ export const Profile: React.FC = () => {
                     }}
                   >
                     <img
-                      src="https://upload.wikimedia.org/wikipedia/en/f/f2/Premier_League_Logo.svg"
+                      src="https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Premier_League_Logo.svg/120px-Premier_League_Logo.svg.png"
                       alt="Premier League"
-                      style={{ width: 28, height: 28, objectFit: 'contain', flexShrink: 0 }}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        objectFit: 'contain',
+                        flexShrink: 0,
+                        borderRadius: '4px',
+                      }}
                     />
                     <span>Premier League</span>
                   </div>
