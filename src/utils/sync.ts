@@ -93,9 +93,6 @@ export async function syncReadAllMatchResolutions(): Promise<
   }
 }
 
-// ─── Admin: Reset all members in a group to zero ─────────────
-// Iterates every document in groups/{groupCode}/members and
-// overwrites score / matchScores / streak / badges to season-zero state.
 // ─── PL Specials: Write resolution to Firestore ───────────────
 import type { PLSpecialPrediction, PLSpecialResolution } from '@/data/specials';
 
@@ -138,6 +135,9 @@ export async function syncUploadPLSpecialPrediction(
   }
 }
 
+// ─── Admin: Reset all members in a group to zero ─────────────
+// Iterates every document in groups/{groupCode}/members and
+// overwrites score / matchScores / streak / badges to season-zero state.
 export async function resetAllGroupMembers(groupCode: string): Promise<void> {
   const membersRef = collection(db, `groups/${groupCode}/members`);
   const snapshot = await getDocs(membersRef);
