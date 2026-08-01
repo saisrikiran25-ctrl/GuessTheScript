@@ -183,22 +183,13 @@ export const AppWordmark: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'm
             </filter>
           </defs>
 
-          {/* Badge Background Shield */}
+          {/* Badge Background Shield — Single Clean Crest Border */}
           <path
             d="M 20 4 L 33 9.5 L 33 21.5 C 33 29 20 35.5 20 35.5 C 20 35.5 7 29 7 21.5 L 7 9.5 Z"
             fill="url(#gts-shield-bg)"
             stroke="url(#gts-gold-metal)"
             strokeWidth="1.8"
             strokeLinejoin="round"
-          />
-
-          {/* Inner Shield Accent Rim */}
-          <path
-            d="M 20 7.5 L 30 11.8 L 30 20.8 C 30 26.5 20 32 20 32 C 20 32 10 26.5 10 20.8 L 10 11.8 Z"
-            fill="none"
-            stroke="url(#gts-gold-metal)"
-            strokeWidth="0.8"
-            opacity="0.35"
           />
 
           {/* ── Clip path for inner shield pattern ── */}
@@ -212,7 +203,7 @@ export const AppWordmark: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'm
             <polygon
               points="20,13 24.75,16.45 22.94,22.05 17.06,22.05 15.25,16.45"
               fill="url(#gts-gold-metal)"
-              opacity="0.3"
+              opacity="0.35"
             />
             <polygon
               points="20,13 24.75,16.45 22.94,22.05 17.06,22.05 15.25,16.45"
@@ -247,15 +238,6 @@ export const AppWordmark: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'm
             <line x1="22.94" y1="22.05" x2="28" y2="29" stroke="url(#gts-gold-metal)" strokeWidth="1" opacity="0.65" />
             <line x1="17.06" y1="22.05" x2="12" y2="29" stroke="url(#gts-gold-metal)" strokeWidth="1" opacity="0.65" />
             <line x1="15.25" y1="16.45" x2="7.5" y2="13.5" stroke="url(#gts-gold-metal)" strokeWidth="1" opacity="0.65" />
-
-            {/* Geodesic Ring Connecting Outer Points */}
-            <path
-              d="M 20 7.5 L 28 9.5 L 31 16 L 28 24 L 20 30.5 L 12 24 L 9 16 L 12 9.5 Z"
-              fill="none"
-              stroke="url(#gts-gold-metal)"
-              strokeWidth="0.9"
-              opacity="0.55"
-            />
 
             {/* Lower Crest Seam Splines for full vertical coverage */}
             <line x1="20" y1="22.05" x2="20" y2="34.8" stroke="url(#gts-gold-metal)" strokeWidth="1" opacity="0.6" />
