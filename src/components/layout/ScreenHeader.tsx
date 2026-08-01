@@ -221,27 +221,7 @@ export const AppWordmark: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'm
           <line x1="17" y1="19" x2="12.5" y2="23" stroke="url(#gts-gold-metal)" strokeWidth="0.8" opacity="0.5" />
           <line x1="15.5" y1="14" x2="10" y2="12.5" stroke="url(#gts-gold-metal)" strokeWidth="0.8" opacity="0.5" />
 
-          {/* Sleek Golden Script Quill slicing across */}
-          <path
-            d="M 28 13 C 25 17 21 21.5 14 27.5"
-            stroke="url(#gts-gold-metal)"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-            filter="url(#gts-gold-glow)"
-          />
-          {/* Quill Nib Triangle */}
-          <polygon
-            points="14,27.5 12,30 16.5,28"
-            fill="url(#gts-gold-metal)"
-          />
-          {/* Written Narrative Flourish Line */}
-          <path
-            d="M 12.5 30.5 C 16 29 19 30 22 28.5"
-            stroke="url(#gts-gold-metal)"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            opacity="0.85"
-          />
+
 
           {/* Oracle 4-Point Star Sparkle at Top-Right */}
           <path
