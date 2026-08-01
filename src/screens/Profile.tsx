@@ -203,15 +203,15 @@ export const Profile: React.FC = () => {
                       gap: '12px',
                     }}
                   >
-                    {/* PL Logo — icon box matching Stats card treatment */}
+                    {/* PL Logo — white icon box so purple logo is prominent */}
                     <div
                       style={{
                         width: 42,
                         height: 42,
                         borderRadius: 'var(--radius-md)',
-                        background: 'rgba(88, 24, 98, 0.55)',
-                        border: '1px solid rgba(160, 70, 180, 0.55)',
-                        boxShadow: '0 0 12px rgba(130, 40, 150, 0.35)',
+                        background: 'rgba(255, 255, 255, 0.92)',
+                        border: '1px solid rgba(255, 255, 255, 0.6)',
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.35)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
