@@ -141,110 +141,51 @@ export const AppWordmark: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'm
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
 
-      {/* ── Bespoke Emblem ─────────────────────────────────────── */}
+      {/* ── Emblem: clean pill container + quill icon ─────────── */}
       <div
         style={{
           width: e,
           height: e,
-          position: 'relative',
+          borderRadius: Math.round(e * 0.28),
+          background: 'linear-gradient(145deg, rgba(245,208,97,0.18) 0%, rgba(201,158,46,0.06) 100%)',
+          border: '1.5px solid rgba(245,208,97,0.45)',
+          boxShadow: '0 0 14px rgba(245,208,97,0.18), inset 0 1px 0 rgba(255,255,255,0.06)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           flexShrink: 0,
         }}
       >
         <svg
-          width={e}
-          height={e}
-          viewBox="0 0 40 40"
+          width={Math.round(e * 0.58)}
+          height={Math.round(e * 0.58)}
+          viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            {/* Main gold gradient */}
-            <linearGradient id="gts-gold" x1="0" y1="0" x2="1" y2="1">
+            <linearGradient id="gts-g" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stopColor="#FFE580" />
-              <stop offset="55%" stopColor="#F5D061" />
               <stop offset="100%" stopColor="#C99E2E" />
             </linearGradient>
-            {/* Glow filter */}
-            <filter id="gts-glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-            {/* Shield clip */}
-            <clipPath id="gts-shield-clip">
-              <path d="M20 3 L34 9 L34 22 Q34 31 20 37 Q6 31 6 22 L6 9 Z" />
-            </clipPath>
           </defs>
-
-          {/* ── Outer shield fill (dark) ── */}
+          {/* Quill diagonal stroke */}
           <path
-            d="M20 3 L34 9 L34 22 Q34 31 20 37 Q6 31 6 22 L6 9 Z"
-            fill="url(#gts-gold)"
-            opacity="0.13"
-          />
-
-          {/* ── Shield border ── */}
-          <path
-            d="M20 3 L34 9 L34 22 Q34 31 20 37 Q6 31 6 22 L6 9 Z"
-            fill="none"
-            stroke="url(#gts-gold)"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-            filter="url(#gts-glow)"
-          />
-
-          {/* ── Inner shield inset line ── */}
-          <path
-            d="M20 7 L30 11.5 L30 21.5 Q30 28.5 20 33.5 Q10 28.5 10 21.5 L10 11.5 Z"
-            fill="none"
-            stroke="url(#gts-gold)"
-            strokeWidth="0.7"
-            opacity="0.45"
-          />
-
-          {/* ── Football seam lines clipped to shield ── */}
-          <g clipPath="url(#gts-shield-clip)" opacity="0.2">
-            {/* horizontal middle */}
-            <line x1="6" y1="20" x2="34" y2="20" stroke="#F5D061" strokeWidth="0.8" />
-            {/* vertical centre */}
-            <line x1="20" y1="3" x2="20" y2="37" stroke="#F5D061" strokeWidth="0.8" />
-            {/* top-left arc */}
-            <path d="M6 14 Q13 16 20 14" stroke="#F5D061" strokeWidth="0.8" fill="none" />
-            {/* bottom-right arc */}
-            <path d="M20 26 Q27 24 34 26" stroke="#F5D061" strokeWidth="0.8" fill="none" />
-          </g>
-
-          {/* ── Quill / Script stroke — the hero icon ── */}
-          {/* Quill body */}
-          <path
-            d="M27 10 Q31 13 28 20 Q25 26 15 29"
-            stroke="url(#gts-gold)"
-            strokeWidth="1.8"
+            d="M18 3 C20 3 21 5 19 7 L8 20"
+            stroke="url(#gts-g)"
+            strokeWidth="2"
             strokeLinecap="round"
             fill="none"
-            filter="url(#gts-glow)"
           />
-          {/* Quill nib */}
+          {/* Nib tip */}
           <path
-            d="M15 29 L17 24 L20 27 Z"
-            fill="url(#gts-gold)"
-            opacity="0.9"
+            d="M8 20 L6 22 L10 21 Z"
+            fill="url(#gts-g)"
           />
-          {/* Quill feather top curl */}
-          <path
-            d="M27 10 Q24 7 22 9 Q25 11 27 10"
-            fill="url(#gts-gold)"
-            opacity="0.8"
-          />
-          {/* Writing line 1 */}
-          <line x1="13" y1="22" x2="21" y2="19" stroke="url(#gts-gold)" strokeWidth="1.1" strokeLinecap="round" opacity="0.7" />
-          {/* Writing line 2 (shorter, below) */}
-          <line x1="13" y1="25" x2="18" y2="23" stroke="url(#gts-gold)" strokeWidth="0.9" strokeLinecap="round" opacity="0.5" />
-
-          {/* ── Dot accent at shield crown ── */}
-          <circle cx="20" cy="5.5" r="1.2" fill="url(#gts-gold)" opacity="0.9" filter="url(#gts-glow)" />
+          {/* Ruled line 1 */}
+          <line x1="4" y1="16" x2="13" y2="13" stroke="url(#gts-g)" strokeWidth="1.4" strokeLinecap="round" opacity="0.65" />
+          {/* Ruled line 2 */}
+          <line x1="4" y1="19.5" x2="10" y2="17.5" stroke="url(#gts-g)" strokeWidth="1.1" strokeLinecap="round" opacity="0.4" />
         </svg>
       </div>
 
