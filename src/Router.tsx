@@ -10,6 +10,7 @@ import { Profile } from '@/screens/Profile';
 import { LeagueTimeline } from '@/screens/LeagueTimeline';
 import { Group } from '@/screens/Group';
 import { Admin } from '@/screens/Admin';
+import { Stats } from '@/screens/Stats';
 import { usePlayer } from '@/store/playerStore';
 
 export const Router: React.FC = () => {
@@ -122,6 +123,14 @@ export const Router: React.FC = () => {
         path="/group/:code"
         element={
           !state.hasOnboarded ? <Navigate to="/welcome" replace /> : <Group />
+        }
+      />
+
+      {/* Stats */}
+      <Route
+        path="/stats"
+        element={
+          !state.hasOnboarded ? <Navigate to="/welcome" replace /> : <Stats />
         }
       />
 

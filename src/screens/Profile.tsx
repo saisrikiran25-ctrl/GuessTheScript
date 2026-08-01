@@ -233,8 +233,58 @@ export const Profile: React.FC = () => {
             </div>
           </section>
 
+          {/* Stats Entry Point */}
+          <div
+            onClick={() => {
+              soundFx.playClick();
+              navigate('/stats');
+            }}
+            style={{
+              padding: 'var(--space-4) var(--space-5)',
+              background: 'linear-gradient(135deg, rgba(0, 242, 254, 0.08) 0%, rgba(22, 25, 41, 0.95) 100%)',
+              border: '1px solid rgba(0, 242, 254, 0.25)',
+              borderRadius: 'var(--radius-lg)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 'var(--space-4)',
+              transition: 'all 0.2s ease',
+              boxShadow: '0 0 16px rgba(0, 242, 254, 0.05)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div style={{
+                width: 42,
+                height: 42,
+                borderRadius: 'var(--radius-md)',
+                background: 'rgba(0, 242, 254, 0.12)',
+                border: '1px solid rgba(0, 242, 254, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '20px',
+                flexShrink: 0,
+              }}>
+                📊
+              </div>
+              <div>
+                <div className="font-display" style={{ fontSize: '14px', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+                  Your Stats
+                </div>
+                <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+                  Prediction style, accuracy, lifetime analytics
+                </div>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00F2FE" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </div>
+
           {/* Badge Vault */}
           <section>
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
               <h2
                 className="font-display"
