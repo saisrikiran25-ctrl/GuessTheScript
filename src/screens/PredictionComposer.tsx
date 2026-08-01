@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ScriptCard } from '@/components/prediction/ScriptCard';
 import { SidePredictionChip } from '@/components/prediction/SidePredictionChip';
 import { ScriptStoryPreview } from '@/components/prediction/ScriptStoryPreview';
-import { Button, Flag, PitchField } from '@/components/ui';
+import { Button, Flag } from '@/components/ui';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { useMatches } from '@/store/matchStore';
 import { usePlayer } from '@/store/playerStore';
@@ -13,6 +13,7 @@ import { getScriptById, getScriptsForMatch } from '@/data/scripts';
 import { Analytics } from '@/utils/analytics';
 import { useToast } from '@/components/ui/Toast';
 import { soundFx } from '@/utils/audio';
+import { PLMatchHubLink } from '@/components/match/PLMatchHubLink';
 import type { PlayerPrediction } from '@/types';
 
 type Step = 1 | 2 | 3;
@@ -144,8 +145,8 @@ export const PredictionComposer: React.FC = () => {
           {/* ─── STEP 1: Script Selection ─────────────────── */}
           {step === 1 && (
             <>
-              {/* 2D Stadium Tactical Pitch Canvas */}
-              <PitchField teamA={match.teamA} teamB={match.teamB} height={130} />
+              {/* Official Premier League Match Hub redirect banner */}
+              <PLMatchHubLink compact />
 
               <div>
                 <h2 className="type-h2 font-display" style={{ color: 'var(--color-text-primary)', marginBottom: 'var(--space-2)' }}>

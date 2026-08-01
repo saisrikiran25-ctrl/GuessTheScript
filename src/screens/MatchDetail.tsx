@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { BottomNav } from '@/components/layout/BottomNav';
-import { Button, CountdownTimer, Flag, PitchField } from '@/components/ui';
+import { Button, CountdownTimer, Flag } from '@/components/ui';
 import { useMatches } from '@/store/matchStore';
 import { usePlayer } from '@/store/playerStore';
 import { loadPrediction, loadScore } from '@/utils/storage';
@@ -12,6 +12,7 @@ import { Analytics } from '@/utils/analytics';
 import { useToast } from '@/components/ui/Toast';
 import { generateShareCard, shareCard } from '@/utils/shareCard';
 import { soundFx } from '@/utils/audio';
+import { PLMatchHubLink } from '@/components/match/PLMatchHubLink';
 
 export const MatchDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -110,8 +111,8 @@ export const MatchDetail: React.FC = () => {
             gap: 'var(--space-4)',
           }}
         >
-          {/* 2D Stadium Tactical Field */}
-          <PitchField teamA={match.teamA} teamB={match.teamB} height={160} />
+          {/* Official Premier League Match Hub redirect banner */}
+          <PLMatchHubLink />
           {/* Label & Location */}
           <div style={{ marginBottom: 'var(--space-5)' }}>
             <span
