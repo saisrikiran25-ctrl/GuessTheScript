@@ -65,19 +65,21 @@ export const PLSpecialsCard: React.FC<PLSpecialsCardProps> = ({ playerId }) => {
           >
             PL SEASON SPECIALS · 1,500 PTS TOTAL
           </div>
-          <span
-            style={{
-              fontSize: '11px',
-              fontWeight: 700,
-              color: isLocked ? '#EF4444' : 'var(--color-text-secondary)',
-              background: isLocked ? 'rgba(239, 68, 68, 0.12)' : 'rgba(255, 255, 255, 0.05)',
-              padding: '2px 8px',
-              borderRadius: 'var(--radius-full)',
-              border: `1px solid ${isLocked ? 'rgba(239, 68, 68, 0.3)' : 'var(--color-border)'}`,
-            }}
-          >
-            {isLocked ? '🔒 Locked' : `⏰ Deadline: ${formatDeadlineIST()}`}
-          </span>
+          {isLocked && (
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                color: '#EF4444',
+                background: 'rgba(239, 68, 68, 0.12)',
+                padding: '2px 8px',
+                borderRadius: 'var(--radius-full)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+              }}
+            >
+              🔒 Locked
+            </span>
+          )}
         </div>
 
         <div>
