@@ -61,6 +61,16 @@ export const PLSpecialsModal: React.FC<PLSpecialsModalProps> = ({
       return;
     }
 
+    const hasMultiName = (val: string) => val.includes(',') || val.includes('/') || val.includes('&') || /\band\b/i.test(val);
+
+    if (hasMultiName(goldenBoot) || hasMultiName(goldenGlove) || hasMultiName(pfaPlayer)) {
+      showToast({
+        type: 'error',
+        message: 'Anti-cheat rule: Please enter ONLY ONE full player name per category (no commas or multiple names).',
+      });
+      return;
+    }
+
     soundFx.playStamp();
     setIsSubmitting(true);
 
@@ -154,8 +164,26 @@ export const PLSpecialsModal: React.FC<PLSpecialsModalProps> = ({
           <div style={{ fontSize: '11px', color: 'var(--color-text-primary)', lineHeight: 1.4 }}>
             <strong>Deadline:</strong> {formatDeadlineIST()} ({isLocked ? 'LOCKED' : 'Editable until deadline'})
             <div style={{ color: 'var(--color-text-muted)', fontSize: '10px', marginTop: '2px' }}>
-              Ensure exact full player name as in official lineups.
+              Ensure exact full player name as in official match lineups.
             </div>
+          </div>
+        </div>
+
+        {/* Strict Anti-Cheat Banner */}
+        <div
+          style={{
+            padding: '12px 14px',
+            borderRadius: 'var(--radius-md)',
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.35)',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '10px',
+          }}
+        >
+          <span style={{ fontSize: '16px' }}>🛡️</span>
+          <div style={{ fontSize: '11px', color: '#F87171', lineHeight: 1.5 }}>
+            <strong style={{ color: '#FF8A8A' }}>STRICT ANTI-CHEAT RULE:</strong> Write the exact full name of ONE player as mentioned in the match lineup (e.g. <em>Bukayo Saka</em> or <em>Erling Haaland</em>). Points are provided ONLY if the name matches exactly. Writing multiple names, commas, or extra text will void your prediction and score 0 points.
           </div>
         </div>
 

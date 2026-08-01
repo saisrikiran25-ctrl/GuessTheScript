@@ -81,13 +81,22 @@ export const Admin: React.FC = () => {
       let specialScore = 0;
 
       if (pred) {
-        if (bootWinners.includes(pred.goldenBoot.trim().toLowerCase())) {
+        const isValidSingleName = (val: string) => {
+          if (!val) return false;
+          // Reject comma, slash, ampersand, or 'and' to prevent multi-name bad actor point theft
+          if (val.includes(',') || val.includes('/') || val.includes('&') || /\band\b/i.test(val)) {
+            return false;
+          }
+          return true;
+        };
+
+        if (isValidSingleName(pred.goldenBoot) && bootWinners.includes(pred.goldenBoot.trim().toLowerCase())) {
           specialScore += SPECIAL_CATEGORY_POINTS;
         }
-        if (gloveWinners.includes(pred.goldenGlove.trim().toLowerCase())) {
+        if (isValidSingleName(pred.goldenGlove) && gloveWinners.includes(pred.goldenGlove.trim().toLowerCase())) {
           specialScore += SPECIAL_CATEGORY_POINTS;
         }
-        if (pfaWinners.includes(pred.pfaPlayer.trim().toLowerCase())) {
+        if (isValidSingleName(pred.pfaPlayer) && pfaWinners.includes(pred.pfaPlayer.trim().toLowerCase())) {
           specialScore += SPECIAL_CATEGORY_POINTS;
         }
       }
