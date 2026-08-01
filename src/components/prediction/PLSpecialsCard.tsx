@@ -82,7 +82,7 @@ export const PLSpecialsCard: React.FC<PLSpecialsCardProps> = ({ playerId }) => {
 
         <div>
           <h2 className="type-h3 font-display gold-gradient-text" style={{ fontSize: '20px', fontWeight: 900 }}>
-            Golden Boot, Glove & PFA Oracles
+            Golden Boot, Glove & PFA POTS
           </h2>
           <p style={{ fontSize: '13px', color: '#E2E8F0', marginTop: '4px', lineHeight: 1.5 }}>
             Predict the Premier League 2026/27 season award winners (+500 PTS each).
@@ -138,7 +138,7 @@ export const PLSpecialsCard: React.FC<PLSpecialsCardProps> = ({ playerId }) => {
             }}
           >
             {hasAllThree
-              ? (isLocked ? '🔒 View Locked Oracles' : 'Edit Season Oracles →')
+              ? (isLocked ? '🔒 View Locked POTS' : 'Edit Season POTS →')
               : 'Make Special Predictions →'}
           </Button>
         </div>

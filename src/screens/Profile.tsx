@@ -276,7 +276,7 @@ export const Profile: React.FC = () => {
                   marginBottom: 'var(--space-3)',
                 }}
               >
-                Your Season Oracles (1,500 PTS)
+                Your Season POTS (1,500 PTS)
               </h2>
 
               <div
@@ -293,7 +293,7 @@ export const Profile: React.FC = () => {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span className="font-display" style={{ fontSize: '13px', fontWeight: 800, color: 'var(--color-accent)' }}>
-                    Premier League 2026/27 Oracles
+                    Premier League 2026/27 POTS
                   </span>
                   <span
                     style={{

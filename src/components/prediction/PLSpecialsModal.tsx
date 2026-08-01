@@ -87,7 +87,7 @@ export const PLSpecialsModal: React.FC<PLSpecialsModalProps> = ({
     await syncUploadPLSpecialPrediction(pred);
 
     setIsSubmitting(false);
-    showToast({ type: 'success', message: 'Season Oracles saved! Editable until Aug 26, 00:00 AM IST. 🏆' });
+    showToast({ type: 'success', message: 'Season POTS saved! Editable until Aug 26, 00:00 AM IST. 🏆' });
 
     if (onSaved) onSaved();
     onClose();
@@ -335,7 +335,7 @@ export const PLSpecialsModal: React.FC<PLSpecialsModalProps> = ({
           </Button>
           {!isLocked && (
             <Button variant="primary" loading={isSubmitting} onClick={handleSave} style={{ flex: 2 }}>
-              Lock In Season Oracles →
+              Lock In Season POTS →
             </Button>
           )}
         </div>
