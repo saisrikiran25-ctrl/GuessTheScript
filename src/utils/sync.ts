@@ -36,7 +36,7 @@ export async function syncUploadMember(
     const docRef = doc(db, `groups/${groupCode}/members/${player.id}`);
     await setDoc(docRef, member, { merge: true });
   } catch (e) {
-    console.warn('Network sync failed (offline fallback active):', e);
+    console.warn('[GTS] syncUploadMember failed:', e);
   }
 }
 
@@ -48,12 +48,12 @@ export async function syncDownloadMembers(
     const membersRef = collection(db, `groups/${groupCode}/members`);
     const snapshot = await getDocs(membersRef);
     const members: SyncMember[] = [];
-    snapshot.forEach((doc) => {
-      members.push(doc.data() as SyncMember);
+    snapshot.forEach((docSnap) => {
+      members.push(docSnap.data() as SyncMember);
     });
     return members;
   } catch (e) {
-    console.warn('Network sync load failed (offline fallback active):', e);
+    console.warn('[GTS] syncDownloadMembers failed:', e);
     return [];
   }
 }
@@ -69,7 +69,7 @@ export async function syncWriteMatchResolution(
     const docRef = doc(db, `matches/${matchId}`);
     await setDoc(docRef, { status: 'resolved', resolution }, { merge: true });
   } catch (e) {
-    console.warn('Failed to write match resolution to Firestore:', e);
+    console.warn('[GTS] syncWriteMatchResolution failed:', e);
   }
 }
 
@@ -88,7 +88,7 @@ export async function syncReadAllMatchResolutions(): Promise<
     });
     return result;
   } catch (e) {
-    console.warn('Failed to read match resolutions from Firestore:', e);
+    console.warn('[GTS] syncReadAllMatchResolutions failed:', e);
     return {};
   }
 }
@@ -103,13 +103,12 @@ export async function syncWritePLSpecialResolution(
     const docRef = doc(db, 'specials/pl_season_2026');
     await setDoc(docRef, res, { merge: true });
   } catch (e) {
-    console.warn('Failed to write PL special resolution to Firestore:', e);
+    console.warn('[GTS] syncWritePLSpecialResolution failed:', e);
   }
 }
 
 export async function syncReadPLSpecialResolution(): Promise<PLSpecialResolution | null> {
   try {
-    const docRef = doc(db, 'specials/pl_season_2026');
     const snap = await getDocs(collection(db, 'specials'));
     let found: PLSpecialResolution | null = null;
     snap.forEach((d) => {
@@ -119,7 +118,7 @@ export async function syncReadPLSpecialResolution(): Promise<PLSpecialResolution
     });
     return found;
   } catch (e) {
-    console.warn('Failed to read PL special resolution from Firestore:', e);
+    console.warn('[GTS] syncReadPLSpecialResolution failed:', e);
     return null;
   }
 }
@@ -131,7 +130,7 @@ export async function syncUploadPLSpecialPrediction(
     const docRef = doc(db, `specials_predictions/${prediction.playerId}`);
     await setDoc(docRef, prediction, { merge: true });
   } catch (e) {
-    console.warn('Failed to upload PL special prediction to Firestore:', e);
+    console.warn('[GTS] syncUploadPLSpecialPrediction failed:', e);
   }
 }
 

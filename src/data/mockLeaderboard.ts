@@ -1,7 +1,7 @@
 import type { LeaderboardEntry } from '@/types';
 
 // ─── Mock Leaderboard ─────────────────────────────────────────
-// Clean production state: no mock players.
-// Leaderboard is populated dynamically in real-time as users submit and resolve predictions.
+// No mock players. Leaderboard is populated exclusively from real Firestore data.
+// All users who register and use the app appear here automatically.
 
 export const MOCK_LEADERBOARD: Omit<LeaderboardEntry, 'rank'>[] = [];
